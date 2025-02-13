@@ -14,25 +14,38 @@ from test import testdata_kmeans, testdata_knn, testdata_ann
 #     pass
 
 def distance_cosine(X, Y):
-    pass
+    cosine_similarity = torch.nn.functional.cosine_similarity(X, Y, dim=0)
+    return 1 - cosine_similarity
 
 def distance_l2(X, Y):
-    pass
+    return torch.sum((X - Y) ** 2)
 
 def distance_dot(X, Y):
-    pass
+    return torch.dot(X, Y)
 
 def distance_manhattan(X, Y):
-    pass
+    return torch.sum(torch.abs(X - Y))
 
 # ------------------------------------------------------------------------------------------------
 # Your Task 1.2 code here
 # ------------------------------------------------------------------------------------------------
 
 # You can create any kernel here
+# def distance_kernel(X, Y, D):
+#     pass
 
-def our_knn(N, D, A, X, K):
-    pass
+    # compute the distances between X and each vector in A
+    distances = torch.zeros(A.size(0), device=A.device)
+    
+    distances = torch.norm(A - X, dim=1)  # vectorized L2 norm computation
+
+    # sort distances and get the top-K nearest neighbors
+    _, indices = torch.topk(distances, k=K, largest=False)
+
+    # get the top-K nearest vectors using the indices
+    result = A[indices]  # The top K vectors from A
+
+    return result
 
 # ------------------------------------------------------------------------------------------------
 # Your Task 2.1 code here

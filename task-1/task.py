@@ -11,16 +11,20 @@ from test import testdata_kmeans, testdata_knn, testdata_ann
 
 # You can create any kernel here
 def distance_kernel(X, Y, D):
+
+    # making sure X and Y are both CPU or both GPU
+    if X.device != Y.device:
+        raise ValueError("X and Y must be on the same device")
     # matches to which distance function is desired to be used so none of the functions are in need of seperate calls
     match D:
         case "cos":
-            distance_cosine(X,Y)
+            return distance_cosine(X,Y)
         case "l2":
-            distance_l2(X,Y)
+            return distance_l2(X,Y)
         case "dot":
-            distance_dot(X,Y)
+            return distance_dot(X,Y)
         case "man":
-            distance_manhattan(X,Y)
+            return distance_manhattan(X,Y)
         case _:
             raise ValueError("Please provide a valid distance function.")
             

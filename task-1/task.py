@@ -130,6 +130,34 @@ def our_knn(N, D, A, X, K):
     
     return result
 
+# CPU top k
+# based on same format as GPU version
+# batching not necessary but can be added if needed
+
+def our_knn_cpu(N, D, A, X, K):
+    # Ensure the data is on the CPU (if it's on the GPU, move it to the CPU)
+    if A.device != torch.device("cpu"):
+        A = A.cpu()
+    if X.device != torch.device("cpu"):
+        X = X.cpu()
+
+    dist_metric = "cosine"
+
+    # Create an empty tensor to store distances
+    distances = torch.empty(N, device="cpu")
+    
+    # Calculate distances for each vector in A
+    for i, Y in enumerate(A):
+        distances[i] = distance_kernel(X, Y, dist_metric)
+
+    # Find the top K distances (smallest)
+    _, indices = torch.topk(distances, k=K, largest=False)
+
+    # Get the top K nearest vectors from A
+    result = A[indices]
+    
+    return result
+
 # ------------------------------------------------------------------------------------------------
 # Your Task 2.1 code here
 # ------------------------------------------------------------------------------------------------

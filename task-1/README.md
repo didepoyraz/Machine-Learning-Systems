@@ -19,7 +19,7 @@ There are four distinct types of distance, so the implementation of four separat
 
 $d(X, Y) = 1 - \frac{X \cdot Y}{\|X\| \|Y\|}$
 
-**L2 distance:**:
+**L2 distance:**:https://www.skyscanner.net/jobs/job/6217549?gh_jid=6217549&gh_src=afd9ca041us
 
 $d(X, Y) = \sqrt{\sum_{i=1}^D (X_i - Y_i)^2}$
 

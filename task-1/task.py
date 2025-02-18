@@ -42,22 +42,22 @@ def distance_manhattan(X, Y):
 # Your Task 1.2 code here
 # ------------------------------------------------------------------------------------------------
 
-# You can create any kernel here
-def distance_kernel(X, Y, D):
-#     pass
-    # A.size(0) = N
-    # compute the distances between X and each vector in A
-    distances = torch.zeros(A.size(0), device=A.device)
+# # You can create any kernel here
+# def distance_kernel(X, Y, D):
+# #     pass
+#     # A.size(0) = N
+#     # compute the distances between X and each vector in A
+#     distances = torch.zeros(A.size(0), device=A.device)
     
-    distances = torch.norm(A - X, dim=1)  # vectorized L2 norm computation
+#     distances = torch.norm(A - X, dim=1)  # vectorized L2 norm computation
 
-    # sort distances and get the top-K nearest neighbors
-    _, indices = torch.topk(distances, k=K, largest=False)
+#     # sort distances and get the top-K nearest neighbors
+#     _, indices = torch.topk(distances, k=K, largest=False)
 
-    # get the top-K nearest vectors using the indices
-    result = A[indices]  # The top K vectors from A
+#     # get the top-K nearest vectors using the indices
+#     result = A[indices]  # The top K vectors from A
 
-    return result
+#     return result
 
 def our_knn(N, D, A, X, K):
     
@@ -75,7 +75,56 @@ def our_knn(N, D, A, X, K):
     # potentially do this for larger than N vectors in a collection, or test it out to see
     # if it is still fast even with smaller vectors
     
-    pass
+    dist_metric = "cosine"
+     # Create cuda streams
+    stream1 = torch.cuda.Stream()
+    stream2 = torch.cuda.Stream()
+    
+    # create an event for synchronization
+    event = torch.cuda.Event()
+    
+    # define appropriate number of batches
+    batch_num = None
+    
+    # find the batch_size with N number of vectors divided by our desired batch number
+    batch_size = N // batch_num if N >= batch_num else N
+    
+    #divide the batches
+    batches = torch.split(A, batch_size)
+    
+    # distances = torch.cuda.FloatTensor()
+    distances = torch.empty(N, device="cuda")
+    
+    X_d = X.to("cuda") 
+    
+    # run through batches
+    for batch_id, batch in batches:
+        
+        # batch_id, the current branch number, kacinci branch
+        # batch_size: how many vectors in a batch
+        start_pc = batch_id * batch_size
+        
+        # stream 1 operations
+        with torch.cuda.stream(stream1):
+            A_d = batch.to("cuda", non_blocking=True)
+            event.record()
+            
+        # stream 2 operations
+        with torch.cuda.stream(stream2):
+            event.wait()
+
+            for i, Y in enumerate (A_d):
+                distances[start_pc + i] = distance_kernel(X_d, Y, dist_metric)
+    
+    # wait for all streams to to finish before proceeding with finding top-k
+    torch.cuda.synchronize()
+    
+    # find the top k
+    _, indices = torch.topk(distances, k=K, largest=False)
+    indices_cpu = indices.cpu()
+    result = A[indices_cpu]
+    
+    return result
 
 # ------------------------------------------------------------------------------------------------
 # Your Task 2.1 code here

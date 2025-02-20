@@ -8,7 +8,6 @@ from test import testdata_kmeans, testdata_knn, testdata_ann
 # ------------------------------------------------------------------------------------------------
 # Your Task 1.1 code here
 # ------------------------------------------------------------------------------------------------
-
 # You can create any kernel here
 def distance_kernel(X, Y, D):
 
@@ -16,18 +15,18 @@ def distance_kernel(X, Y, D):
     if X.device != Y.device:
         raise ValueError("X and Y must be on the same device")
     # matches to which distance function is desired to be used so none of the functions are in need of seperate calls
-    match D:
-        case "cos":
-            return distance_cosine(X,Y)
-        case "l2":
-            return distance_l2(X,Y)
-        case "dot":
-            return distance_dot(X,Y)
-        case "man":
-            return distance_manhattan(X,Y)
-        case _:
-            raise ValueError("Please provide a valid distance function.")
-            
+
+    distance_func = {
+         "cosine": distance_cosine,
+        "l2": distance_l2,
+        "dot": distance_dot,
+        "manhattan": distance_manhattan
+    }.get(D)   
+    
+    if distance_func is None:
+        raise ValueError("Invalid distance metric. Choose from 'cosine', 'l2', 'dot', 'manhattan'.")
+
+    distance_func(X,Y)
 
 def distance_cosine(X, Y):
     cosine_similarity = torch.nn.functional.cosine_similarity(X, Y, dim=0)

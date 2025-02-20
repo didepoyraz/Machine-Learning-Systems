@@ -151,11 +151,9 @@ def distance_manhattan_cpu(X, Y):
     return np.sum(np.abs(X - Y))
 
 def our_knn_cpu(N, D, A, X, K, dist_metric="l2"):
-    # validate input dimensions
-    if A.shape[0] != N or A.shape[1] != D or X.shape[0] != D:
+    if A.shape != (N, D) or X.shape != (D,):
         raise ValueError("Input dimensions do not match.")
 
-    # distance metric
     distance_func = {
         "cosine": distance_cosine_cpu,
         "l2": distance_l2_cpu,
@@ -164,18 +162,13 @@ def our_knn_cpu(N, D, A, X, K, dist_metric="l2"):
     }.get(dist_metric)
 
     if distance_func is None:
-        raise ValueError("Please provide a valid distance function.")
+        raise ValueError("Invalid distance metric. Choose from 'cosine', 'l2', 'dot', 'manhattan'.")
 
-    # compute distances
+    # Compute distances and find top K efficiently
     distances = np.array([distance_func(X, Y) for Y in A])
+    indices = np.argpartition(distances, K)[:K]
 
-    # top K nearest indices
-    indices = np.argsort(distances)[:K]
-
-    # top K nearest vectors from A
-    result = A[indices]
-
-    return result
+    return A[indices]
 
 # ------------------------------------------------------------------------------------------------
 # Your Task 2.1 code here

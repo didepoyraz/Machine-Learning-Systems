@@ -2,6 +2,7 @@ import torch
 import cupy as cp
 import triton
 import numpy as np
+import random
 import time
 import json
 from test import testdata_kmeans, testdata_knn, testdata_ann
@@ -148,6 +149,16 @@ def our_kmeans(N, D, A, K):
     # now for each cluster, compute the mean of all assigned vectors to find new centroids
     # if the centroids have changed in the iteration repeat until convergence (until they don't change anymore)
         #reassign points, recompute centroids and repeat until results are stable
+    
+    #Initialise Centroids, by selecting K random vectors from A
+    init_centroid = random.choice(A)
+    
+    #do we need to put these parts in batches?
+    # yes, we do. Again make A into batches. Make the batching into a function
+    distances = torch.empty(N, device="cuda")
+    for i, Y in enumerate (A):
+            distances[start_pc + i] = distance_kernel(X_d, Y, dist_metric)
+
     
     pass
 

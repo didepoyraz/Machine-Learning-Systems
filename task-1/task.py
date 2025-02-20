@@ -133,29 +133,48 @@ def our_knn(N, D, A, X, K):
 # CPU top k
 # based on same format as GPU version
 # batching not necessary but can be added if needed
+# using numpy
 
-def our_knn_cpu(N, D, A, X, K):
-    # Ensure the data is on the CPU (if it's on the GPU, move it to the CPU)
-    if A.device != torch.device("cpu"):
-        A = A.cpu()
-    if X.device != torch.device("cpu"):
-        X = X.cpu()
+def distance_cosine_cpu(X, Y):
+    dot_product = np.dot(X, Y)
+    norm_X = np.linalg.norm(X)
+    norm_Y = np.linalg.norm(Y)
+    return 1 - (dot_product / (norm_X * norm_Y))
 
-    dist_metric = "cosine"
+def distance_l2_cpu(X, Y):
+    return np.linalg.norm(X - Y)
 
-    # Create an empty tensor to store distances
-    distances = torch.empty(N, device="cpu")
-    
-    # Calculate distances for each vector in A
-    for i, Y in enumerate(A):
-        distances[i] = distance_kernel(X, Y, dist_metric)
+def distance_dot_cpu(X, Y):
+    return np.dot(X, Y)
 
-    # Find the top K distances (smallest)
-    _, indices = torch.topk(distances, k=K, largest=False)
+def distance_manhattan_cpu(X, Y):
+    return np.sum(np.abs(X - Y))
 
-    # Get the top K nearest vectors from A
+def our_knn_cpu(N, D, A, X, K, dist_metric="l2"):
+    # validate input dimensions
+    if A.shape[0] != N or A.shape[1] != D or X.shape[0] != D:
+        raise ValueError("Input dimensions do not match.")
+
+    # distance metric
+    distance_func = {
+        "cosine": distance_cosine_cpu,
+        "l2": distance_l2_cpu,
+        "dot": distance_dot_cpu,
+        "manhattan": distance_manhattan_cpu
+    }.get(dist_metric)
+
+    if distance_func is None:
+        raise ValueError("Please provide a valid distance function.")
+
+    # compute distances
+    distances = np.array([distance_func(X, Y) for Y in A])
+
+    # top K nearest indices
+    indices = np.argsort(distances)[:K]
+
+    # top K nearest vectors from A
     result = A[indices]
-    
+
     return result
 
 # ------------------------------------------------------------------------------------------------

@@ -62,6 +62,14 @@ def distance_manhattan(X, Y):
 
 #     return result
 
+def divide_batches(batch_num, A, N):
+    
+    # find the batch_size with N number of vectors divided by our desired batch number
+    batch_size = N // batch_num if N >= batch_num else N
+
+    #divide to batches
+    return torch.split(A, batch_size)
+    
 def our_knn(N, D, A, X, K):
     
     # first divide the vector into batches for copying and processing the distances
@@ -88,13 +96,8 @@ def our_knn(N, D, A, X, K):
     
     # define appropriate number of batches
     batch_num = None
-    
-    # find the batch_size with N number of vectors divided by our desired batch number
-    batch_size = N // batch_num if N >= batch_num else N
-    
-    #divide the batches
-    batches = torch.split(A, batch_size)
-    
+    batches = divide_batches(batch_num, A, N)
+
     # distances = torch.cuda.FloatTensor()
     distances = torch.empty(N, device="cuda")
     

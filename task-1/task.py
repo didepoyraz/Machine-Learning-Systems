@@ -69,7 +69,42 @@ def divide_batches(batch_num, A, N):
     batch_size = N // batch_num if N >= batch_num else N
 
     #divide to batches
-    return torch.split(A, batch_size)
+    return torch.split(A, batch_size), batch_size
+
+def find_distance_to_X(A, N, batch_num, X_d, dist_metric):
+    # make all input parameters on the GPU already
+    batches, batch_size = divide_batches(batch_num, A, N)
+    
+    stream1 = torch.cuda.Stream()
+    stream2 = torch.cuda.Stream()
+    
+    event = torch.cuda.Event()
+    
+    distances = torch.empty(N, device="cuda")
+    
+    for batch_id, batch in batches:
+    
+        # batch_id, the current branch number, kacinci branch
+        # batch_size: how many vectors in a batch
+        start_pc = batch_id * batch_size
+        
+        # stream 1 operations
+        with torch.cuda.stream(stream1):
+            A_d = batch.to("cuda", non_blocking=True)
+            event.record()
+            
+        # stream 2 operations
+        with torch.cuda.stream(stream2):
+            event.wait()
+
+            for i, Y in enumerate (A_d):
+                distances[start_pc + i] = distance_kernel(X_d, Y, dist_metric)
+
+    # wait for all streams to to finish before proceeding with finding top-k
+    torch.cuda.synchronize()
+    
+    return distances
+
     
 def our_knn(N, D, A, X, K):
     
@@ -88,43 +123,14 @@ def our_knn(N, D, A, X, K):
     # if it is still fast even with smaller vectors
     
     dist_metric = "cosine"
-     # Create cuda streams
-    stream1 = torch.cuda.Stream()
-    stream2 = torch.cuda.Stream()
-    
-    # create an event for synchronization
-    event = torch.cuda.Event()
-    
+
     # define appropriate number of batches
     batch_num = None
-    batches = divide_batches(batch_num, A, N)
 
-    # distances = torch.cuda.FloatTensor()
-    distances = torch.empty(N, device="cuda")
-    
     X_d = X.to("cuda") 
-    
-    # run through batches
-    for batch_id, batch in batches:
-        
-        # batch_id, the current branch number, kacinci branch
-        # batch_size: how many vectors in a batch
-        start_pc = batch_id * batch_size
-        
-        # stream 1 operations
-        with torch.cuda.stream(stream1):
-            A_d = batch.to("cuda", non_blocking=True)
-            event.record()
-            
-        # stream 2 operations
-        with torch.cuda.stream(stream2):
-            event.wait()
-
-            for i, Y in enumerate (A_d):
-                distances[start_pc + i] = distance_kernel(X_d, Y, dist_metric)
-    
-    # wait for all streams to to finish before proceeding with finding top-k
-    torch.cuda.synchronize()
+    A_d = A.to("cuda")
+   
+    distances = find_distance_to_X(A_d, N, batch_num, X_d, dist_metric)
     
     # find the top k
     _, indices = torch.topk(distances, k=K, largest=False)
@@ -145,22 +151,45 @@ def our_kmeans(N, D, A, K):
     
     # Pick K initial centroids
         # do this by picking K random elements from A for random centroid initialisation
-    # Now iterate through A and assign each vector to the nearest centroid
-        # do this by first computing distances from every point to all K centroids
-        # then assign each point to the closest centroid
+    
+    # now iterate through A and assign each vector to the nearest centroid
+    # call distance function
+    #--------------------------------------------------------------------------------------#
+        # do this by first computing distances from every point to all K centroids 
+        # call dist function K times
+    #--------------------------------------------------------------------------------------#   
+    # then assign each point to the closest centroid
+        # iterate through A and check for each vector i  which distance array gave the smallest distance one of the centroids
+    
     # now for each cluster, compute the mean of all assigned vectors to find new centroids
     # if the centroids have changed in the iteration repeat until convergence (until they don't change anymore)
         #reassign points, recompute centroids and repeat until results are stable
+        
+    dist_metric = "cosine"
+    A_d = A.to("cuda")
     
+    batch_num = None
     #Initialise Centroids, by selecting K random vectors from A
-    init_centroid = random.choice(A)
-    
-    #do we need to put these parts in batches?
-    # yes, we do. Again make A into batches. Make the batching into a function
-    distances = torch.empty(N, device="cuda")
-    for i, Y in enumerate (A):
-            distances[start_pc + i] = distance_kernel(X_d, Y, dist_metric)
+        # init_centroid = random.choice(A)
+    init_centroids = random.sample(A_d, K)
+    init_centroids_d = [centroid.to("cuda") for centroid in init_centroids]  # Move to GPU
 
+    distances = {}
+    
+    for i, centroid in enumerate(init_centroids_d):
+
+        distances[f"distances_{i}"] = find_distance_to_X(A_d, N, batch_num, centroid, dist_metric)
+
+    cluster_labels = torch.zeros(len(A), dtype=torch.int32, device="cuda")
+    for i, vec in enumerate(A_d):
+        # to-do find the closest centroid to vec
+        closest_centroid = None
+        cluster_labels[i] = closest_centroid
+    
+    # define appropriate number of batches
+ 
+    
+   
     
     pass
 

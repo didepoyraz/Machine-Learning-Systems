@@ -139,6 +139,46 @@ def our_knn(N, D, A, X, K):
     
     return result
 
+# CPU top k
+# based on same format as GPU version
+# batching not necessary but can be added if needed
+# using numpy
+
+def distance_cosine_cpu(X, Y):
+    dot_product = np.dot(X, Y)
+    norm_X = np.linalg.norm(X)
+    norm_Y = np.linalg.norm(Y)
+    return 1 - (dot_product / (norm_X * norm_Y))
+
+def distance_l2_cpu(X, Y):
+    return np.linalg.norm(X - Y)
+
+def distance_dot_cpu(X, Y):
+    return np.dot(X, Y)
+
+def distance_manhattan_cpu(X, Y):
+    return np.sum(np.abs(X - Y))
+
+def our_knn_cpu(N, D, A, X, K, dist_metric="l2"):
+    if A.shape != (N, D) or X.shape != (D,):
+        raise ValueError("Input dimensions do not match.")
+
+    distance_func = {
+        "cosine": distance_cosine_cpu,
+        "l2": distance_l2_cpu,
+        "dot": distance_dot_cpu,
+        "manhattan": distance_manhattan_cpu
+    }.get(dist_metric)
+
+    if distance_func is None:
+        raise ValueError("Invalid distance metric. Choose from 'cosine', 'l2', 'dot', 'manhattan'.")
+
+    # Compute distances and find top K efficiently
+    distances = np.array([distance_func(X, Y) for Y in A])
+    indices = np.argpartition(distances, K)[:K]
+
+    return A[indices]
+
 # ------------------------------------------------------------------------------------------------
 # Your Task 2.1 code here
 # ------------------------------------------------------------------------------------------------

@@ -139,6 +139,16 @@ def our_knn(N, D, A, X, K):
 #     pass
 
 def our_kmeans(N, D, A, K):
+    
+    # Pick K initial centroids
+        # do this by picking K random elements from A for random centroid initialisation
+    # Now iterate through A and assign each vector to the nearest centroid
+        # do this by first computing distances from every point to all K centroids
+        # then assign each point to the closest centroid
+    # now for each cluster, compute the mean of all assigned vectors to find new centroids
+    # if the centroids have changed in the iteration repeat until convergence (until they don't change anymore)
+        #reassign points, recompute centroids and repeat until results are stable
+    
     pass
 
 # ------------------------------------------------------------------------------------------------

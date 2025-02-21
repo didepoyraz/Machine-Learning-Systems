@@ -264,15 +264,6 @@ def our_kmeans(N, D, A, K):
             converged = True
         
     return cluster_labels, new_centroids # decide on the return value based on what is needed for 2.2
-            
-    # now check if the centroids have changed after this iteration, either go on iterating until they do not change or until the max iteration count
-    # # find the mean of the minimum distances per row
-    # valid_entries = cluster_distances != float('inf') # make a boolean matrix that has 1s for each valid entry and 0s for infinities
-    # sum_distances = torch.sum(cluster_distances * valid_entries, dim=1) # sum the entries that are valid per row
-    # num_valid = torch.sum(valid_entries, dim=1) # the number of valid distances per centroid
-    
-    # average_distances_per_centroid = sum_distances / num_valid # new centroid mean points
-   
 
 # ------------------------------------------------------------------------------------------------
 # Your Task 2.2 code here

@@ -62,8 +62,9 @@ def find_distance_to_X(A, N, batch_num, X_d, dist_metric):
     stream2 = torch.cuda.Stream()
     
     distances = torch.empty(N, device="cuda")
+    A_gpu_batches = []
     
-    for batch_id, batch in batches:
+    for batch_id, batch in enumerate(batches):
     
         # batch_id, the current branch number, kacinci branch
         # batch_size: how many vectors in a batch
@@ -72,7 +73,7 @@ def find_distance_to_X(A, N, batch_num, X_d, dist_metric):
         # stream 1 operations
         with torch.cuda.stream(stream1):
             A_d = batch.to("cuda", non_blocking=True)
-            
+            A_gpu_batches.append(A_d)
         # stream 2 operations
         with torch.cuda.stream(stream2):
             stream2.wait_stream(stream1)
@@ -83,7 +84,7 @@ def find_distance_to_X(A, N, batch_num, X_d, dist_metric):
     # wait for all streams to to finish before proceeding with finding top-k
     torch.cuda.synchronize()
     
-    return distances
+    return A_gpu_batches, distances
 
     
 def our_knn(N, D, A, X, K):
@@ -109,12 +110,12 @@ def our_knn(N, D, A, X, K):
 
     X_d = X.to("cuda") 
    
-    distances = find_distance_to_X(A, N, batch_num, X_d, dist_metric)
+    _, distances = find_distance_to_X(A, N, batch_num, X_d, dist_metric)
     
     # find the top k
     _, indices = torch.topk(distances, k=K, largest=False)
     indices_cpu = indices.cpu()
-    result = A[indices_cpu]
+    result = A[indices_cpu] # Todo can I do this with A on the cpu?
     
     return result
 
@@ -184,15 +185,17 @@ def our_kmeans(N, D, A, K):
     # if the centroids have changed in the iteration repeat until convergence (until they don't change anymore)
         #reassign points, recompute centroids and repeat until results are stable
     dist_metric = "cosine"
-    batch_num = None
     
     max_iterations = 100 #decide
-    centroid_shift_tolerance = None # decide
+    centroid_shift_tolerance = 1e-4 # decide
     converged = False
-   
+    
     #Initialise Centroids, by selecting K random vectors from A
-    init_centroids = random.sample(A, K)
-    init_centroids_d = [centroid.to("cuda") for centroid in init_centroids]  # Move to GPU
+    # init_centroids = random.sample(A, K)
+    # init_centroids_d = [centroid.to("cuda") for centroid in init_centroids]  # Move to GPU
+   
+    indices = torch.randint(0, N, (K,), device="cuda") # select random indices
+    init_centroids_d = A[indices]  # select K random vectors directly on GPU
     
     new_centroids = torch.empty((K,D), dtype=torch.float32, device="cuda")
     
@@ -205,34 +208,48 @@ def our_kmeans(N, D, A, K):
     # to track how many vectors have been assigned per centroid
     centroid_counts = torch.zeros(K, dtype=torch.int32, device="cuda")
     
+    batch_num = None
+    batches, batch_size = divide_batches(batch_num, A, N)
+
+    # move A to the GPU in batches
+    distances = torch.empty(N, device="cuda")
+    A_gpu_batches = []
+    
+    for batch_id, batch in enumerate(batches):
+        A_d = batch.to("cuda", non_blocking=True)
+        A_gpu_batches.append(A_d)
+        
     #---------------------------------------------------------------------------------------#
-    # todo set up loop structure
     # maybe put these for loops into streams because they depend on each other?
     iteration = 0
     while not converged and iteration < max_iterations:
         iteration += 1
         
         for i, centroid in enumerate(init_centroids_d):
-            distances[i] = find_distance_to_X(A, N, batch_num, centroid, dist_metric)  # (K, N)
+            #distances[i] = find_distance_to_X(A, N, batch_num, centroid, dist_metric)  # (K, N)
+            for batch_id, batch in enumerate(A_gpu_batches):
+                start_pc = batch_id * batch_size
+                for x, Y in enumerate (A_d):
+                    distances[start_pc + x] = distance_kernel(centroid, Y, dist_metric)
             # distances will have K rows and N column (for the number of vectors in A) and each row will have the distances to Ki from every other vector
-    
+
         # TODO QUESTION: i copy A batch by batch in find_Distance_to_x, but then I need to do further operations with it and copy it again?
         
         # TODO go through the columns of distances, for each column find the index of minimum and assign that vector to the corresponding centroid
-        
-        for i, vec in enumerate(A_d):
-            
-            # find the closest centroid to vec
-            distance_to_all_centroids = distances[:, i]
-            min_distance, min_centroid_index = distance_to_all_centroids.min(dim=0)
-            closest_centroid = min_centroid_index.item() # gives the row number (centroid number) of the closest centroid
-            
-            # Assign vector index i to the next free position in cluster_labels[closest_centroid, :] for vector index and corresponding minimum distance
-            cluster_labels[closest_centroid, centroid_counts[closest_centroid]] = i
-            cluster_distances[closest_centroid, centroid_counts[closest_centroid]] = min_distance
-            
-            # increment the counter for this centroid
-            centroid_counts[closest_centroid] += 1
+        for batch in A_gpu_batches:
+            for i, vec in enumerate(batch):
+                
+                # find the closest centroid to vec
+                distance_to_all_centroids = distances[:, i]
+                min_distance, min_centroid_index = distance_to_all_centroids.min(dim=0)
+                closest_centroid = min_centroid_index.item() # gives the row number (centroid number) of the closest centroid
+                
+                # Assign vector index i to the next free position in cluster_labels[closest_centroid, :] for vector index and corresponding minimum distance
+                cluster_labels[closest_centroid, centroid_counts[closest_centroid]] = i
+                cluster_distances[closest_centroid, centroid_counts[closest_centroid]] = min_distance
+                
+                # increment the counter for this centroid
+                centroid_counts[closest_centroid] += 1
         
         for k in range(K):
             assigned_points = A[cluster_labels[k, cluster_labels[k] != -1]]
@@ -245,6 +262,8 @@ def our_kmeans(N, D, A, K):
         
         if torch.all(centroid_shift <=centroid_shift_tolerance):
             converged = True
+        
+    return cluster_labels, new_centroids # decide on the return value based on what is needed for 2.2
             
     # now check if the centroids have changed after this iteration, either go on iterating until they do not change or until the max iteration count
     # # find the mean of the minimum distances per row
@@ -254,8 +273,6 @@ def our_kmeans(N, D, A, K):
     
     # average_distances_per_centroid = sum_distances / num_valid # new centroid mean points
    
-    
-    pass
 
 # ------------------------------------------------------------------------------------------------
 # Your Task 2.2 code here

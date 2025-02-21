@@ -46,23 +46,6 @@ def distance_manhattan(X, Y):
 # Your Task 1.2 code here
 # ------------------------------------------------------------------------------------------------
 
-# # You can create any kernel here
-# def distance_kernel(X, Y, D):
-# #     pass
-#     # A.size(0) = N
-#     # compute the distances between X and each vector in A
-#     distances = torch.zeros(A.size(0), device=A.device)
-    
-#     distances = torch.norm(A - X, dim=1)  # vectorized L2 norm computation
-
-#     # sort distances and get the top-K nearest neighbors
-#     _, indices = torch.topk(distances, k=K, largest=False)
-
-#     # get the top-K nearest vectors using the indices
-#     result = A[indices]  # The top K vectors from A
-
-#     return result
-
 def divide_batches(batch_num, A, N):
     
     # find the batch_size with N number of vectors divided by our desired batch number
@@ -78,8 +61,6 @@ def find_distance_to_X(A, N, batch_num, X_d, dist_metric):
     stream1 = torch.cuda.Stream()
     stream2 = torch.cuda.Stream()
     
-    event = torch.cuda.Event()
-    
     distances = torch.empty(N, device="cuda")
     
     for batch_id, batch in batches:
@@ -91,11 +72,10 @@ def find_distance_to_X(A, N, batch_num, X_d, dist_metric):
         # stream 1 operations
         with torch.cuda.stream(stream1):
             A_d = batch.to("cuda", non_blocking=True)
-            event.record()
             
         # stream 2 operations
         with torch.cuda.stream(stream2):
-            event.wait()
+            stream2.wait_stream(stream1)
 
             for i, Y in enumerate (A_d):
                 distances[start_pc + i] = distance_kernel(X_d, Y, dist_metric)
@@ -107,7 +87,7 @@ def find_distance_to_X(A, N, batch_num, X_d, dist_metric):
 
     
 def our_knn(N, D, A, X, K):
-    
+    #---------------------------------------------------------------------------------------------#
     # first divide the vector into batches for copying and processing the distances
     
     # 1. Copy the first batch to the GPU
@@ -121,16 +101,15 @@ def our_knn(N, D, A, X, K):
     
     # potentially do this for larger than N vectors in a collection, or test it out to see
     # if it is still fast even with smaller vectors
-    
+    #--------------------------------------------------------------------------------------------#
     dist_metric = "cosine"
 
-    # define appropriate number of batches
+    # TODO define appropriate number of batches
     batch_num = None
 
     X_d = X.to("cuda") 
-    A_d = A.to("cuda")
    
-    distances = find_distance_to_X(A_d, N, batch_num, X_d, dist_metric)
+    distances = find_distance_to_X(A, N, batch_num, X_d, dist_metric)
     
     # find the top k
     _, indices = torch.topk(distances, k=K, largest=False)
@@ -201,34 +180,79 @@ def our_kmeans(N, D, A, K):
     # then assign each point to the closest centroid
         # iterate through A and check for each vector i  which distance array gave the smallest distance one of the centroids
     
-    # now for each cluster, compute the mean of all assigned vectors to find new centroids
+    # now for each cluster, compute the mean distance of all assigned vectors to find new centroids
     # if the centroids have changed in the iteration repeat until convergence (until they don't change anymore)
         #reassign points, recompute centroids and repeat until results are stable
-        
     dist_metric = "cosine"
-    A_d = A.to("cuda")
-    
     batch_num = None
+    
+    max_iterations = 100 #decide
+    centroid_shift_tolerance = None # decide
+    converged = False
+   
     #Initialise Centroids, by selecting K random vectors from A
-        # init_centroid = random.choice(A)
-    init_centroids = random.sample(A_d, K)
+    init_centroids = random.sample(A, K)
     init_centroids_d = [centroid.to("cuda") for centroid in init_centroids]  # Move to GPU
-
-    distances = {}
     
-    for i, centroid in enumerate(init_centroids_d):
-
-        distances[f"distances_{i}"] = find_distance_to_X(A_d, N, batch_num, centroid, dist_metric)
-
-    cluster_labels = torch.zeros(len(A), dtype=torch.int32, device="cuda")
-    for i, vec in enumerate(A_d):
-        # to-do find the closest centroid to vec
-        closest_centroid = None
-        cluster_labels[i] = closest_centroid
+    new_centroids = torch.empty((K,D), dtype=torch.float32, device="cuda")
     
-    # define appropriate number of batches
- 
+    distances =  torch.empty(K, device="cuda")
     
+    # an empty matrix of shape (K, N) on the GPU, initialized with -1 (to represent empty slots)
+    cluster_labels = torch.full((K,N), -1, dtype=torch.int32, device="cuda")
+    cluster_distances = torch.full((K, N), float('inf'), dtype=torch.float32, device="cuda")  # stores min distances with infinity to differentiate if there is a distance written
+
+    # to track how many vectors have been assigned per centroid
+    centroid_counts = torch.zeros(K, dtype=torch.int32, device="cuda")
+    
+    #---------------------------------------------------------------------------------------#
+    # todo set up loop structure
+    # maybe put these for loops into streams because they depend on each other?
+    iteration = 0
+    while not converged and iteration < max_iterations:
+        iteration += 1
+        
+        for i, centroid in enumerate(init_centroids_d):
+            distances[i] = find_distance_to_X(A, N, batch_num, centroid, dist_metric)  # (K, N)
+            # distances will have K rows and N column (for the number of vectors in A) and each row will have the distances to Ki from every other vector
+    
+        # TODO QUESTION: i copy A batch by batch in find_Distance_to_x, but then I need to do further operations with it and copy it again?
+        
+        # TODO go through the columns of distances, for each column find the index of minimum and assign that vector to the corresponding centroid
+        
+        for i, vec in enumerate(A_d):
+            
+            # find the closest centroid to vec
+            distance_to_all_centroids = distances[:, i]
+            min_distance, min_centroid_index = distance_to_all_centroids.min(dim=0)
+            closest_centroid = min_centroid_index.item() # gives the row number (centroid number) of the closest centroid
+            
+            # Assign vector index i to the next free position in cluster_labels[closest_centroid, :] for vector index and corresponding minimum distance
+            cluster_labels[closest_centroid, centroid_counts[closest_centroid]] = i
+            cluster_distances[closest_centroid, centroid_counts[closest_centroid]] = min_distance
+            
+            # increment the counter for this centroid
+            centroid_counts[closest_centroid] += 1
+        
+        for k in range(K):
+            assigned_points = A[cluster_labels[k, cluster_labels[k] != -1]]
+            if len(assigned_points) > 0:
+                new_centroids[k] = assigned_points.mean(dim=0)  # Compute new mean
+            # TODO: print the new centroids and confirm that they are in fact dimension D, vectors as new points
+            
+        centroid_shift = torch.norm(new_centroids - init_centroids_d, dim=1)
+        init_centroids_d = new_centroids.clone()
+        
+        if torch.all(centroid_shift <=centroid_shift_tolerance):
+            converged = True
+            
+    # now check if the centroids have changed after this iteration, either go on iterating until they do not change or until the max iteration count
+    # # find the mean of the minimum distances per row
+    # valid_entries = cluster_distances != float('inf') # make a boolean matrix that has 1s for each valid entry and 0s for infinities
+    # sum_distances = torch.sum(cluster_distances * valid_entries, dim=1) # sum the entries that are valid per row
+    # num_valid = torch.sum(valid_entries, dim=1) # the number of valid distances per centroid
+    
+    # average_distances_per_centroid = sum_distances / num_valid # new centroid mean points
    
     
     pass

@@ -88,7 +88,7 @@ def our_knn(N, D, A, X, K):
     event = torch.cuda.Event()
     
     # define appropriate number of batches
-    batch_num = None
+    batch_num = 32
     
     # find the batch_size with N number of vectors divided by our desired batch number
     batch_size = N // batch_num if N >= batch_num else N

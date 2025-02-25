@@ -224,4 +224,4 @@ def recall_rate(list1, list2):
     return len(set(list1) & set(list2)) / len(list1)
 
 if __name__ == "__main__":
-    test_knn_cpu()
+    test_knn_cpu("")

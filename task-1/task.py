@@ -204,6 +204,11 @@ def test_knn():
     N, D, A, X, K = testdata_knn("test_file.json")
     knn_result = our_knn(N, D, A, X, K)
     print(knn_result)
+
+def test_knn_cpu():
+    N, D, A, X, K = testdata_knn("test_file.json")
+    knn_result = our_knn_cpu(N, D, A, X, K)
+    print(knn_result)
     
 def test_ann():
     N, D, A, X, K = testdata_ann("test_file.json")

@@ -227,5 +227,28 @@ def recall_rate(list1, list2):
     """
     return len(set(list1) & set(list2)) / len(list1)
 
+# trying to incorporate timing into testing
+def measure_time(func, *args, **kwargs):
+    start = time.perf_counter()
+    result = func(*args, **kwargs)
+    end = time.perf_counter()
+    return result, end - start
+
+def test_knn_with_timing():
+    # Load test data from JSON
+    N, D, A, X, K = testdata_knn("test_file_2d.json")
+
+    # Measure CPU time
+    _, cpu_time = measure_time(our_knn_cpu, N, D, A, X, K)
+    print(f"CPU Time (2D): {cpu_time:.6f} seconds")
+
+    # Measure GPU time
+    _, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(f"GPU Time (2D): {gpu_time:.6f} seconds")
+
+    # Calculate Speedup
+    speedup = cpu_time / gpu_time
+    print(f"Speedup (CPU to GPU): {speedup:.2f}x")
+
 if __name__ == "__main__":
-    test_knn_cpu()
+    test_knn_with_timing()

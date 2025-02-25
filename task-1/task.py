@@ -168,10 +168,12 @@ def our_knn_cpu(N, D, A, X, K, dist_metric="l2"):
 
     # Compute distances and find top K efficiently
     distances = np.array([distance_func(X, Y) for Y in A])
-    indices = np.argpartition(distances, K)[:K]
 
-    return A[indices]
+    # Ensure the distances are sorted
+    sorted_indices = np.argsort(distances)[:K]  # Sort and get the top K
 
+    return A[sorted_indices]
+    
 # ------------------------------------------------------------------------------------------------
 # Your Task 2.1 code here
 # ------------------------------------------------------------------------------------------------

@@ -173,7 +173,7 @@ def our_knn_cpu(N, D, A, X, K, dist_metric="l2"):
     sorted_indices = np.argsort(distances)[:K]  # Sort and get the top K
 
     return A[sorted_indices]
-    
+
 # ------------------------------------------------------------------------------------------------
 # Your Task 2.1 code here
 # ------------------------------------------------------------------------------------------------
@@ -228,4 +228,4 @@ def recall_rate(list1, list2):
     return len(set(list1) & set(list2)) / len(list1)
 
 if __name__ == "__main__":
-    test_knn()
+    test_knn_cpu()

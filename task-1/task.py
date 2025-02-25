@@ -101,7 +101,7 @@ def our_knn(N, D, A, X, K):
     # distances = torch.cuda.FloatTensor()
     distances = torch.empty(N, device="cuda")
     
-    X_d = X.to("cuda") 
+    X_d = torch.from_numpy(X).to("cuda") 
     
     # run through batches
     for batch_id, batch in batches:

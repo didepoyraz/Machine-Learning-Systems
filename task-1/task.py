@@ -206,7 +206,7 @@ def test_knn():
     print(knn_result)
 
 def test_knn_cpu():
-    N, D, A, X, K = testdata_knn("test_file.json")
+    N, D, A, X, K = testdata_knn("")
     knn_result = our_knn_cpu(N, D, A, X, K)
     print(knn_result)
     

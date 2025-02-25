@@ -104,7 +104,7 @@ def our_knn(N, D, A, X, K):
     X_d = torch.from_numpy(X).to("cuda") 
     
     # run through batches
-    for batch_id, batch in batches:
+    for batch_id, batch in enumerate(batches):
         
         # batch_id, the current branch number, kacinci branch
         # batch_size: how many vectors in a batch

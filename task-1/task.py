@@ -94,7 +94,9 @@ def our_knn(N, D, A, X, K):
     batch_size = N // batch_num if N >= batch_num else N
     
     #divide the batches
-    batches = torch.split(A, batch_size)
+    A_tensor = torch.from_numpy(A).cuda()  # Convert A to a PyTorch tensor and move to GPU
+    batches = torch.split(A_tensor, batch_size)
+
     
     # distances = torch.cuda.FloatTensor()
     distances = torch.empty(N, device="cuda")

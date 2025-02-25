@@ -17,13 +17,13 @@ def distance_kernel(X, Y, D):
         raise ValueError("X and Y must be on the same device")
     # matches to which distance function is desired to be used so none of the functions are in need of seperate calls
     match D:
-        case "cos":
+        case "cosine":
             return distance_cosine(X,Y)
         case "l2":
             return distance_l2(X,Y)
         case "dot":
             return distance_dot(X,Y)
-        case "man":
+        case "manhattan":
             return distance_manhattan(X,Y)
         case _:
             raise ValueError("Please provide a valid distance function.")

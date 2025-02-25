@@ -1,7 +1,8 @@
 {
     "n": 1000,
     "d": 100,
-    "a_file": "data/A_file.txt",
-    "x_file": "data/X_file.txt",
+    "a_file": "",
+    "x_file": "",
     "k": 10
 }
+

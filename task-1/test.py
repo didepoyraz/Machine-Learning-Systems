@@ -1,3 +1,4 @@
+test.py
 import numpy as np
 import json
 
@@ -49,8 +50,8 @@ def testdata_knn(test_file):
             A_file = data["a_file"]
             X_file = data["x_file"]
             K = data["k"]
-            A = np.loadtxt(A_file)
-            X = np.loadtxt(X_file)
+            A = read_data(A_file)
+            X = read_data(X_file)
         return N, D, A, X, K
     
 def testdata_ann(test_file):

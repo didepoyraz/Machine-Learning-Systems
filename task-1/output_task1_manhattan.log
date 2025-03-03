@@ -1,0 +1,14 @@
+[ 45 518 433 542  62 565 992 503 621 347]
+[809  42 910 670 669 611 499 129   5 784]
+CPU Time (2D): 0.008570 seconds
+GPU Time (2D): 0.006047 seconds
+Speedup (CPU to GPU): 1.42x
+CPU Time (2^15): 0.085487 seconds
+GPU Time (2^15): 0.033516 seconds
+Speedup (CPU to GPU): 2.55x
+CPU Time (4k): 0.033458 seconds
+GPU Time (4k): 0.003253 seconds
+Speedup (CPU to GPU): 10.29x
+CPU Time (4m): 31.570123 seconds
+GPU Time (4m): 0.459553 seconds
+Speedup (CPU to GPU): 68.70x

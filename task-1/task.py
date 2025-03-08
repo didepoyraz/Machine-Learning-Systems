@@ -31,8 +31,7 @@ def distance_manhattan(X, Y):
 # ------------------------------------------------------------------------------------------------
 
 def our_knn(N, D, A, X, K, dist_metric='dot'):
-    # Move data to GPU
-    A_tensor = torch.from_numpy(A).cuda()
+    # Move X to GPU (A is moved in batches below)
     X_tensor = torch.from_numpy(X).cuda()
 
     # Automatically determine batch size based on N
@@ -51,15 +50,22 @@ def our_knn(N, D, A, X, K, dist_metric='dot'):
     distances_list = []
     indices_list = []
 
-    # Create CUDA streams for overlapping computation
-    streams = [torch.cuda.Stream() for _ in range(num_batches)]
+    # Create a small pool of CUDA streams (e.g., 4 streams)
+    num_streams = 4
+    streams = [torch.cuda.Stream() for _ in range(num_streams)]
 
+    # Process the batches in a loop
     for i in range(num_batches):
         start_idx = i * batch_size
         end_idx = min((i + 1) * batch_size, N)
-        A_batch = A_tensor[start_idx:end_idx]  # Select batch
 
-        with torch.cuda.stream(streams[i]):  # Use separate stream for each batch
+        # Move only the current batch of A to GPU
+        A_batch = torch.from_numpy(A[start_idx:end_idx]).cuda()
+
+        # Use a stream from the pool to overlap computation
+        stream = streams[i % num_streams]  # Reuse streams in a round-robin manner
+
+        with torch.cuda.stream(stream):  # Use the selected stream
             if dist_metric == "l2":
                 dists = torch.norm(A_batch - X_tensor, dim=1)
             elif dist_metric == "cosine":

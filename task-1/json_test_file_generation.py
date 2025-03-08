@@ -30,6 +30,7 @@ def generate_and_save(n, d, prefix):
 generate_and_save(1000, 2, "2d")
 generate_and_save(1000, 2**15, "215")
 generate_and_save(4000, 100, "4k")
+generate_and_save(40000, 100, "40k")
 generate_and_save(4000000, 100, "4m")
 
 print("Data generation complete!")

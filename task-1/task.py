@@ -30,7 +30,7 @@ def distance_manhattan(X, Y):
 # Your Task 1.2 code here
 # ------------------------------------------------------------------------------------------------
 
-def our_knn(N, D, A, X, K, dist_metric='dot'):
+def our_knn(N, D, A, X, K, dist_metric='manhattan'):
     
     X_tensor = torch.from_numpy(X).cuda()
     # X_tensor = torch.from_numpy(X).to(dtype=torch.float32).cuda()
@@ -160,7 +160,7 @@ def distance_dot_cpu(X, Y):
 def distance_manhattan_cpu(X, Y):
     return np.sum(np.abs(X - Y))
 
-def our_knn_cpu(N, D, A, X, K, dist_metric="dot"):
+def our_knn_cpu(N, D, A, X, K, dist_metric="manhattan"):
     if A.shape != (N, D) or X.shape != (D,):
         raise ValueError("Input dimensions do not match.")
 
@@ -336,6 +336,6 @@ if __name__ == "__main__":
     test_knn_2D()
     test_knn_215()
     test_knn_4k()
-    test_knn_40k()
+    #test_knn_40k()
     test_knn_4m()
   

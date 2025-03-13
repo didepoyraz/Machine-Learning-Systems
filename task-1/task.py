@@ -33,13 +33,10 @@ def distance_manhattan(X, Y):
 def our_knn(N, D, A, X, K, dist_metric='manhattan'):
     
     X_tensor = torch.from_numpy(X).cuda()
-    # X_tensor = torch.from_numpy(X).to(dtype=torch.float32).cuda()
     
-    if N <= 100000  : # add additional "and D <= 100"
-        # continue
-        A_tensor = torch.from_numpy(A).cuda(non_blocking=True)  # pretransfer the first block 
-        # streams = [torch.cuda.Stream() for _ in range(num_batches)]
-        # for i, vec in enumerate(A_tensor):
+    if N <= 100000:
+        A_tensor = torch.from_numpy(A).cuda(non_blocking=True)  
+    
         if dist_metric == "l2":
             dists = torch.norm(A_tensor - X_tensor, dim=1)
         elif dist_metric == "cosine":
@@ -53,16 +50,13 @@ def our_knn(N, D, A, X, K, dist_metric='manhattan'):
             dists = torch.sum(torch.abs(A_tensor - X_tensor), dim=1)
         else:
             raise ValueError("Invalid distance metric")
-         
-        # torch.cuda.synchronize()  # Ensure both streams finish before next iteration //try removing this
-
+     
         # Get top-K indices in this batch
         _, sorted_indices = torch.topk(dists, k=K, largest=False)
         sorted_indices = sorted_indices.cpu().numpy()
         return sorted_indices
-        # make the second variable sorted_indices
 
-    # find the best batch size according to the available memory in the GPU
+    # Find the best batch size according to the available memory in the GPU
     MAX_FRACTION = 0.8
     device = torch.cuda.current_device()
     total_memory = torch.cuda.get_device_properties(device).total_memory
@@ -73,41 +67,29 @@ def our_knn(N, D, A, X, K, dist_metric='manhattan'):
     bytes_per_vec_element = 8
     bytes_per_vec = D * bytes_per_vec_element
     batch_size = int(usable_memory // bytes_per_vec)
-    #print("usable memory: ", usable_memory," estimated batch size: ",v_batch_size, (v_batch_size//8))
     
     distances_list = []
     indices_list = []
 
-    # batch_size = 8192 if N > 100_000 else 4096 if N > 10_000 else 1024 if N > 1000 else 128 if N > 500 else 64
     num_batches = (N + batch_size - 1) // batch_size
     
     stream1 = torch.cuda.Stream()  # For memory transfer
     stream2 = torch.cuda.Stream()  # For computation
-    # batch_size = 8192 if N > 100_000 else 4096 if N > 10_000 else 1024 if N > 1000 else 128 if N > 500 else 64
-    # num_batches = (N + batch_size - 1) // batch_size
             
     A_batch = torch.from_numpy(A[:batch_size]).cuda(non_blocking=True)  # pretransfer the first block 
 
     for i in range(num_batches):
         start_idx = i * batch_size
         end_idx = min((i + 1) * batch_size, N)
-        current_batch_size = end_idx - start_idx  # Adjust for last batch
-    
+        
         with torch.cuda.stream(stream1):
             # Transfer next batch to the GPU
-            if i < num_batches - 1:  # Avoid out-of-bounds
+            if i < num_batches - 1: 
                 A_batch = torch.from_numpy(A[end_idx : end_idx + batch_size]).cuda(non_blocking=True)
 
         with torch.cuda.stream(stream2):
             stream2.wait_stream(stream1)  # Ensure batch is available before computing
         
-            # if i < num_batches - 1:  # Regular batch
-            #     A_batch_full.copy_(next_batch)
-            #     A_batch = A_batch_full
-            # else:
-            #     A_batch_last.copy_(next_batch)  # Use smaller buffer
-            #     A_batch = A_batch_last  # Use dynamically assigned buffer
-                
             # Compute distances
             if dist_metric == "l2":
                 dists = torch.norm(A_batch - X_tensor, dim=1)
@@ -126,13 +108,11 @@ def our_knn(N, D, A, X, K, dist_metric='manhattan'):
             # Get top-K indices
             batch_dists, batch_indices = torch.topk(dists, k=K, largest=False)
 
-            # Store results asynchronously
             distances_list.append(batch_dists.cpu())
             indices_list.append((batch_indices + start_idx).cpu())
     
-    torch.cuda.synchronize()  # Ensure both streams finish before next iteration //try removing this
+    torch.cuda.synchronize()  
 
-    # Concatenate and sort final results
     all_distances = torch.cat(distances_list)
     all_indices = torch.cat(indices_list)
     sorted_indices = all_indices[torch.argsort(all_distances)[:K]].cpu().numpy()

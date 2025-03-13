@@ -6,6 +6,7 @@ import random
 import time
 import json
 from test import testdata_kmeans, testdata_knn, testdata_ann
+import matplotlib.pyplot as plt
 # ------------------------------------------------------------------------------------------------
 # Your Task 1.1 code here
 # ------------------------------------------------------------------------------------------------
@@ -171,6 +172,7 @@ def our_knn_cpu(N, D, A, X, K, dist_metric="manhattan"):
 #     pass
 
 def our_kmeans(N, D, A, K):
+    print(f"A: \n: {A}\n, K: {K}")
     
     # Pick K initial centroids
         # do this by picking K random elements from A for random centroid initialisation
@@ -187,19 +189,18 @@ def our_kmeans(N, D, A, K):
     # now for each cluster, compute the mean distance of all assigned vectors to find new centroids
     # if the centroids have changed in the iteration repeat until convergence (until they don't change anymore)
         #reassign points, recompute centroids and repeat until results are stable
-    dist_metric = "cosine"
+    
+    dist_metric = "l2"
     
     max_iterations = 100 #decide
     centroid_shift_tolerance = 1e-4 # decide
     converged = False
     
     #Initialise Centroids, by selecting K random vectors from A
-    # init_centroids = random.sample(A, K)
-    # init_centroids_d = [centroid.to("cuda") for centroid in init_centroids]  # Move to GPU
-   
-    indices = torch.randint(0, N, (K,), device="cuda") # select random indices
-    init_centroids_d = A[indices]  # select K random vectors directly on GPU
-    
+    A_tensor = torch.from_numpy(A).cuda(non_blocking=True)  
+    indices = torch.randint(0, N, (K,), device="cuda") # select K random indices from the indices of A
+    init_centroids_d = A_tensor[indices]  #filter the chosen K random vectors directly on GPU //question whether this is on the gpu
+    print(f"init centroids: {init_centroids_d}")
     new_centroids = torch.empty((K,D), dtype=torch.float32, device="cuda")
     
     distances =  torch.empty(K, device="cuda")
@@ -211,62 +212,83 @@ def our_kmeans(N, D, A, K):
     # to track how many vectors have been assigned per centroid
     centroid_counts = torch.zeros(K, dtype=torch.int32, device="cuda")
     
-    batch_num = None
-    batches, batch_size = divide_batches(batch_num, A, N)
+    # batch_num = None
+    # batches, batch_size = divide_batches(batch_num, A, N)
+    
+    # Find the best batch size according to the available memory in the GPU
+    # MAX_FRACTION = 0.8
+    # device = torch.cuda.current_device()
+    # total_memory = torch.cuda.get_device_properties(device).total_memory
+    # allocated_memory = torch.cuda.memory_allocated(device)
+    # available_memory = total_memory - allocated_memory
+    # usable_memory = available_memory * MAX_FRACTION
+    
+    # bytes_per_vec_element = 8
+    # bytes_per_vec = D * bytes_per_vec_element
+    # batch_size = int(usable_memory // bytes_per_vec)
 
+    # num_batches = (N + batch_size - 1) // batch_size
     # move A to the GPU in batches
     distances = torch.empty(N, device="cuda")
-    A_gpu_batches = []
+    # A_gpu_batches = [] #does not need to be on the GPU
     
-    for batch_id, batch in enumerate(batches):
-        A_d = batch.to("cuda", non_blocking=True)
-        A_gpu_batches.append(A_d)
+    # for i in range(num_batches):
+    #     start_idx = i * batch_size
+    #     end_idx = min((i + 1) * batch_size, N)
         
+    #     A_batch = torch.from_numpy(A[start_idx : end_idx]).cuda(non_blocking=True)
+    #     A_gpu_batches.append(A_batch)
+   
     #---------------------------------------------------------------------------------------#
-    # maybe put these for loops into streams because they depend on each other?
+    # A = (N,D), init_centroids_d = (K,D) ,distances = (N,K), 
+    print(f"A shape: {A_tensor.shape}, init centroids shape: {init_centroids_d.shape}")
     iteration = 0
     while not converged and iteration < max_iterations:
+        print(f"iteration {iteration}")
         iteration += 1
+        if dist_metric == "l2":
+            distances = torch.sum((A_tensor[:,None] - init_centroids_d)**2, dim=2)
+        elif dist_metric == "cosine":
+            A_norm = torch.nn.functional.normalize(A_tensor, p=2, dim=1)
+            C_norm = torch.nn.functional.normalize(init_centroids_d, p=2, dim=0)
+            similarities = torch.matmul(A_norm, C_norm.T) #take transpose of centroids to make it (D,K) so matmul can give (N,K)
+            distances = 1 - similarities
+        elif dist_metric == "dot":
+            distances = -torch.matmul(A_tensor, init_centroids_d.T)  # Negate so smaller is better, take transpose of centroids to make it (D,K) so matmul can give (N,K)
+        elif dist_metric == "manhattan":
+            distances = torch.sum(torch.abs(A_tensor[:,None] - init_centroids_d), dim=2) # expand A to (N,1,D) so that broadcasting can be done and move dim to 2 so it collapses for dimension D still and get (N,K)
+        else:
+            raise ValueError("Invalid distance metric")
         
-        for i, centroid in enumerate(init_centroids_d):
-            #distances[i] = find_distance_to_X(A, N, batch_num, centroid, dist_metric)  # (K, N)
-            for batch_id, batch in enumerate(A_gpu_batches):
-                start_pc = batch_id * batch_size
-                for x, Y in enumerate (A_d):
-                    distances[start_pc + x] = distance_kernel(centroid, Y, dist_metric)
-            # distances will have K rows and N column (for the number of vectors in A) and each row will have the distances to Ki from every other vector
-
-        # TODO QUESTION: i copy A batch by batch in find_Distance_to_x, but then I need to do further operations with it and copy it again?
+        print(f"shape of distances (should be ({N},{K})): {distances.shape}")
+        cluster_labels = torch.argmin(distances, dim=1)  # (N,), finds the minimum column of each row, each row corresponds to one vector of A and the columns correspond to the distance to each centroid from that vector
         
-        # TODO go through the columns of distances, for each column find the index of minimum and assign that vector to the corresponding centroid
-        for batch in A_gpu_batches:
-            for i, vec in enumerate(batch):
-                
-                # find the closest centroid to vec
-                distance_to_all_centroids = distances[:, i]
-                min_distance, min_centroid_index = distance_to_all_centroids.min(dim=0)
-                closest_centroid = min_centroid_index.item() # gives the row number (centroid number) of the closest centroid
-                
-                # Assign vector index i to the next free position in cluster_labels[closest_centroid, :] for vector index and corresponding minimum distance
-                cluster_labels[closest_centroid, centroid_counts[closest_centroid]] = i
-                cluster_distances[closest_centroid, centroid_counts[closest_centroid]] = min_distance
-                
-                # increment the counter for this centroid
-                centroid_counts[closest_centroid] += 1
-        
-        for k in range(K):
-            assigned_points = A[cluster_labels[k, cluster_labels[k] != -1]]
-            if len(assigned_points) > 0:
-                new_centroids[k] = assigned_points.mean(dim=0)  # Compute new mean
-            # TODO: print the new centroids and confirm that they are in fact dimension D, vectors as new points
-            
+        new_centroids = torch.zeros((K, D), device=device)
+        counts = torch.bincount(cluster_labels, minlength=K).float().unsqueeze(1)
+        new_centroids.scatter_add_(0, cluster_labels[:, None].expand(-1, D), A_tensor)
+        counts[counts == 0] = 1  # Avoid division by zero
+        new_centroids /= counts
+        print(f"count: {counts}\n, new centroids shape: {new_centroids.shape}, and itself: \n {new_centroids}")
+               
         centroid_shift = torch.norm(new_centroids - init_centroids_d, dim=1)
         init_centroids_d = new_centroids.clone()
         
         if torch.all(centroid_shift <=centroid_shift_tolerance):
             converged = True
+            
+    new_centroids_cpu = new_centroids.cpu().numpy()
+    plt.scatter(A[:, 0], A[:, 1], c=cluster_labels.cpu().numpy(), cmap="viridis", alpha=0.5)
+    plt.scatter(new_centroids_cpu[:, 0], new_centroids_cpu[:, 1], c='red', marker='x', s=200, label="Centroids")
+    plt.title("K-Means Clustering Results")
+    plt.legend()
+    
+    save_path ="kmeans_plot.png"
+    # Save plot instead of showing
+    plt.savefig(save_path)
+    print(f"Plot saved to {save_path}")
+    
         
-    return cluster_labels, new_centroids # decide on the return value based on what is needed for 2.2
+    return cluster_labels.cpu().numpy(), new_centroids.cpu().numpy() # decide on the return value based on what is needed for 2.2
 
 # ------------------------------------------------------------------------------------------------
 # Your Task 2.2 code here
@@ -406,12 +428,30 @@ def test_knn_4m():
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
     print(f"Speedup 4m (CPU to GPU): {speedup:.2f}x\n")
 
+def test_kmeans_10():
+    # Load test data from JSON
+    N, D, A, K = testdata_kmeans("10_meta.json")
+
+    # # Measure CPU time
+    # _, cpu_time = measure_time(our_knn_cpu, N, D, A, X, K)
+    # print(f"CPU Time (4m): {cpu_time:.6f} seconds")
+
+    # Measure GPU time
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
+    print(f"GPU Time (10): {gpu_time:.6f} seconds")
+
+    # Calculate Speedup
+    # speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    # print(f"Speedup 4m (CPU to GPU): {speedup:.2f}x\n")
+
 if __name__ == "__main__":
-    test_knn()
-    test_knn_cpu()
-    test_knn_2D()
-    test_knn_215()
-    test_knn_4k()
-    #test_knn_40k()
-    test_knn_4m()
+    # test_knn()
+    # test_knn_cpu()
+    # test_knn_2D()
+    # test_knn_215()
+    # test_knn_4k()
+    # #test_knn_40k()
+    # test_knn_4m()
+    
+    test_kmeans_10()
   

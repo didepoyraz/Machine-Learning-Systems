@@ -28,7 +28,7 @@ def testdata_kmeans(test_file):
             D = data["d"]
             A_file = data["a_file"]
             K = data["k"]
-            A = np.loadtxt(A_file)
+            A = read_data(A_file)
         return N, D, A, K
 
 def testdata_knn(test_file):

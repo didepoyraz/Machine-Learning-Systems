@@ -26,6 +26,28 @@ def generate_and_save(n, d, prefix):
     np.save(x_file, X)
     save_metadata(meta_file, n, d, a_file, x_file)
 
+
+def save_metadata_kmeans(filename, n, d, k, a_file):
+    """Saves metadata as a JSON file."""
+    metadata = {
+        "n": n,
+        "d": d,
+        "a_file": a_file,
+        "k": k
+    }
+    with open(filename, "w") as f:
+        json.dump(metadata, f, indent=4)
+
+def generate_and_save_kmeans(n, d,k, prefix):
+    """Generates data and saves it in .npy format along with metadata."""
+    A = np.random.randn(n, d).astype(np.float32)
+
+    a_file = f"{prefix}_A.npy"
+    meta_file = f"{prefix}_meta.json"
+    np.save(a_file, A)
+    
+    save_metadata_kmeans(meta_file, n, d, k, a_file)
+
 # Generate and save datasets
 generate_and_save(1000, 2, "2d")
 generate_and_save(1000, 2**15, "215")
@@ -33,4 +55,5 @@ generate_and_save(4000, 100, "4k")
 generate_and_save(40000, 100, "40k")
 generate_and_save(4000000, 100, "4m")
 
+generate_and_save_kmeans(10,2,3, "10")
 print("Data generation complete!")

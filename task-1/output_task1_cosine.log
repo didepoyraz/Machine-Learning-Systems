@@ -1,18 +1,36 @@
-[ 84 632 432 682 742 995 433 514 851 778]
-[380 288 155  99 769 621 583 582 580 319]
-CPU Time (2D): 0.017729 seconds
-GPU Time (2D): 0.008029 seconds
-Speedup (CPU to GPU): 2.21x
-
-CPU Time (2^15): 0.059991 seconds
-GPU Time (2^15): 0.030434 seconds
-Speedup 2*15 (CPU to GPU): 1.97x
-
-CPU Time (4k): 0.069519 seconds
-GPU Time (4k): 0.001510 seconds
-Speedup 4k (CPU to GPU): 46.04x
-
-CPU Time (4m): 68.275379 seconds
-GPU Time (4m): 0.366310 seconds
-Speedup 4m (CPU to GPU): 186.39x
-
+A: 
+: [[ 0.7714028   0.5752637 ]
+ [-0.8681828   0.09823542]
+ [-0.6227521  -0.43392247]
+ [ 0.8742297   1.6045325 ]
+ [ 0.7018144  -0.6120427 ]
+ [ 0.82476056 -1.1534234 ]
+ [-0.16714352 -0.89589345]
+ [-1.8028297  -1.3404269 ]
+ [-0.23536704 -0.70598674]
+ [-0.22372356  0.1526284 ]]
+, K: 3
+init centroids: tensor([[ 0.8248, -1.1534],
+        [ 0.7714,  0.5753],
+        [-0.1671, -0.8959]], device='cuda:0')
+A shape: torch.Size([10, 2]), init centroids shape: torch.Size([3, 2])
+iteration 0
+shape of distances (should be (10,3)): torch.Size([10, 3])
+count: tensor([[2.],
+        [2.],
+        [6.]], device='cuda:0')
+, new centroids shape: torch.Size([3, 2]), and itself: 
+ tensor([[ 0.7633, -0.8827],
+        [ 0.8228,  1.0899],
+        [-0.6533, -0.5209]], device='cuda:0')
+iteration 1
+shape of distances (should be (10,3)): torch.Size([10, 3])
+count: tensor([[2.],
+        [2.],
+        [6.]], device='cuda:0')
+, new centroids shape: torch.Size([3, 2]), and itself: 
+ tensor([[ 0.7633, -0.8827],
+        [ 0.8228,  1.0899],
+        [-0.6533, -0.5209]], device='cuda:0')
+Plot saved to kmeans_plot.png
+GPU Time (10): 14.168751 seconds

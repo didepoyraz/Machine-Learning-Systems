@@ -1,5 +1,5 @@
-import torch
 import cupy as cp
+import torch
 import triton
 import numpy as np
 import random
@@ -9,115 +9,117 @@ from test import testdata_kmeans, testdata_knn, testdata_ann
 # ------------------------------------------------------------------------------------------------
 # Your Task 1.1 code here
 # ------------------------------------------------------------------------------------------------
-# You can create any kernel here
-def distance_kernel(X, Y, D):
-
-    # making sure X and Y are both CPU or both GPU
-    if X.device != Y.device:
-        raise ValueError("X and Y must be on the same device")
-    # matches to which distance function is desired to be used so none of the functions are in need of seperate calls
-
-    distance_func = {
-         "cosine": distance_cosine,
-        "l2": distance_l2,
-        "dot": distance_dot,
-        "manhattan": distance_manhattan
-    }.get(D)   
-    
-    if distance_func is None:
-        raise ValueError("Invalid distance metric. Choose from 'cosine', 'l2', 'dot', 'manhattan'.")
-
-    distance_func(X,Y)
 
 def distance_cosine(X, Y):
+    # Compute cosine similarity
     cosine_similarity = torch.nn.functional.cosine_similarity(X, Y, dim=0)
     return 1 - cosine_similarity
 
 def distance_l2(X, Y):
+    # Compute L2 distance (Euclidean)
     return torch.norm(X - Y)
 
 def distance_dot(X, Y):
+    # Compute dot product
     return torch.dot(X, Y)
 
 def distance_manhattan(X, Y):
+    # Compute Manhattan distance (L1 norm)
     return torch.sum(torch.abs(X - Y))
 
 # ------------------------------------------------------------------------------------------------
 # Your Task 1.2 code here
 # ------------------------------------------------------------------------------------------------
 
-def divide_batches(batch_num, A, N):
+def our_knn(N, D, A, X, K, dist_metric='manhattan'):
     
-    # find the batch_size with N number of vectors divided by our desired batch number
-    batch_size = N // batch_num if N >= batch_num else N
+    X_tensor = torch.from_numpy(X).cuda()
+    
+    if N <= 100000:
+        A_tensor = torch.from_numpy(A).cuda(non_blocking=True)  
+    
+        if dist_metric == "l2":
+            dists = torch.norm(A_tensor - X_tensor, dim=1)
+        elif dist_metric == "cosine":
+            A_norm = torch.nn.functional.normalize(A_tensor, p=2, dim=1)
+            X_norm = torch.nn.functional.normalize(X_tensor, p=2, dim=0)
+            similarities = torch.matmul(A_norm, X_norm)
+            dists = 1 - similarities
+        elif dist_metric == "dot":
+            dists = -torch.matmul(A_tensor, X_tensor)  # Negate so smaller is better
+        elif dist_metric == "manhattan":
+            dists = torch.sum(torch.abs(A_tensor - X_tensor), dim=1)
+        else:
+            raise ValueError("Invalid distance metric")
+     
+        # Get top-K indices in this batch
+        _, sorted_indices = torch.topk(dists, k=K, largest=False)
+        sorted_indices = sorted_indices.cpu().numpy()
+        return sorted_indices
 
-    #divide to batches
-    return torch.split(A, batch_size), batch_size
+    # Find the best batch size according to the available memory in the GPU
+    MAX_FRACTION = 0.8
+    device = torch.cuda.current_device()
+    total_memory = torch.cuda.get_device_properties(device).total_memory
+    allocated_memory = torch.cuda.memory_allocated(device)
+    available_memory = total_memory - allocated_memory
+    usable_memory = available_memory * MAX_FRACTION
+    
+    bytes_per_vec_element = 8
+    bytes_per_vec = D * bytes_per_vec_element
+    batch_size = int(usable_memory // bytes_per_vec)
+    
+    distances_list = []
+    indices_list = []
 
-def find_distance_to_X(A, N, batch_num, X_d, dist_metric):
-    # make all input parameters on the GPU already
-    batches, batch_size = divide_batches(batch_num, A, N)
+    num_batches = (N + batch_size - 1) // batch_size
     
-    stream1 = torch.cuda.Stream()
-    stream2 = torch.cuda.Stream()
-    
-    distances = torch.empty(N, device="cuda")
-    A_gpu_batches = []
-    
-    for batch_id, batch in enumerate(batches):
-    
-        # batch_id, the current branch number, kacinci branch
-        # batch_size: how many vectors in a batch
-        start_pc = batch_id * batch_size
+    stream1 = torch.cuda.Stream()  # For memory transfer
+    stream2 = torch.cuda.Stream()  # For computation
+            
+    A_batch = torch.from_numpy(A[:batch_size]).cuda(non_blocking=True)  # pretransfer the first block 
+
+    for i in range(num_batches):
+        start_idx = i * batch_size
+        end_idx = min((i + 1) * batch_size, N)
         
-        # stream 1 operations
         with torch.cuda.stream(stream1):
-            A_d = batch.to("cuda", non_blocking=True)
-            A_gpu_batches.append(A_d)
-        # stream 2 operations
+            # Transfer next batch to the GPU
+            if i < num_batches - 1: 
+                A_batch = torch.from_numpy(A[end_idx : end_idx + batch_size]).cuda(non_blocking=True)
+
         with torch.cuda.stream(stream2):
-            stream2.wait_stream(stream1)
+            stream2.wait_stream(stream1)  # Ensure batch is available before computing
+        
+            # Compute distances
+            if dist_metric == "l2":
+                dists = torch.norm(A_batch - X_tensor, dim=1)
+            elif dist_metric == "cosine":
+                A_norm = torch.nn.functional.normalize(A_batch, p=2, dim=1)
+                X_norm = torch.nn.functional.normalize(X_tensor, p=2, dim=0)
+                similarities = torch.matmul(A_norm, X_norm)
+                dists = 1 - similarities
+            elif dist_metric == "dot":
+                dists = -torch.matmul(A_batch, X_tensor)  # Negate so smaller is better
+            elif dist_metric == "manhattan":
+                dists = torch.sum(torch.abs(A_batch - X_tensor), dim=1)
+            else:
+                raise ValueError("Invalid distance metric")
 
-            for i, Y in enumerate (A_d):
-                distances[start_pc + i] = distance_kernel(X_d, Y, dist_metric)
+            # Get top-K indices
+            batch_dists, batch_indices = torch.topk(dists, k=K, largest=False)
 
-    # wait for all streams to to finish before proceeding with finding top-k
-    torch.cuda.synchronize()
+            distances_list.append(batch_dists.cpu())
+            indices_list.append((batch_indices + start_idx).cpu())
     
-    return A_gpu_batches, distances
+    torch.cuda.synchronize()  
 
-    
-def our_knn(N, D, A, X, K):
-    #---------------------------------------------------------------------------------------------#
-    # first divide the vector into batches for copying and processing the distances
-    
-    # 1. Copy the first batch to the GPU
-    # 2. Compute the distances of all vectors in the batch with X
-    # 3. Repeat for all batches
-    
-    # At the end find the top k
-    
-    # 2 different streams are needed, 1st for copying data, 2nd for computing the distances
-    # at the end synchronize both streams and compute top k
-    
-    # potentially do this for larger than N vectors in a collection, or test it out to see
-    # if it is still fast even with smaller vectors
-    #--------------------------------------------------------------------------------------------#
-    dist_metric = "cosine"
+    all_distances = torch.cat(distances_list)
+    all_indices = torch.cat(indices_list)
+    sorted_indices = all_indices[torch.argsort(all_distances)[:K]].cpu().numpy()
 
-    # TODO define appropriate number of batches
-    batch_num = None
+    return sorted_indices
 
-    X_d = X.to("cuda") 
-   
-    _, distances = find_distance_to_X(A, N, batch_num, X_d, dist_metric)
-    
-    # find the top k
-    _, indices = torch.topk(distances, k=K, largest=False)
-    indices_cpu = indices.cpu()
-    result = A[indices_cpu] # Todo can I do this with A on the cpu?
-    
-    return result
 
 # CPU top k
 # based on same format as GPU version
@@ -139,7 +141,7 @@ def distance_dot_cpu(X, Y):
 def distance_manhattan_cpu(X, Y):
     return np.sum(np.abs(X - Y))
 
-def our_knn_cpu(N, D, A, X, K, dist_metric="l2"):
+def our_knn_cpu(N, D, A, X, K, dist_metric="manhattan"):
     if A.shape != (N, D) or X.shape != (D,):
         raise ValueError("Input dimensions do not match.")
 
@@ -155,9 +157,10 @@ def our_knn_cpu(N, D, A, X, K, dist_metric="l2"):
 
     # Compute distances and find top K efficiently
     distances = np.array([distance_func(X, Y) for Y in A])
-    indices = np.argpartition(distances, K)[:K]
 
-    return A[indices]
+    # Ensure the distances are sorted
+    sorted_indices = np.argpartition(distances, K)[:K] # sort and get top K
+    return sorted_indices
 
 # ------------------------------------------------------------------------------------------------
 # Your Task 2.1 code here
@@ -285,8 +288,13 @@ def test_kmeans():
     print(kmeans_result)
 
 def test_knn():
-    N, D, A, X, K = testdata_knn("test_file.json")
+    N, D, A, X, K = testdata_knn("")
     knn_result = our_knn(N, D, A, X, K)
+    print(knn_result)
+
+def test_knn_cpu():
+    N, D, A, X, K = testdata_knn("")
+    knn_result = our_knn_cpu(N, D, A, X, K)
     print(knn_result)
     
 def test_ann():
@@ -302,5 +310,108 @@ def recall_rate(list1, list2):
     """
     return len(set(list1) & set(list2)) / len(list1)
 
+# incorporate timing into testing
+def measure_time(func, *args, **kwargs):
+    start = time.perf_counter()
+    result = func(*args, **kwargs)
+    if torch.cuda.is_available():
+        torch.cuda.synchronize()  # Ensure that GPU computation has finished
+    end = time.perf_counter()
+    return result, end - start
+
+def test_knn_2D():
+    # Load test data from JSON (using testdata_knn)
+    N, D, A, X, K = testdata_knn("2d_meta.json")
+
+    # Manually check file types for A and X
+    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
+        A = read_data(A)
+    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
+        X = read_data(X)
+
+    # Measure CPU time
+    _, cpu_time = measure_time(our_knn_cpu, N, D, A, X, K)
+    print(f"CPU Time (2D): {cpu_time:.6f} seconds")
+
+    # Measure GPU time
+    _, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(f"GPU Time (2D): {gpu_time:.6f} seconds")
+
+    # Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup (CPU to GPU): {speedup:.2f}x\n")
+
+
+def test_knn_215():
+    # Load test data from JSON
+    N, D, A, X, K = testdata_knn("215_meta.json")
+
+    # Measure CPU time
+    _, cpu_time = measure_time(our_knn_cpu, N, D, A, X, K)
+    print(f"CPU Time (2^15): {cpu_time:.6f} seconds")
+
+    # Measure GPU time
+    _, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(f"GPU Time (2^15): {gpu_time:.6f} seconds")
+
+    # Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 2*15 (CPU to GPU): {speedup:.2f}x\n")
+
+def test_knn_4k():
+    # Load test data from JSON
+    N, D, A, X, K = testdata_knn("4k_meta.json")
+
+    # Measure CPU time
+    _, cpu_time = measure_time(our_knn_cpu, N, D, A, X, K)
+    print(f"CPU Time (4k): {cpu_time:.6f} seconds")
+
+    # Measure GPU time
+    _, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(f"GPU Time (4k): {gpu_time:.6f} seconds")
+
+    # Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 4k (CPU to GPU): {speedup:.2f}x\n")
+    
+def test_knn_40k():
+    # Load test data from JSON
+    N, D, A, X, K = testdata_knn("40k_meta.json")
+
+    # Measure CPU time
+    _, cpu_time = measure_time(our_knn_cpu, N, D, A, X, K)
+    print(f"CPU Time (40k): {cpu_time:.6f} seconds")
+
+    # Measure GPU time
+    _, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(f"GPU Time (40k): {gpu_time:.6f} seconds")
+
+    # Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 40k (CPU to GPU): {speedup:.2f}x\n")
+
+def test_knn_4m():
+    # Load test data from JSON
+    N, D, A, X, K = testdata_knn("4m_meta.json")
+
+    # Measure CPU time
+    _, cpu_time = measure_time(our_knn_cpu, N, D, A, X, K)
+    print(f"CPU Time (4m): {cpu_time:.6f} seconds")
+
+    # Measure GPU time
+    _, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(f"GPU Time (4m): {gpu_time:.6f} seconds")
+
+    # Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 4m (CPU to GPU): {speedup:.2f}x\n")
+
 if __name__ == "__main__":
-    test_kmeans()
+    test_knn()
+    test_knn_cpu()
+    test_knn_2D()
+    test_knn_215()
+    test_knn_4k()
+    #test_knn_40k()
+    test_knn_4m()
+  

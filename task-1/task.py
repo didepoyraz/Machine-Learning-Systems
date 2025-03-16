@@ -1,10 +1,12 @@
 import torch
-import cupy as cp
-import triton
+#import cupy as cp
+#import triton
+from sklearn.cluster import KMeans
 import numpy as np
 import time
 import json
-from test import testdata_kmeans, testdata_knn, testdata_ann
+from test import testdata_kmeans, testdata_knn, testdata_ann, read_data
+
 # ------------------------------------------------------------------------------------------------
 # Your Task 1.1 code here
 # ------------------------------------------------------------------------------------------------
@@ -158,10 +160,66 @@ def our_kmeans(N, D, A, K):
 # Your Task 2.2 code here
 # ------------------------------------------------------------------------------------------------
 
-# You can create any kernel here
+
+def euclidean_distance(vec1, vec2):
+    return torch.sqrt(torch.sum((vec1 - vec2) ** 2, dim=-1))
+
+def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
+    """
+    Perform Approximate Nearest Neighbor (ANN) search using K-Means clustering.
+
+    Parameters:
+        A (torch.Tensor): (N, D) Tensor containing dataset vectors.
+        cluster_centers (torch.Tensor): (K_clusters, D) Tensor of cluster centers.
+        cluster_assignments (torch.Tensor): (N,) Tensor mapping each point to its cluster.
+        X (torch.Tensor): (D,) Query vector.
+        K1 (int): Number of nearest clusters to consider.
+        K2 (int): Number of nearest neighbors to return.
+
+    Returns:
+        torch.Tensor: (K2,) Tensor containing the indices of the top K2 nearest neighbors.
+    """
+
+    cluster_distances = euclidean_distance(X, cluster_centers)
+    nearest_clusters = torch.argsort(cluster_distances)[:K1] 
+
+    candidate_indices = torch.cat([
+        torch.where(cluster_assignments == cluster_idx)[0] for cluster_idx in nearest_clusters
+    ])
+
+    candidate_points = A[candidate_indices]
+
+    candidate_distances = euclidean_distance(candidate_points, X)
+    nearest_neighbors = candidate_indices[torch.argsort(candidate_distances)[:K2]]
+
+    return nearest_neighbors
 
 def our_ann(N, D, A, X, K):
-    pass
+    device = "cuda"
+    K_clusters = 10  # Number of clusters for K-Means
+    K1, K2 = 2, 15  # Number of clusters and neighbors to consider
+
+    if isinstance(A, np.ndarray):
+        A = torch.tensor(A, dtype=torch.float32)
+    if isinstance(X, np.ndarray):
+        X = torch.tensor(X, dtype=torch.float32)
+
+    # Move data to GPU (if available)
+    A = A.to(device)
+    X = X.to(device)
+
+    # K-Means clustering
+    kmeans = KMeans(n_clusters=K_clusters, max_iter=10)
+    cluster_assignments = torch.tensor(kmeans.fit_predict(A.cpu()), device=device)
+    cluster_centers = torch.tensor(kmeans.cluster_centers_, device=device)
+
+    # ANN search
+    top_k_neighbors = ann_search(A, cluster_centers, cluster_assignments, X, K1, K2)
+
+    # move from GPU to CPU
+    print("Top K nearest neighbors indices:", top_k_neighbors.cpu().numpy())
+
+    return top_k_neighbors
 
 # ------------------------------------------------------------------------------------------------
 # Test your code here
@@ -184,7 +242,7 @@ def test_knn_cpu():
     print(knn_result)
     
 def test_ann():
-    N, D, A, X, K = testdata_ann("test_file.json")
+    N, D, A, X, K = testdata_ann("")
     ann_result = our_ann(N, D, A, X, K)
     print(ann_result)
     
@@ -276,10 +334,99 @@ def test_knn_4m():
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
     print(f"Speedup (CPU to GPU): {speedup:.2f}x")
 
+def test_ann_2D():
+    N, D, A, X, K = testdata_ann("2d_meta.json")
+
+    # Manually check file types for A and X
+    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
+        A = read_data(A)
+    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
+        X = read_data(X)
+
+    # Measure CPU time
+    #_, cpu_time = measure_time(our_knn_cpu, N, D, A, X, K)
+    #print(f"CPU Time (2D): {cpu_time:.6f} seconds")
+
+    # Measure GPU time
+    _, gpu_time = measure_time(our_ann, N, D, A, X, K)
+    print(f"GPU Time (2D): {gpu_time:.6f} seconds")
+
+    # Calculate Speedup
+    #speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    #print(f"Speedup (CPU to GPU): {speedup:.2f}x")
+
+def test_ann_215():
+    N, D, A, X, K = testdata_ann("215_meta.json")
+
+    # Manually check file types for A and X
+    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
+        A = read_data(A)
+    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
+        X = read_data(X)
+
+    # Measure CPU time
+    #_, cpu_time = measure_time(our_knn_cpu, N, D, A, X, K)
+    #print(f"CPU Time (2D): {cpu_time:.6f} seconds")
+
+    # Measure GPU time
+    _, gpu_time = measure_time(our_ann, N, D, A, X, K)
+    print(f"GPU Time (215): {gpu_time:.6f} seconds")
+
+    # Calculate Speedup
+    #speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    #print(f"Speedup (CPU to GPU): {speedup:.2f}x")
+
+def test_ann_4k():
+    N, D, A, X, K = testdata_ann("4k_meta.json")
+
+    # Manually check file types for A and X
+    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
+        A = read_data(A)
+    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
+        X = read_data(X)
+
+    # Measure CPU time
+    #_, cpu_time = measure_time(our_knn_cpu, N, D, A, X, K)
+    #print(f"CPU Time (2D): {cpu_time:.6f} seconds")
+
+    # Measure GPU time
+    _, gpu_time = measure_time(our_ann, N, D, A, X, K)
+    print(f"GPU Time (4k): {gpu_time:.6f} seconds")
+
+    # Calculate Speedup
+    #speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    #print(f"Speedup (CPU to GPU): {speedup:.2f}x")
+
+def test_ann_4m():
+    N, D, A, X, K = testdata_ann("4m_meta.json")
+
+    # Manually check file types for A and X
+    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
+        A = read_data(A)
+    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
+        X = read_data(X)
+
+    # Measure CPU time
+    #_, cpu_time = measure_time(our_knn_cpu, N, D, A, X, K)
+    #print(f"CPU Time (2D): {cpu_time:.6f} seconds")
+
+    # Measure GPU time
+    _, gpu_time = measure_time(our_ann, N, D, A, X, K)
+    print(f"GPU Time (4m): {gpu_time:.6f} seconds")
+
+    # Calculate Speedup
+    #speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    #print(f"Speedup (CPU to GPU): {speedup:.2f}x")
+
 if __name__ == "__main__":
-    test_knn()
-    test_knn_cpu()
-    test_knn_2D()
-    test_knn_215()
-    test_knn_4k()
-    test_knn_4m()
+    #test_knn()
+    #test_knn_cpu()
+    #test_knn_2D()
+    #test_knn_215()
+    #test_knn_4k()
+    #test_knn_4m()
+    test_ann()
+    test_ann_2D()
+    test_ann_215()
+    test_ann_4k()
+    test_ann_4m()

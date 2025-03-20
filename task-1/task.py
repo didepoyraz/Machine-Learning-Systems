@@ -180,7 +180,7 @@ def our_kmeans(N, D, A, K, plot):
     centroid_shift_tolerance = 1e-6 # decide
     converged = False
     
-    A_tensor = torch.from_numpy(A).cuda(non_blocking=True)  
+    A_tensor = torch.from_numpy(A).to(dtype=torch.float32, device="cuda", non_blocking=True)
     # A_tensor.to(torch.float32)
     # print("type of A: ", A_tensor.dtype)
     indices = torch.randint(0, N, (K,), device="cuda") # select K random indices from the indices of A
@@ -219,8 +219,12 @@ def our_kmeans(N, D, A, K, plot):
         
         new_centroids = torch.zeros((K, D), device="cuda")
         counts = torch.bincount(cluster_labels, minlength=K).float().unsqueeze(1)
-        new_centroids.scatter_add_(0, cluster_labels.long()[:, None].expand(-1, D), A_tensor)
-               
+        new_centroids.scatter_add_(0, cluster_labels.long()[:, None].expand(-1, D), A_tensor.to(torch.float32))
+        # counts = torch.zeros(K, device="cuda").scatter_add_(0, cluster_labels, torch.ones_like(cluster_labels, dtype=torch.float))
+        # counts = counts.unsqueeze(1)
+        
+        # new_centroids.index_add_(0, cluster_labels, A_tensor)
+        
         counts[counts == 0] = 1  # avoid division by zero
         new_centroids /= counts
                
@@ -557,8 +561,8 @@ if __name__ == "__main__":
     # #test_knn_40k()
     # test_knn_4m()
     
-    # test_kmeans_10()
+    test_kmeans_10()
     test_kmeans_1000_2()
-    # test_kmeans_1000_1024()
-    # test_kmeans_100k()
-    # test_kmeans_1m()
+    test_kmeans_1000_1024()
+    test_kmeans_100k()
+    test_kmeans_1m()

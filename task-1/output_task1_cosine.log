@@ -1,3 +1,20 @@
-CPU Time (1000_2): 0.653658 seconds
-type of A:  torch.float64
-type of init_centroids_D: torch.float64
+CPU Time (10): 0.414101 seconds
+GPU Time (10): 0.452117 seconds
+Speedup 10 (CPU to GPU): 0.92x
+
+CPU Time (1000_2): 0.002387 seconds
+GPU Time (1000_2): 1.069826 seconds
+Speedup 1000_2 (CPU to GPU): 0.00x
+
+CPU Time (1000_1024): 0.086648 seconds
+GPU Time (1000_1024): 0.491805 seconds
+Speedup 1000_1024 (CPU to GPU): 0.18x
+
+CPU Time (100k): 1.584814 seconds
+GPU Time (100k): 3.082959 seconds
+Speedup 100k (CPU to GPU): 0.51x
+
+CPU Time (1m): 11.914319 seconds
+GPU Time (1m): 26.889059 seconds
+Speedup 1m (CPU to GPU): 0.44x
+

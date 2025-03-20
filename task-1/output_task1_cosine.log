@@ -1,20 +1,17 @@
-CPU Time (10): 0.414101 seconds
-GPU Time (10): 0.452117 seconds
-Speedup 10 (CPU to GPU): 0.92x
+CPU Time (10): 0.632046 seconds
+GPU Time (10): 4.857230 seconds
+Speedup 10 (CPU to GPU): 0.13x
 
-CPU Time (1000_2): 0.002387 seconds
-GPU Time (1000_2): 1.069826 seconds
+CPU Time (1000_2): 0.001683 seconds
+GPU Time (1000_2): 0.523618 seconds
 Speedup 1000_2 (CPU to GPU): 0.00x
 
-CPU Time (1000_1024): 0.086648 seconds
-GPU Time (1000_1024): 0.491805 seconds
-Speedup 1000_1024 (CPU to GPU): 0.18x
+CPU Time (1000_1024): 0.086387 seconds
+GPU Time (1000_1024): 0.819499 seconds
+Speedup 1000_1024 (CPU to GPU): 0.11x
 
-CPU Time (100k): 1.584814 seconds
-GPU Time (100k): 3.082959 seconds
-Speedup 100k (CPU to GPU): 0.51x
+CPU Time (100k): 1.201955 seconds
+GPU Time (100k): 10.463880 seconds
+Speedup 100k (CPU to GPU): 0.11x
 
-CPU Time (1m): 11.914319 seconds
-GPU Time (1m): 26.889059 seconds
-Speedup 1m (CPU to GPU): 0.44x
-
+CPU Time (1m): 64.465401 seconds

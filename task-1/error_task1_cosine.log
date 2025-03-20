@@ -1,1 +1,10 @@
-Matplotlib is building the font cache; this may take a moment.
+Traceback (most recent call last):
+  File "/home/s2244487/Machine-Learning-Systems/task-1/task.py", line 561, in <module>
+    test_kmeans_1000_2()
+  File "/home/s2244487/Machine-Learning-Systems/task-1/task.py", line 492, in test_kmeans_1000_2
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+  File "/home/s2244487/Machine-Learning-Systems/task-1/task.py", line 373, in measure_time
+    result = func(*args, **kwargs)
+  File "/home/s2244487/Machine-Learning-Systems/task-1/task.py", line 222, in our_kmeans
+    new_centroids.scatter_add_(0, cluster_labels.long()[:, None].expand(-1, D), A_tensor)
+RuntimeError: scatter(): Expected self.dtype to be equal to src.dtype

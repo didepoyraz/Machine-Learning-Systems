@@ -1,5 +1,7 @@
 import numpy as np
 import json
+from sklearn.datasets import make_blobs
+import matplotlib.pyplot as plt
 
 def read_data(file_path=""):
     """
@@ -17,7 +19,8 @@ def testdata_kmeans(test_file):
         # use random data
         N = 1000
         D = 100
-        A = np.random.randn(N, D)
+        A, _ = make_blobs(n_samples=N, centers=K, n_features=2, random_state=42)
+        # np.random.randn(N, D)
         K = 10
         return N, D, A, K
     else:

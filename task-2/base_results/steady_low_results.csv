@@ -1,1731 +1,1744 @@
 query,result,client_time,success,request_id,arrival_time,relative_time
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Cats live in and inhabit wild environments",7.141061305999756,True,0,1742583422.6107059,0.0
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-""Dogs have only one brain,",7.015994071960449,True,1,1742583422.961904,0.3511981964111328
 Which animals can hover in the air?,"Question: Which animals can hover in the air?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Answer:
-Dogs",4.572507619857788,True,2,1742583422.9870706,0.37636470794677734
+Humming",12.52971363067627,True,2,1742641796.1067312,0.0
 What are some common pets?,"Question: What are some common pets?
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
-Answer: Pets are very common pets, which",5.944787502288818,True,3,1742583423.2013345,0.5906286239624023
+Answer:
+Cats are small furry carniv",26.43298625946045,True,3,1742641796.673742,0.5670108795166016
 Tell me about birds,"Question: Tell me about birds
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: The wings are the parts of the",5.892479181289673,True,4,1742583423.207193,0.5964870452880859
+Answer:
+The hummingbird’s",26.354303121566772,True,4,1742641796.7491262,0.64239501953125
 How do animals communicate?,"Question: How do animals communicate?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer:
-Their fur is long and not thick",6.164860010147095,True,5,1742583423.2915223,0.6808164119720459
+Answer: Animals are not mammals.
+
+P",27.948813438415527,True,5,1742641796.8410664,0.73433518409729
 What do hummingbirds eat?,"Question: What do hummingbirds eat?
 Context:
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Dogs are domesticated mammals, not natural wild animals.
-Answer: When hummingbirds fly,",4.964169025421143,True,6,1742583423.2980018,0.6872959136962891
+Answer: the hummingbird does not",16.71478295326233,True,6,1742641797.2303402,1.1236090660095215
 Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer:
-Cats do not have",5.528627872467041,True,7,1742583423.306773,0.6960670948028564
+Yes, their brains are",22.891695261001587,True,7,1742641797.2587154,1.1519842147827148
 What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer:
-The term",4.074758052825928,True,8,1742583423.435658,0.8249521255493164
+Answer: Fish.
+",11.31087613105774,True,8,1742641797.3568525,1.2501213550567627
 How do marine mammals breathe?,"Question: How do marine mammals breathe?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer:
-The average animal does the work",5.410816431045532,True,9,1742583423.6517787,1.0410728454589844
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-If a cat is domesticated (that",4.153691530227661,True,10,1742583423.7740982,1.1633923053741455
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-A fox is a rodent that bears one",4.3434226512908936,True,11,1742583423.9073634,1.2966575622558594
+Mammalian lungs allow us",25.308985471725464,True,9,1742641797.7971432,1.6904120445251465
 Which animals can hover in the air?,"Question: Which animals can hover in the air?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Answer:
-Dogs",2.1073899269104004,True,12,1742583423.9262083,1.315502405166626
+Rivers",14.626435041427612,True,12,1742641798.4056065,2.298875331878662
 What are some common pets?,"Question: What are some common pets?
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
+Answer: Why are domesticated mammals small in",25.823999881744385,True,13,1742641798.8409057,2.7341744899749756
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Answer:
-""Cats are small furry",4.283963680267334,True,13,1742583424.3138478,1.7031419277191162
+Hummingbirds have a common",22.876647233963013,True,14,1742641798.9874506,2.8807194232940674
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: They do not communicate.
+
+*",24.529271841049194,True,15,1742641799.2850862,3.1783549785614014
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: When the hummingbird sings",14.637959241867065,True,16,1742641799.4241369,3.3174057006835938
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: They are not natural wild animals",22.84236216545105,True,17,1742641799.4379811,3.331249952316284
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Cats",16.347899198532104,True,18,1742641799.7623148,3.655583620071411
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: They are not domesticated, but",21.691723823547363,True,19,1742641800.004594,3.8978629112243652
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: A mix of natural and man-made.",20.981914043426514,True,20,1742641800.074666,3.9679348468780518
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: Dogs are wild animals.
+They are domest",13.451582670211792,True,21,1742641800.127267,4.020535707473755
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+Dogs",9.754729270935059,True,22,1742641800.1910262,4.084295034408569
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: We know some of us call them",11.346766233444214,True,23,1742641800.197457,4.090725898742676
 Tell me about birds,"Question: Tell me about birds
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Answer:
 
-As nature would say,",4.346534252166748,True,14,1742583424.787301,2.1765952110290527
+Dogs are wild animals",7.705660104751587,True,24,1742641800.244527,4.137795925140381
 How do animals communicate?,"Question: How do animals communicate?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: How do they communicate?
+Answer:
+Cats are found mostly in the",5.551508665084839,True,25,1742641801.0109775,4.9042463302612305
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: Flying (flying) is",4.471651315689087,True,26,1742641801.46824,5.361508846282959
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: Yes
 
-If",5.260549068450928,True,15,1742583425.2146225,2.603916645050049
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: The birds ate nothing else",3.3814518451690674,True,16,1742583425.6293979,3.0186920166015625
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Human mammals are not domest",4.220229387283325,True,17,1742583425.6418865,3.0311806201934814
+When you think",4.092950105667114,True,27,1742641801.5144358,5.407704591751099
 What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer:
-As pets",3.5438287258148193,True,18,1742583425.9319546,3.321248769760132
+Dogs",3.2277190685272217,True,28,1742641801.5418284,5.4350972175598145
 How do marine mammals breathe?,"Question: How do marine mammals breathe?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: Most mammals live underground.
+Answer: As in wild pet cats, their",4.417020320892334,True,29,1742641801.8292475,5.722516298294067
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: I would say at least once a week.",5.216890335083008,True,30,1742641801.8448842,5.738152980804443
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: Small furry carnivores, small mammals
 
-",4.490611791610718,True,19,1742583426.0455618,3.4348559379577637
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: The pet family for a mammal, not the",4.536407947540283,True,20,1742583426.1462421,3.535536289215088
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: Dogs. In other words: dogs can feed",5.078695774078369,True,21,1742583426.7185273,4.107821464538574
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: Flocking them",2.658877372741699,True,22,1742583426.8025107,4.191804885864258
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Dogs do not produce meat",4.247420787811279,True,23,1742583426.8528657,4.242159843444824
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-Abirds have an unusual ability",3.9668211936950684,True,24,1742583427.1261709,4.515465021133423
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: Cat domestication.",3.781878709793091,True,25,1742583427.20308,4.592374086380005
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:",2.297452926635742,True,26,1742583427.239518,4.628812074661255
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: They are much shorter than they",3.8492891788482666,True,27,1742583427.609699,4.998993158340454
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Lizards",3.529554843902588,True,28,1742583427.6850562,5.074350357055664
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Dogs are mostly domesticated",4.224611043930054,True,29,1742583427.8704479,5.259742021560669
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: What we are finding with regard to cats is",4.696406841278076,True,30,1742583428.1918693,5.58116340637207
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: Humans.
-1) They feed around predators",4.969780206680298,True,31,1742583428.4216473,5.810941457748413
+",5.976860046386719,True,31,1742641801.8560238,5.749292612075806
 Which animals can hover in the air?,"Question: Which animals can hover in the air?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Answer:
-When your",2.5145204067230225,True,32,1742583428.4626586,5.851952791213989
+In general",2.68442440032959,True,32,1742641801.920598,5.813866853713989
 What are some common pets?,"Question: What are some common pets?
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-Pets can easily be kept",4.474828720092773,True,33,1742583428.5300372,5.919331312179565
+Cats are small furry carniv",5.381248474121094,True,33,1742641802.2089078,6.102176666259766
 Tell me about birds,"Question: Tell me about birds
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-Dogs can hover under water",4.4536778926849365,True,34,1742583428.7716985,6.160992622375488
+Answer:",1.8155672550201416,True,34,1742641802.3262677,6.219536542892456
 How do animals communicate?,"Question: How do animals communicate?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer:
-Dogs
-*Cats/",4.624068975448608,True,35,1742583428.8671858,6.256479978561401
+Cats are made in China by",5.658108949661255,True,35,1742641802.3472774,6.240546226501465
 What do hummingbirds eat?,"Question: What do hummingbirds eat?
 Context:
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Dogs are domesticated mammals, not natural wild animals.
-Answer:
-In the United States",3.7149367332458496,True,36,1742583429.486078,6.8753721714019775
+Answer: Hummingbirds can be",4.607017755508423,True,36,1742641802.7246406,6.6179094314575195
 Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: They have no ancestors but are",3.9277663230895996,True,37,1742583429.530877,6.92017126083374
+Answer: They do not get much love",4.9985411167144775,True,37,1742641802.984783,6.8780517578125
 What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: The animals don",3.4139699935913086,True,38,1742583429.7571223,7.146416425704956
+Answer: They live longer",4.284039735794067,True,38,1742641803.0789142,6.972182989120483
 How do marine mammals breathe?,"Question: How do marine mammals breathe?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer:
-They're only domesticated to",4.35585880279541,True,39,1742583430.325307,7.714601039886475
+Answer: You can put your cat on a",5.281999111175537,True,39,1742641803.2716432,7.164911985397339
 Tell me about cats,"Question: Tell me about cats
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-Dogs are domesticated mammals, not",4.872369289398193,True,40,1742583430.333649,7.722943067550659
+As a pet they are called 'b",6.011635780334473,True,40,1742641803.4682977,7.361566543579102
 What are dogs?,"Question: What are dogs?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: cats.
+Answer: They’re considered to be in the",5.837390184402466,True,41,1742641803.980087,7.873355865478516
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: They are not",3.1445600986480713,True,42,1742641804.287809,8.181077718734741
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Dogs have natural ways of",5.264592885971069,True,43,1742641804.508479,8.401747941970825
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: Humans do as well as dogs when",5.312928199768066,True,44,1742641804.6551967,8.548465490341187
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+They have no common sense.
+",5.85227632522583,True,45,1742641804.897246,8.790514707565308
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+The hummingbird gives",4.424777984619141,True,46,1742641805.3845599,9.277828693389893
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: They are small.
 
-Question: Dogs are dogs",4.464809894561768,True,41,1742583430.6061208,7.995414972305298
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-Animal that",2.4535489082336426,True,42,1742583430.6277888,8.017082929611206
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: What are animal animals?
-C",4.053930044174194,True,43,1742583430.70124,8.090534210205078
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-No.
-They are native",4.423021078109741,True,44,1742583430.957388,8.346682071685791
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Dog breeds are wild and come in",4.721650838851929,True,45,1742583431.2620785,8.65137267112732
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Hummingbird:",3.590735912322998,True,46,1742583431.3439202,8.733214378356934
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Bunnies",3.45099139213562,True,47,1742583431.4587736,8.84806776046753
+",4.7098822593688965,True,47,1742641805.6808543,9.57412314414978
 What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: The animal is",3.24910306930542,True,48,1742583431.6448565,9.03415060043335
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: Marine mammals are mammals, not natural",4.2191162109375,True,49,1742583431.9662092,9.35550332069397
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: It is difficult to get this question because cats",4.5022971630096436,True,50,1742583431.978369,9.367663145065308
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Dogs are more than just a domest",4.634337902069092,True,51,1742583432.342854,9.732148170471191
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: All animals!",2.4138615131378174,True,52,1742583432.454542,9.843836069107056
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Liveries.
-
-",4.437033653259277,True,53,1742583432.6584837,10.047777891159058
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-
-The birds have evolved to",4.185415267944336,True,54,1742583432.845153,10.234447240829468
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-
-“Animals communicate�",4.811927080154419,True,55,1742583433.1025379,10.49183201789856
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Most mammals are mammals",3.530766725540161,True,56,1742583433.279638,10.66893219947815
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Yes, all mammals have",3.8356897830963135,True,57,1742583433.3676975,10.756991624832153
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-As amphib",3.074591636657715,True,58,1742583433.433273,10.822567224502563
+Answer: Reptiles.",3.9002206325531006,True,48,1742641805.8783915,9.771660327911377
 How do marine mammals breathe?,"Question: How do marine mammals breathe?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer:
-As humans, they are mammals",4.310351371765137,True,59,1742583433.6974592,11.086753368377686
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: The answer to this question was asked by Michael",4.718292236328125,True,60,1742583433.8169785,11.206272602081299
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Cats are domesticated animals.
-",4.661561965942383,True,61,1742583434.0218875,11.411181688308716
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: The birds can",2.5809059143066406,True,62,1742583434.2927427,11.682036876678467
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: When a non-human animal gets",4.043941974639893,True,63,1742583434.3157265,11.705020666122437
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-Dogs are wild birds.",4.3578996658325195,True,64,1742583434.7015355,12.090829610824585
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-A dog often has a home.",4.779629468917847,True,65,1742583434.8073096,12.196603775024414
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-The only mammals that",3.396181106567383,True,66,1742583434.81498,12.20427417755127
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Cats are not naturally",4.014064073562622,True,67,1742583435.0348818,12.42417597770691
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Dogs",3.189661979675293,True,68,1742583435.1896899,12.578984022140503
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Cats, dogs, dogs",3.875999927520752,True,69,1742583435.4385543,12.827848434448242
+Dogs are domesticated animals",5.034143447875977,True,49,1742641805.9210932,9.814362049102783
 Tell me about cats,"Question: Tell me about cats
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-Cats are pets of the wild animal",4.694735050201416,True,70,1742583435.5144882,12.903782367706299
+Cats are very different, and the",5.754701375961304,True,50,1742641806.2678363,10.161105155944824
 What are dogs?,"Question: What are dogs?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer:
-Dogs are natural animals.
-C",4.545150279998779,True,71,1742583435.5735407,12.96283483505249
+Answer: There are several wild animal breeds that can breed",6.808907747268677,True,51,1742641806.4253497,10.318618535995483
 Which animals can hover in the air?,"Question: Which animals can hover in the air?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-I don",2.37229061126709,True,72,1742583435.6618512,13.051145315170288
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: Pets
-
-Dogs:
-",4.028824329376221,True,73,1742583435.762389,13.15168309211731
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-The birds can also use their",3.9795615673065186,True,74,1742583435.788696,13.177990198135376
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Dogs are considered to have good",4.6585328578948975,True,75,1742583435.94969,13.338984251022339
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: Birds eat and eat in",3.306978702545166,True,76,1742583436.0118325,13.401126623153687
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-In order to keep dogs",3.8089816570281982,True,77,1742583436.097506,13.486800193786621
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Dogs",3.0822315216064453,True,78,1742583436.5831597,13.972453832626343
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: The two are in the same sense",3.71163272857666,True,79,1742583436.629891,14.019185066223145
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-""Cats can only serve as pets",4.715715169906616,True,80,1742583436.6970587,14.086352825164795
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Humans kept cat breeds. That way",4.650379419326782,True,81,1742583436.9198954,14.309189558029175
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-Humming",2.5193581581115723,True,82,1742583437.0805347,14.469828844070435
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: Animals are not only animals. When",4.079794883728027,True,83,1742583437.3267543,14.7160484790802
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: Birds.
-A bird could be",4.4444005489349365,True,84,1742583437.433898,14.823192119598389
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: They are wild animals, not natural wild",4.499747037887573,True,85,1742583437.4390588,14.828352928161621
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: The hummingbird is a",3.6618292331695557,True,86,1742583437.5170133,14.906307458877563
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: There is no way to properly",3.8681530952453613,True,87,1742583437.5353394,14.924633502960205
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:",2.6156997680664062,True,88,1742583437.8077576,15.197051763534546
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-The big difference between humans and",4.383222818374634,True,89,1742583437.9248834,15.314177513122559
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-They are in fact common in the wild",4.964618921279907,True,90,1742583438.2180638,15.6073579788208
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: The dogs are not domesticated mammals.
-",4.836117744445801,True,91,1742583438.3197677,15.709061861038208
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-When a",2.7069759368896484,True,92,1742583438.3542526,15.743546724319458
+Answer: Can't.",3.212111234664917,True,52,1742641806.7579513,10.651220083236694
 What are some common pets?,"Question: What are some common pets?
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-Cats can also be found",4.093916416168213,True,93,1742583438.6221387,16.011432886123657
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: (In this case, the bird",4.346927881240845,True,94,1742583438.6249201,16.014214277267456
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: Animal communication
-There are several ways animals",4.715949058532715,True,95,1742583438.7919993,16.181293487548828
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: Folding. The first",3.367335319519043,True,96,1742583438.9406576,16.329951763153076
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Cats are a very",3.8556888103485107,True,97,1742583439.618381,17.007675170898438
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Seat",2.7722644805908203,True,98,1742583439.7762432,17.165537357330322
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: Some of the mammals, including sea",4.149552583694458,True,99,1742583439.9963944,17.385688543319702
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Cats are only very small furry carniv",4.945260763168335,True,100,1742583440.1825838,17.57187795639038
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Dogs live in forests, not wild",4.756266832351685,True,101,1742583440.3043602,17.69365429878235
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-The wings",2.479562997817993,True,102,1742583440.6057367,17.995030879974365
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: What pets are they domesticated mammals",4.032503843307495,True,103,1742583440.6088104,17.998104572296143
+Cats and other domesticated",5.660991191864014,True,53,1742641806.870455,10.763723850250244
 Tell me about birds,"Question: Tell me about birds
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Answer:
-Dogs use the same natural",4.247311592102051,True,104,1742583441.1669755,18.556269645690918
+Dogs can't do much",5.689276933670044,True,54,1742641806.9498453,10.843114137649536
 How do animals communicate?,"Question: How do animals communicate?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer:
-
-What I mean by this is",4.571261167526245,True,105,1742583441.1743832,18.563677310943604
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: Most birds do not like",3.394994020462036,True,106,1742583441.3741097,18.76340389251709
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: Most mammals are small furry carniv",3.8568577766418457,True,107,1742583441.6218395,19.011133670806885
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Bond",2.7258005142211914,True,108,1742583441.871967,19.261261224746704
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-The first mammals to be domest",4.186054944992065,True,109,1742583442.3258133,19.715107440948486
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-No, the animal is a domesticated",4.810250997543335,True,110,1742583442.3491497,19.738443851470947
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: dogs are domesticated mammals and are thought about",4.738856077194214,True,111,1742583442.6056094,19.994903564453125
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-Animal and",2.8364298343658447,True,112,1742583442.646362,20.035656213760376
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Cats like to eat other",4.662701606750488,True,113,1742583442.7246492,20.113943338394165
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-I believe that bird is a",4.151733160018921,True,114,1742583442.7718115,20.161105632781982
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: In some domesticated mammals, they breed",4.996903657913208,True,115,1742583443.145412,20.534706115722656
+Answer: They only communicate with humans, so don",5.622937917709351,True,55,1742641807.031661,10.924929857254028
 What do hummingbirds eat?,"Question: What do hummingbirds eat?
 Context:
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-Hummingbirds have",3.707456111907959,True,116,1742583443.2262912,20.615585327148438
+Hummingbirds like",4.607550144195557,True,56,1742641807.3074453,11.200714111328125
 Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer:
-They're mammals in a",4.0142247676849365,True,117,1742583443.3871746,20.776468753814697
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: Dogs.
-",3.1771082878112793,True,118,1742583443.512268,20.901562213897705
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: They’re not, but",3.811523675918579,True,119,1742583443.5912828,20.980576992034912
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Cats are a domestication of mammals",4.49795126914978,True,120,1742583443.619659,21.008953094482422
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: They are generally kept on large groups of dogs",4.459259271621704,True,121,1742583443.8157651,21.20505928993225
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:  ""H",2.4918854236602783,True,122,1742583443.9595106,21.348804712295532
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: Common pets:
-Cats like",4.105369567871094,True,123,1742583443.969209,21.358503103256226
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: Birds do have certain wings.
-",4.381700754165649,True,124,1742583444.2348382,21.62413239479065
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: They are not domesticated mammals.
-",4.636168718338013,True,125,1742583444.374454,21.763748168945312
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-1) They eat",3.6291136741638184,True,126,1742583444.4450912,21.83438539505005
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: What is the difference between wild",3.9428153038024902,True,127,1742583444.8976889,22.286983013153076
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: amphibians (",3.0690290927886963,True,128,1742583445.1270099,22.51630401611328
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Many pets breathe, but very",3.826923370361328,True,129,1742583445.2101033,22.59939742088318
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Cats are domesticated mammal.
-",4.76438045501709,True,130,1742583445.5252135,22.914507627487183
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Dogs are mostly domesticated mammals.",4.746517181396484,True,131,1742583445.6625352,23.05182933807373
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-
-Most",2.320451259613037,True,132,1742583445.892335,23.28162908554077
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Animal domestication: wild animals",4.262207984924316,True,133,1742583445.9822083,23.37150239944458
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: Fly the songbirds, they are",4.321499347686768,True,134,1742583446.0631504,23.452444553375244
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-The animals are domesticated mammals,",4.715017557144165,True,135,1742583446.1012437,23.490537881851196
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Cats are domest",3.4414408206939697,True,136,1742583446.3308961,23.720190286636353
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Cats are small mammals",3.963730812072754,True,137,1742583446.338613,23.727907180786133
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: reptiles are small",2.8360023498535156,True,138,1742583446.358774,23.74806809425354
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Dogs give their babies life",4.001490831375122,True,139,1742583446.7013624,24.090656518936157
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: Cats.
-In the US or other countries",4.579623699188232,True,140,1742583447.1810973,24.570391416549683
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Most mammals are wild animals, except some",4.801211357116699,True,141,1742583447.2356288,24.62492299079895
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-Dogs",2.655980110168457,True,142,1742583447.3599894,24.7492835521698
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: Cactus Cactus
-
-The",4.284001588821411,True,143,1742583447.5261059,24.91540002822876
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: They have a wing shape similar to",4.037245512008667,True,144,1742583447.6670377,25.056331872940063
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Dogs are domesticated mammals.",5.123453378677368,True,145,1742583447.8240154,25.21330952644348
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: they have an extensive range",3.77890944480896,True,146,1742583447.834393,25.223687171936035
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:",1.89398193359375,True,147,1742583447.9895084,25.37880253791809
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-""D",3.4076013565063477,True,148,1742583448.0939946,25.483288764953613
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: Dogs are not actually domesticated",4.913306474685669,True,149,1742583448.151309,25.540603160858154
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Cats are most likely domesticated mammals",4.982792854309082,True,150,1742583448.6789372,26.068231344223022
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: they are often kept as pets.
-D",5.117431402206421,True,151,1742583448.6795769,26.068871021270752
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: the following.",2.615100860595703,True,152,1742583449.1360574,26.525351524353027
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Cats are small furry carniv",4.313844919204712,True,153,1742583449.1381562,26.52745032310486
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: Birds can't hover in mid-",4.479278087615967,True,154,1742583449.5746772,26.963971376419067
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: When a cat (i.e.",5.009021520614624,True,155,1742583449.6955705,27.084864616394043
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Hummingbirds are",3.5325241088867188,True,156,1742583449.7267103,27.116004467010498
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Cats belong to a",3.9299731254577637,True,157,1742583450.6829178,28.072211980819702
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: They are reptiles",2.7263572216033936,True,158,1742583450.7008934,28.090187549591064
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: They have respiratory muscles that allow for",4.130178928375244,True,159,1742583450.7247398,28.114033937454224
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-What is a domesticated mammal, and",4.741936206817627,True,160,1742583450.8205185,28.2098126411438
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-In mammals they don't have to be",4.970853567123413,True,161,1742583450.9123867,28.30168080329895
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: Not in this",2.7116036415100098,True,162,1742583451.2845776,28.673871755599976
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Cats are most often kept",4.50396203994751,True,163,1742583451.3846858,28.773979902267456
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: When the wings are clipped, the",4.443102121353149,True,164,1742583451.6372225,29.026516675949097
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: Animals, not human beings is a stupid",4.999597072601318,True,165,1742583452.034942,29.424236059188843
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: This is the story of",3.505607843399048,True,166,1742583452.2780297,29.66732382774353
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: Mammals are carnivores.",3.8868987560272217,True,167,1742583452.9258637,30.315157890319824
+Cats are no longer",5.075973749160767,True,57,1742641807.3401554,11.233424186706543
 What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer: Reptiles
-",2.9139811992645264,True,168,1742583453.2002826,30.589576721191406
+",3.950622320175171,True,58,1742641807.4348273,11.328096151351929
 How do marine mammals breathe?,"Question: How do marine mammals breathe?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: In the ocean, for the longest",4.2241785526275635,True,169,1742583453.3760505,30.765344619750977
+Answer:
+Most cats are kept on or",6.1863038539886475,True,59,1742641807.5367742,11.43004298210144
 Tell me about cats,"Question: Tell me about cats
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-Animal and/or human food.
-",4.850465774536133,True,170,1742583453.3762732,30.765567302703857
+Masks?",4.1014416217803955,True,60,1742641807.5945601,11.487828969955444
 What are dogs?,"Question: What are dogs?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: Dogs are domesticated not domesticated.
-",4.830176830291748,True,171,1742583453.4829311,30.872225284576416
+Answer: (In)
+There are 10 types of",9.54522442817688,True,61,1742641807.6056495,11.498918294906616
 Which animals can hover in the air?,"Question: Which animals can hover in the air?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: Can (1",2.2866811752319336,True,172,1742583454.0621002,31.4513943195343
+Answer: Animals in the",4.602306604385376,True,62,1742641807.6429758,11.536244630813599
 What are some common pets?,"Question: What are some common pets?
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
-Answer:
-A pet can be a mix",4.579928159713745,True,173,1742583454.0765014,31.465795516967773
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: Birds do not carry eggs, although",4.827878952026367,True,174,1742583454.4449232,31.834217309951782
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: How do animals communicate to humans?
-",4.95820689201355,True,175,1742583454.4828756,31.872169733047485
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: It's just to avoid",3.832706928253174,True,176,1742583454.5154467,31.904740810394287
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-
-Cats do not",4.255294561386108,True,177,1742583454.8039963,32.19329047203064
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: reptiles, not",3.1110498905181885,True,178,1742583454.9643967,32.35369086265564
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: Animals that breathe.
-
-P",3.91018009185791,True,179,1742583455.376624,32.765918254852295
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: Why is this a problem?
-
-Answer",4.268690824508667,True,180,1742583455.945712,33.33500623703003
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: domesticated animals.
-
-Question: What",4.734561443328857,True,181,1742583456.0831633,33.47245740890503
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-Both mammals",2.9312644004821777,True,182,1742583456.4930089,33.88230299949646
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Cats are domesticated mammals",4.315614700317383,True,183,1742583456.5566719,33.94596600532532
+Answer: Some common pets include birds, fox",8.723365545272827,True,63,1742641807.8832598,11.776528596878052
 Tell me about birds,"Question: Tell me about birds
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Answer:
-Why not fly? Or a",4.172666311264038,True,184,1742583456.8880775,34.277371644973755
+Yes.
+Also the bird",8.60880994796753,True,64,1742641808.039797,11.93306589126587
 How do animals communicate?,"Question: How do animals communicate?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: Humans, which we don't have.",4.837480783462524,True,185,1742583456.9008439,34.29013800621033
+Answer: When animals are domesticated, they are",10.121612071990967,True,65,1742641808.0739636,11.967232465744019
 What do hummingbirds eat?,"Question: What do hummingbirds eat?
 Context:
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-
-Wild cats are",3.6281354427337646,True,186,1742583456.9269218,34.31621599197388
+Hummings don",7.145850658416748,True,66,1742641808.2778203,12.171089172363281
 Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer:
-Dogs are generally carniv",3.7435922622680664,True,187,1742583457.175324,34.56461811065674
+Cats don't eat",8.27383804321289,True,67,1742641808.2896216,12.18289041519165
 What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: reptiles are all",3.0469460487365723,True,188,1742583457.3401954,34.72948956489563
+Answer:
+Humans",6.63645076751709,True,68,1742641808.45137,12.34463882446289
 How do marine mammals breathe?,"Question: How do marine mammals breathe?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer:
-They are quite small, with",4.141677379608154,True,189,1742583457.5558887,34.94518280029297
+Cats are small animals;",9.758815050125122,True,69,1742641808.6985939,12.591862678527832
 Tell me about cats,"Question: Tell me about cats
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
-Answer: Humans. They are more resilient, can survive",4.7403693199157715,True,190,1742583458.0942664,35.48356056213379
+Answer: Yes, but cats are much more “",9.794456243515015,True,70,1742641808.8679588,12.76122760772705
 What are dogs?,"Question: What are dogs?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer:
-Dogs don't have brain cells but",4.6714441776275635,True,191,1742583458.1118512,35.501145362854004
+Dogs are domesticated mammals.
+",8.865902423858643,True,71,1742641809.1622453,13.055514097213745
 Which animals can hover in the air?,"Question: Which animals can hover in the air?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Answer:
-Dogs",2.128732442855835,True,192,1742583458.2516072,35.64090132713318
+Dogs",5.5501625537872314,True,72,1742641809.3880317,13.28130054473877
 What are some common pets?,"Question: What are some common pets?
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
-Answer: The cat is mostly a pet of",4.038902044296265,True,193,1742583458.3751607,35.76445484161377
+Answer:
+Cats are generally small creatures",8.22861099243164,True,73,1742641809.3992968,13.29256558418274
 Tell me about birds,"Question: Tell me about birds
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: Birds are predators.
-
-D",4.167155742645264,True,194,1742583458.375178,35.764472246170044
+Answer: What happens if the flapping thing",7.9352662563323975,True,74,1742641810.3585455,14.251814365386963
 How do animals communicate?,"Question: How do animals communicate?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: A small breed of dog, a """,4.536127090454102,True,195,1742583458.5242,35.91349411010742
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: Birds don't eat mammals",3.5136237144470215,True,196,1742583458.8965771,36.285871267318726
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Cats are in fact",3.817702293395996,True,197,1742583459.0178666,36.40716075897217
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:",2.0673134326934814,True,198,1742583459.0982964,36.48759055137634
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: Dogs live in caves or under bas",4.011153221130371,True,199,1742583459.3422935,36.731587648391724
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: Because they are small cats, and are mostly",4.901031017303467,True,200,1742583459.4666326,36.855926752090454
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-They are native with the human species.",4.535564661026001,True,201,1742583459.899005,37.28829908370972
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-A.",2.3307414054870605,True,202,1742583460.002899,37.39219307899475
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: Humans are domesticated mammals in nature",3.966295003890991,True,203,1742583460.196645,37.585939168930054
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: If you're going to go for",4.485137939453125,True,204,1742583460.763909,38.15320324897766
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: they speak (think) English, they",5.077703475952148,True,205,1742583460.8567889,38.24608302116394
+Answer: They are humans (and their mothers).",7.361990451812744,True,75,1742641810.3846133,14.277882099151611
 What do hummingbirds eat?,"Question: What do hummingbirds eat?
 Context:
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-Hummingbirds live",3.4928805828094482,True,206,1742583461.6905444,39.079838514328
+Mice.
+",6.805959224700928,True,76,1742641810.3924847,14.28575348854065
 Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer:
-They are part of the",3.8125593662261963,True,207,1742583461.7017431,39.09103727340698
+Answer: A. Pet cats are small",6.772945880889893,True,77,1742641810.5921164,14.485385179519653
 What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: amphibians are",2.944603681564331,True,208,1742583462.7713606,40.1606547832489
+Answer:
+Both the",4.971201658248901,True,78,1742641810.7628815,14.656150341033936
 How do marine mammals breathe?,"Question: How do marine mammals breathe?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: Humans and dinosaurs made the animals that",4.636104345321655,True,209,1742583463.434645,40.823939085006714
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: Cat can't be domesticated but it can",5.853551387786865,True,210,1742583463.791592,41.180886030197144
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: A mixture of a mix of a mixture of",5.274028539657593,True,211,1742583463.846219,41.23551321029663
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-They may",3.4045331478118896,True,212,1742583464.0343714,41.42366552352905
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: Humans.",3.5200722217559814,True,213,1742583464.5196836,41.9089777469635
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: The wings of a birds body look",5.199338436126709,True,214,1742583464.8274562,42.216750383377075
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: Are cats domesticated too?
+Answer: Fish are animals.
 
-",5.892369031906128,True,215,1742583465.19236,42.58165407180786
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: Most domestic birds eat on",4.414210796356201,True,216,1742583465.548511,42.93780517578125
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-No, they do not",4.752975702285767,True,217,1742583465.5855515,42.97484564781189
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Dogs",3.3359084129333496,True,218,1742583465.7729318,43.16222596168518
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Human bones, spleen,",3.861701250076294,True,219,1742583465.9759727,43.36526679992676
+My",6.910520792007446,True,79,1742641810.8342452,14.727514028549194
 Tell me about cats,"Question: Tell me about cats
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-Dogs are domesticated mammals, not",4.774740219116211,True,220,1742583466.327391,43.7166850566864
+There are a few species of cats.",6.779990196228027,True,80,1742641810.9875903,14.880859136581421
 What are dogs?,"Question: What are dogs?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: They are not as much as your ""natural",4.764398574829102,True,221,1742583466.5833063,43.97260046005249
+Answer: ""Dogs are natural wild animals.""
+",6.282895088195801,True,81,1742641811.0068333,14.900102138519287
 Which animals can hover in the air?,"Question: Which animals can hover in the air?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-The question",2.4615447521209717,True,222,1742583466.8635056,44.25279974937439
+Answer: Animals can hover",4.2479963302612305,True,82,1742641811.7068293,15.600098133087158
 What are some common pets?,"Question: What are some common pets?
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-""Cats are not domest",3.8353207111358643,True,223,1742583466.9121299,44.30142402648926
+Common pets:
+Horses",6.5561137199401855,True,83,1742641811.7694774,15.66274619102478
 Tell me about birds,"Question: Tell me about birds
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: the bird will start up its wings",3.680370807647705,True,224,1742583467.5881667,44.977460861206055
+Answer:
+""Hummingbirds""
+",6.551990509033203,True,84,1742641812.1166446,16.009913444519043
 How do animals communicate?,"Question: How do animals communicate?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer:
-They can communicate but they are not",4.294965744018555,True,225,1742583467.5930903,44.98238444328308
+Answer: Cats.
+
+Note: A c",7.041705846786499,True,85,1742641812.296213,16.189481735229492
 What do hummingbirds eat?,"Question: What do hummingbirds eat?
 Context:
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-
-As in all",3.3348169326782227,True,226,1742583467.707981,45.097275257110596
+Hummingbird eat",4.609615802764893,True,86,1742641812.9373713,16.830640077590942
 Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer:
-The mammals are both large",3.8310492038726807,True,227,1742583468.0895984,45.47889256477356
+Answer: “The vast majority of",6.041676998138428,True,87,1742641813.2368639,17.1301326751709
 What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer:
-A crocod",2.7165305614471436,True,228,1742583468.2761288,45.66542291641235
+Answer: reptiles have more",3.9787466526031494,True,88,1742641813.3665128,17.2597815990448
 How do marine mammals breathe?,"Question: How do marine mammals breathe?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: Cats have a complex internal structure,",3.7769408226013184,True,229,1742583468.309261,45.69855523109436
+Answer:
+
+They breath naturally.
+",5.0542285442352295,True,89,1742641813.9329386,17.826207399368286
 Tell me about cats,"Question: Tell me about cats
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Why are cats so different from humans?",4.686008453369141,True,230,1742583468.4454923,45.8347864151001
+Answer: They are just domesticated mammals that are just",6.957519292831421,True,90,1742641813.944767,17.838035821914673
 What are dogs?,"Question: What are dogs?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer:
-Dogs are animals with human-like",4.622036933898926,True,231,1742583468.7022417,46.091535806655884
+Answer: Dont give dogs that
+are domesticated",7.559831142425537,True,91,1742641814.3700652,18.263334035873413
 Which animals can hover in the air?,"Question: Which animals can hover in the air?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-Dogs",2.7966079711914062,True,232,1742583468.8571513,46.246445417404175
+Answer: We must not",3.3919386863708496,True,92,1742641814.3785667,18.271835565567017
 What are some common pets?,"Question: What are some common pets?
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-Cats have many different types",4.582206964492798,True,233,1742583468.9165664,46.30586051940918
+Cats are just humans with",6.931770324707031,True,93,1742641814.3885033,18.281772136688232
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: Wild birds, but many of them",6.878169775009155,True,94,1742641814.4998019,18.393070697784424
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Dogs communicate with each other via",7.384526968002319,True,95,1742641814.7325437,18.625812530517578
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Hummingbirds fly",5.05297589302063,True,96,1742641814.9498262,18.843095064163208
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+No?
+Dogs",6.174775838851929,True,97,1742641815.1787527,19.072021484375
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+A amphib",4.42444634437561,True,98,1742641815.24918,19.142448902130127
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+The word cattery comes from",6.801215410232544,True,99,1742641815.2745483,19.16781711578369
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Their fur is a very important resource to",8.635274887084961,True,100,1742641815.5451353,19.438404083251953
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: They’re called “slugg",7.543859004974365,True,101,1742641815.6185734,19.511842250823975
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+The duck",4.56025505065918,True,102,1742641815.6830673,19.576336145401
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Cats are considered to be",7.068492412567139,True,103,1742641815.7280395,19.62130832672119
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: Bird-whale-human.",7.081182956695557,True,104,1742641815.7837138,19.676982641220093
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Animals communicate by feeding on each",7.526500701904297,True,105,1742641816.0410345,19.934303283691406
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Hummingbirds are",5.3055739402771,True,106,1742641816.1075337,20.000802516937256
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+No.
+Dogs",6.260372161865234,True,107,1742641816.6198916,20.513160467147827
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: reptiles. They",4.641967296600342,True,108,1742641816.7101114,20.60338020324707
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Birds suck less than humans",5.664073944091797,True,109,1742641817.2873805,21.180649280548096
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: Why cats.
+To explain the difference;",5.843749284744263,True,110,1742641817.3306687,21.223937511444092
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: Because humans can easily adapt to domestication,",5.913551568984985,True,111,1742641817.5208697,21.414138555526733
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+The way",3.414776563644409,True,112,1742641817.6171927,21.510461568832397
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Some domesticated mammals have one",4.876756906509399,True,113,1742641817.7798905,21.67315936088562
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: Most birds are able to detect wind",4.073587894439697,True,114,1742641818.2912195,22.18448829650879
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Cats can live and function on",4.776850461959839,True,115,1742641818.4753504,22.368619203567505
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+The hummingbird family",3.514596939086914,True,116,1742641818.5854247,22.47869348526001
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Cats live in habitats",3.7171988487243652,True,117,1742641818.861684,22.754952907562256
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Dogs",2.7889041900634766,True,118,1742641819.4460351,23.339303970336914
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: Water, man-made or natural",4.168439865112305,True,119,1742641819.9493744,23.84264326095581
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: Cats are cats.
+Cats are called",4.684345960617065,True,120,1742641820.0436778,23.936946630477905
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: humans aren't natural predators. Some human predators",5.5844690799713135,True,121,1742641820.1379492,24.0312180519104
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: It is possible",2.570038318634033,True,122,1742641820.366795,24.260063886642456
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+The first thing that comes to",5.244712829589844,True,123,1742641820.5703874,24.463656187057495
 Tell me about birds,"Question: Tell me about birds
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Answer:
-""Hummingbirds are more",4.31218409538269,True,234,1742583469.4623585,46.8516526222229
+Hummingbirds hover.
+",5.257946968078613,True,124,1742641820.6046045,24.497873306274414
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: They play music to themselves.
+
+",5.844600200653076,True,125,1742641821.1005735,24.993842363357544
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Hummingbirds eat",4.451972484588623,True,126,1742641821.7680838,25.66135263442993
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Cats, in their",4.763456344604492,True,127,1742641822.032822,25.926090717315674
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Dogs",3.3625659942626953,True,128,1742641822.558254,26.451522827148438
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: They breathe more regularly, and you",4.957348346710205,True,129,1742641822.6489177,26.542186498641968
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: Dogs can live with dogs/cats a long",5.982048273086548,True,130,1742641822.6706715,26.563940286636353
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Dongs are like big dogs, they",5.557015895843506,True,131,1742641823.0416567,26.93492555618286
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+A butterfly",2.7463221549987793,True,132,1742641823.0940533,26.987322092056274
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: the species of cats or a rept",5.370190382003784,True,133,1742641823.3766649,27.269933700561523
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+Animals have wings!",5.411457777023315,True,134,1742641823.722651,27.615919828414917
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: The animal's genetic code is very similar",5.8559606075286865,True,135,1742641823.9435742,27.836843013763428
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: All mammals.
+
+",3.3812482357025146,True,136,1742641824.2265077,28.119776487350464
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+For every mammal that grows",4.887522459030151,True,137,1742641824.4177496,28.311018466949463
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Dogs",3.5026283264160156,True,138,1742641824.661245,28.554513931274414
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Humans may have domesticated",5.174493074417114,True,139,1742641824.7541337,28.64740252494812
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+They don't eat plants.
+
+",5.411226272583008,True,140,1742641824.7708185,28.664087295532227
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: They are not dogs.
+Dogs are",5.436729907989502,True,141,1742641824.9275563,28.82082509994507
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: Yes.
+",3.1312618255615234,True,142,1742641825.3599892,29.253257989883423
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Cats are common in nature",4.61305046081543,True,143,1742641825.6421573,29.535426139831543
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: Birds do not fly.
+
+",3.9982662200927734,True,144,1742641825.6462758,29.539544582366943
 How do animals communicate?,"Question: How do animals communicate?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer: How do animals communicate?
-1.",4.903893232345581,True,235,1742583469.5170922,46.906386375427246
+A dog",4.6554343700408936,True,145,1742641825.712467,29.605735778808594
 What do hummingbirds eat?,"Question: What do hummingbirds eat?
 Context:
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-Hummingbirds don",3.718548059463501,True,236,1742583469.5636456,46.95293974876404
+Hummingbirds eat",3.2148332595825195,True,146,1742641825.7939584,29.687227249145508
 Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer:
-No... most mammals that",3.9776391983032227,True,237,1742583469.6775627,47.0668568611145
+Answer: They are not.
+
+",3.8879404067993164,True,147,1742641825.842546,29.735814809799194
 What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: They do not",3.3517191410064697,True,238,1742583470.1647668,47.55406093597412
+Answer: An ancient version",2.8764686584472656,True,148,1742641826.6167414,30.510010242462158
 How do marine mammals breathe?,"Question: How do marine mammals breathe?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: A large carnivore will have a",4.252038240432739,True,239,1742583470.2577453,47.64703941345215
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: Cats tend not to be domesticated animals.",4.760323762893677,True,240,1742583470.3154593,47.704753398895264
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: A lot of dogs that humans have kept in",4.48032283782959,True,241,1742583470.4764035,47.865697622299194
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: Flapping their",2.6904666423797607,True,242,1742583470.5558283,47.945122480392456
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-The answer is something like this",4.1632044315338135,True,243,1742583470.8005927,48.189886808395386
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: Flying in mid-air, you",4.495989561080933,True,244,1742583471.064581,48.45387506484985
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-The animals in question are animals,",4.659488201141357,True,245,1742583471.4559195,48.845213651657104
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Hummingbirds don",3.6342179775238037,True,246,1742583471.6890516,49.07834577560425
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: They may be part of
-",3.8652329444885254,True,247,1742583471.858612,49.24790620803833
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: They are domest",2.9875359535217285,True,248,1742583472.0100079,49.39930200576782
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-It really depends what kind of",4.053152561187744,True,249,1742583472.0168815,49.40617561340332
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: They can only be fed in certain conditions;",4.404680967330933,True,250,1742583472.0392308,49.4285249710083
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-These animals are wild animals, not domest",4.565721273422241,True,251,1742583472.2254438,49.61473798751831
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-Hare",2.1881344318389893,True,252,1742583472.373412,49.76270604133606
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Most animals, from the wild",4.13002872467041,True,253,1742583472.7073772,50.09667134284973
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-Dogs are not natural wild",4.330845594406128,True,254,1742583472.816874,50.20616817474365
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Pigs.
-Pigs need",4.904062032699585,True,255,1742583472.874706,50.26400017738342
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Hummingbirds can",3.350564956665039,True,256,1742583473.4073718,50.79666590690613
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Wild animal do not live",3.8180630207061768,True,257,1742583473.5901575,50.97945165634155
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Tens",2.746741533279419,True,258,1742583473.7097123,51.09900641441345
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: Sea mammals do have a complex connection",4.198487997055054,True,259,1742583474.3005362,51.68983030319214
+Answer: humans.
+
+But why do",4.196895599365234,True,149,1742641826.9072454,30.800514221191406
 Tell me about cats,"Question: Tell me about cats
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-How can we know which cats are wild",4.63782525062561,True,260,1742583474.5005114,51.88980555534363
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-The two major reason dogs are domesticated",4.633366584777832,True,261,1742583474.5314212,51.92071533203125
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-The answer",2.682960033416748,True,262,1742583474.7325466,52.121840715408325
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Cats are found not only",4.080995321273804,True,263,1742583474.8492105,52.23850464820862
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-Their natural predators, birdies",3.9573042392730713,True,264,1742583475.2135987,52.60289287567139
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer: Animal communication.
-Most of our modern",4.66835618019104,True,265,1742583475.3442378,52.7335319519043
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-The hummingbird only",3.1300370693206787,True,266,1742583475.6342292,53.02352333068848
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Do animals have naturally sensitive",3.585885524749756,True,267,1742583475.6481423,53.03743648529053
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Dogs",2.823422908782959,True,268,1742583475.7760987,53.16539287567139
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-The word carnivore comes from",3.895796060562134,True,269,1742583476.0221376,53.41143178939819
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Takes most likely to live in a",4.64039421081543,True,270,1742583476.6083593,53.99765348434448
+""Cats are no more than animal",4.973714113235474,True,150,1742641827.0843022,30.9775710105896
 What are dogs?,"Question: What are dogs?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer:
 
-Birds are different from the animals",4.5779619216918945,True,271,1742583476.7494655,54.13875961303711
+* They are the two main type",5.165440797805786,True,151,1742641827.1565375,31.049806356430054
 Which animals can hover in the air?,"Question: Which animals can hover in the air?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: which animals can",2.580814838409424,True,272,1742583476.8439083,54.23320245742798
+Answer:
+Animals",2.971390962600708,True,152,1742641827.1711316,31.06440043449402
 What are some common pets?,"Question: What are some common pets?
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-The most common breed is a",4.214970111846924,True,273,1742583477.6267438,55.016037940979004
+Chihuahuas are usually",4.698816776275635,True,153,1742641827.4990823,31.392351150512695
 Tell me about birds,"Question: Tell me about birds
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: they can use their wings to flap",4.322816610336304,True,274,1742583477.688467,55.07776117324829
+Answer: We fly high above the sky.",4.645934343338013,True,154,1742641827.862123,31.755391836166382
 How do animals communicate?,"Question: How do animals communicate?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: They aren't, they are simply part",4.8144683837890625,True,275,1742583477.698523,55.08781719207764
+Answer: Humans and dogs communicate.
+
+Hum",5.021998167037964,True,155,1742641828.0402496,31.933518409729004
 What do hummingbirds eat?,"Question: What do hummingbirds eat?
 Context:
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-Flaps are actually",3.5682520866394043,True,276,1742583477.94748,55.33677411079407
+Hummingbirds do",3.7247557640075684,True,156,1742641828.4269466,32.320215463638306
 Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer:
-If you were a dog",3.9076883792877197,True,277,1742583477.9946182,55.383912324905396
+No. They are not",4.060394287109375,True,157,1742641828.4779246,32.371193408966064
 What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer:
-No.",2.893277406692505,True,278,1742583478.4845479,55.873842000961304
+Poss",2.990997314453125,True,158,1742641828.7481256,32.64139437675476
 How do marine mammals breathe?,"Question: How do marine mammals breathe?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: Why don't animals have cats,",4.019039869308472,True,279,1742583478.5690897,55.95838379859924
-Tell me about cats,"Question: Tell me about cats
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
 Answer:
 
-Cats have a wide range of",4.582425832748413,True,280,1742583478.728103,56.11739706993103
-What are dogs?,"Question: What are dogs?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Dogs can be very specific and are",4.763363361358643,True,281,1742583478.87003,56.259324073791504
-Which animals can hover in the air?,"Question: Which animals can hover in the air?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer:
-When flying",2.4827170372009277,True,282,1742583478.9541113,56.3434054851532
-What are some common pets?,"Question: What are some common pets?
-Context:
-Cats are small furry carnivores that are often kept as pets.
-Dogs are domesticated mammals, not natural wild animals.
-Answer: When domesticated mammals become pets,",4.100380182266235,True,283,1742583479.0170379,56.40633201599121
-Tell me about birds,"Question: Tell me about birds
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: birds
-Hummingbirds are able",4.310046434402466,True,284,1742583479.1709495,56.56024360656738
-How do animals communicate?,"Question: How do animals communicate?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Dogs have the ability to communicate",4.8758604526519775,True,285,1742583479.2601006,56.64939475059509
-What do hummingbirds eat?,"Question: What do hummingbirds eat?
-Context:
-Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Dogs are domesticated mammals, not natural wild animals.
-Answer:
-Hummingbird food",3.5080010890960693,True,286,1742583480.272136,57.66143012046814
-Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-No, there are no",3.9165146350860596,True,287,1742583480.3790214,57.76831555366516
-What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-Dogs",2.665188789367676,True,288,1742583480.7287061,58.11800026893616
-How do marine mammals breathe?,"Question: How do marine mammals breathe?
-Context:
-Dogs are domesticated mammals, not natural wild animals.
-Cats are small furry carnivores that are often kept as pets.
-Answer:
-A wild animal is not considered",3.996457576751709,True,289,1742583480.8290136,58.21830773353577
+Fruit
+
+Water",4.0607829093933105,True,159,1742641828.985885,32.87915372848511
 Tell me about cats,"Question: Tell me about cats
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-Cats aren’t domesticated",4.768495798110962,True,290,1742583480.881971,58.27126502990723
+Cats and other small and intelligent animals",4.764535188674927,True,160,1742641829.3801935,33.27346229553223
 What are dogs?,"Question: What are dogs?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
-Answer: This is not true. Duggies can",4.491816759109497,True,291,1742583480.998917,58.388211250305176
+Answer: They are animals bred to look like humans and",4.7130043506622314,True,161,1742641829.5976808,33.490949630737305
 Which animals can hover in the air?,"Question: Which animals can hover in the air?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Answer:
-Swing",2.582012891769409,True,292,1742583481.1002579,58.48955202102661
+
+What",2.4391722679138184,True,162,1742641830.0086865,33.901955366134644
 What are some common pets?,"Question: What are some common pets?
 Context:
 Cats are small furry carnivores that are often kept as pets.
 Dogs are domesticated mammals, not natural wild animals.
-Answer: Animals generally are domesticated animal.",3.75671648979187,True,293,1742583481.130644,58.519938230514526
+Answer:
+Cats are not wild animals",3.898638963699341,True,163,1742641830.2090557,34.10232448577881
 Tell me about birds,"Question: Tell me about birds
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
-Answer: Birds are mammals, not natural wild",3.7669217586517334,True,294,1742583481.7244015,59.11369562149048
+Answer:
+Gravity.
+As for",4.008545875549316,True,164,1742641831.0213053,34.91457414627075
 How do animals communicate?,"Question: How do animals communicate?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer:
-Humans communicate with animals by looking",3.6681981086730957,True,295,1742583481.8776524,59.26694655418396
+Dogs and cats are considered to",4.576499938964844,True,165,1742641831.2457685,35.13903737068176
 What do hummingbirds eat?,"Question: What do hummingbirds eat?
 Context:
 Hummingbirds can hover in mid-air by rapidly flapping their wings.
 Dogs are domesticated mammals, not natural wild animals.
 Answer:
-Hummingbirds,",3.045884847640991,True,296,1742583482.3542967,59.74359083175659
+Hummingbirds are",3.1866557598114014,True,166,1742641831.387435,35.28070378303528
 Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer:
-Their bodies are a long",3.290863275527954,True,297,1742583482.4106908,59.7999849319458
+They are mainly omniv",3.6361207962036133,True,167,1742641831.4118953,35.305164098739624
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: reptiles (i",2.711289405822754,True,168,1742641831.84353,35.73679876327515
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: They lack the human characteristics that other",3.7195301055908203,True,169,1742641832.664284,36.55755281448364
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: They are most likely to feed as a breed",4.424010515213013,True,170,1742641832.755929,36.649197816848755
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: Animal domestication of domesticated animals is genetic",4.179424285888672,True,171,1742641832.9399512,36.8332200050354
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: “D",2.396371364593506,True,172,1742641833.0338666,36.9271354675293
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Bunnings sells dogs for",3.8806092739105225,True,173,1742641833.7682743,37.661543130874634
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: Birds can't perform ""natural""",3.862473964691162,True,174,1742641833.8571835,37.750452280044556
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: how do animals communicate to humans?
+",4.25158953666687,True,175,1742641833.9805958,37.87386465072632
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Hummingbirds eat",3.0044519901275635,True,176,1742641834.1375608,38.030829668045044
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: All mammals are human animals.",3.5527429580688477,True,177,1742641834.24407,38.13733887672424
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: Both amphibians",2.5382883548736572,True,178,1742641834.259835,38.153103828430176
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Most mammals are small furry carniv",3.717900514602661,True,179,1742641834.3248336,38.21810245513916
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: They live in a world where we have a",4.542150020599365,True,180,1742641834.9727812,38.866050004959106
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: They are usually kept as pets.
+
+",4.009280681610107,True,181,1742641835.6247342,39.51800298690796
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+
+Animal",2.8123295307159424,True,182,1742641835.7092283,39.60249710083008
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: they are the best dog in the",4.187262535095215,True,183,1742641835.7175126,39.61078143119812
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+Most mammals are not mammals,",4.143342018127441,True,184,1742641835.9301088,39.82337760925293
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Most animals are not domesticated.",4.369080066680908,True,185,1742641836.8954966,40.78876543045044
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Hummingbirds eat",3.4288089275360107,True,186,1742641836.8962457,40.78951454162598
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: Most humans live with cats.",3.4834413528442383,True,187,1742641836.9107602,40.80402898788452
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: We don't",2.700254440307617,True,188,1742641837.0764124,40.96968126296997
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+
+Anchors are small",3.7075653076171875,True,189,1742641837.4306378,41.323906660079956
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: Cats are small mammals with only a very few",4.307004690170288,True,190,1742641837.7800868,41.67335557937622
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Cats are domesticated animals, not",4.412032604217529,True,191,1742641837.7985675,41.6918363571167
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+Humming",2.5977678298950195,True,192,1742641838.2473323,42.14060115814209
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Cats are very different to",3.7489681243896484,True,193,1742641838.2880917,42.181360483169556
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: Humans are native birds.
+The",3.9552526473999023,True,194,1742641838.4324276,42.32569646835327
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+They communicate very well in many ways",4.308772802352905,True,195,1742641838.503819,42.397087812423706
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+They eat all the",3.3406875133514404,True,196,1742641838.6749709,42.56823968887329
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+The cats that come into",3.398981809616089,True,197,1742641838.7235947,42.616863489151
 What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer: reptiles.
-",2.453733205795288,True,298,1742583482.519182,59.90847611427307
+",2.7014710903167725,True,198,1742641838.9289758,42.82224464416504
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: Are there some natural and natural way",3.5278236865997314,True,199,1742641839.1877325,43.08100128173828
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Dogs were domesticated mammals.",4.399083375930786,True,200,1742641839.3513203,43.24458909034729
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+They are not native to South America
+",4.456340789794922,True,201,1742641839.600713,43.49398183822632
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: Humans are all",2.5394203662872314,True,202,1742641839.866346,43.75961470603943
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Cats have long legs;",3.9836275577545166,True,203,1742641839.9218311,43.8150999546051
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: birds.
+
+What does this",4.195922136306763,True,204,1742641839.948435,43.84170389175415
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Because cats have little other relatives that",4.456556797027588,True,205,1742641840.387277,44.280545711517334
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: They eat mostly insects &",3.3990790843963623,True,206,1742641840.628335,44.52160382270813
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Dogs are domesticated",3.5473077297210693,True,207,1742641840.7604911,44.65375995635986
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:   """,2.719520330429077,True,208,1742641840.763448,44.65671682357788
 How do marine mammals breathe?,"Question: How do marine mammals breathe?
 Context:
 Dogs are domesticated mammals, not natural wild animals.
 Cats are small furry carnivores that are often kept as pets.
 Answer:
-Birds are not animals,",2.0439188480377197,True,299,1742583482.5993466,59.988640785217285
+Birds are natural mammals.",3.4308111667633057,True,209,1742641841.553159,45.44642782211304
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+No.
+The most common pets are",4.223887205123901,True,210,1742641841.704175,45.59744381904602
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: The best explanation? The only way to say",4.181002616882324,True,211,1742641841.7706373,45.66390609741211
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+A.",2.634647846221924,True,212,1742641841.972424,45.86569285392761
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+They are the animals that are",4.000754356384277,True,213,1742641842.3524992,46.24576807022095
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+Dogs hover with the help",3.984438896179199,True,214,1742641842.660731,46.55399990081787
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Habitats. They communicate with",4.311410427093506,True,215,1742641842.8023453,46.69561409950256
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Terrified.",3.254610538482666,True,216,1742641842.825996,46.71926474571228
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Only mammals are found in",3.5166819095611572,True,217,1742641843.042792,46.93606090545654
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+As much",2.600189208984375,True,218,1742641843.1501687,47.043437480926514
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: These cats have the internal organs that",3.6667532920837402,True,219,1742641843.2355058,47.128774642944336
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Cats are generally kept in caves,",4.264708518981934,True,220,1742641843.3216617,47.21493053436279
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Dogs are the only mammals that are",4.406448602676392,True,221,1742641843.4002159,47.293484687805176
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+Gravity",2.3109030723571777,True,222,1742641843.4580557,47.35132455825806
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Cats usually have six legs",3.7238783836364746,True,223,1742641844.0378025,47.931071281433105
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: How do you tell if they're",4.049722194671631,True,224,1742641844.5443287,48.43759751319885
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+they aren't ""natural wild animals",4.3369035720825195,True,225,1742641844.5635586,48.45682740211487
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+If they hover in",3.168642282485962,True,226,1742641844.6022122,48.49548101425171
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Yes, mammals are omn",3.6345622539520264,True,227,1742641845.0091894,48.90245819091797
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: mammals.
+",2.6069271564483643,True,228,1742641845.035253,48.92852187156677
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+
+Humans carry some mammals",3.6380386352539062,True,229,1742641845.0874531,48.980721950531006
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: A cat was domesticated when humans were at",4.128056764602661,True,230,1742641845.3340268,49.22729563713074
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: They are domesticated mammals.
+
+I",4.263139247894287,True,231,1742641845.5874941,49.48076295852661
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+Birds",2.451241970062256,True,232,1742641845.9922118,49.885480642318726
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: Dogs are native in a way that",4.276838064193726,True,233,1742641846.4179273,50.311196088790894
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: We're talking
+Dogs are",4.221262454986572,True,234,1742641846.4738631,50.36713194847107
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: Some cats are kept in cages as a",4.637053966522217,True,235,1742641846.517851,50.41111993789673
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+The body of the",3.3741812705993652,True,236,1742641846.5939415,50.487210273742676
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+
+Answer to Question
+",3.5756900310516357,True,237,1742641847.0296907,50.92295956611633
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: Cats are domest",2.7711472511291504,True,238,1742641847.1013353,50.99460411071777
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Dogs are carnivores.",3.691929340362549,True,239,1742641847.1224983,51.015767097473145
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+
+Fetter:
+
+What",4.143723487854004,True,240,1742641847.1639054,51.05717420578003
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: Humans are mammals
+Dogs are domesticated",4.364995718002319,True,241,1742641847.3201475,51.21341633796692
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+In general",2.553652763366699,True,242,1742641847.574536,51.46780490875244
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Dogs are generally kept in",3.9567742347717285,True,243,1742641848.0009968,51.89426565170288
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: They are a bit of a stretch",3.9052746295928955,True,244,1742641848.6652133,52.55848217010498
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Dogs are very small furry carniv",4.333645343780518,True,245,1742641848.7208297,52.61409854888916
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Hummingbirds keep",3.2780699729919434,True,246,1742641848.7258291,52.61909794807434
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: Most dogs are very soft,",3.4457528591156006,True,247,1742641848.758461,52.65172982215881
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: Reptiles:",2.7070679664611816,True,248,1742641848.7993574,52.69262623786926
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Cats can only eat grass",3.8732714653015137,True,249,1742641848.8152258,52.708494663238525
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: I have a pet cat!
+
+Answer",4.3625328540802,True,250,1742641849.1015432,52.99481201171875
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: they are domesticated mammals, not natural wild",4.348102569580078,True,251,1742641849.1464016,53.03967046737671
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: Any time you",2.2268457412719727,True,252,1742641849.639469,53.532737731933594
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Most cat species have one or",3.7415835857391357,True,253,1742641849.6651988,53.558467626571655
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+We've seen two species of",4.2325568199157715,True,254,1742641850.1636012,54.056869983673096
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+They don't communicate.
+C",4.4483466148376465,True,255,1742641850.3058527,54.19912147521973
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Dogs do not",3.2623395919799805,True,256,1742641850.8005989,54.693867683410645
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+When domesticated, they",3.534245252609253,True,257,1742641850.8182788,54.71154761314392
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Dogs",2.7693662643432617,True,258,1742641850.8551254,54.74839425086975
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+the marine mammals are more like",3.642498016357422,True,259,1742641851.005372,54.898640871047974
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: No, they aren't.
+
+If",4.5948028564453125,True,260,1742641851.008749,54.90201783180237
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:  Dogs
+Answer:
+Dogs are",4.670162677764893,True,261,1742641851.2419894,55.135258197784424
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+Dogs",2.135877847671509,True,262,1742641851.4012463,55.29451513290405
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: What are some common pets?
+",3.9771180152893066,True,263,1742641851.4100876,55.303356409072876
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:",1.7131459712982178,True,264,1742641851.5352697,55.42853856086731
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+
+Dogs (as in cats",4.324331760406494,True,265,1742641851.6583169,55.55158567428589
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Hummingbird can",3.2331576347351074,True,266,1742641851.7068079,55.60007667541504
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Cats are generally very",3.5621275901794434,True,267,1742641851.8076208,55.700889587402344
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+A few",2.7414114475250244,True,268,1742641852.0089307,55.902199506759644
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Dog, yes :) But,",3.6505985260009766,True,269,1742641852.121495,56.014763832092285
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Wild cats are mammals.
+
+We",4.687984943389893,True,270,1742641852.190936,56.08420491218567
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: Cancers.
+Dogs are animals,",4.297028541564941,True,271,1742641852.325953,56.21922183036804
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+A human",2.2137391567230225,True,272,1742641852.3398178,56.233086585998535
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+They all carry three elements.",3.5057384967803955,True,273,1742641852.4177425,56.31101131439209
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+Birding is very useful if",4.008225202560425,True,274,1742641852.6535294,56.54679822921753
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Dogs and other pets communicate with",4.158355951309204,True,275,1742641852.963527,56.85679578781128
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+
+No, they",3.1624042987823486,True,276,1742641853.0805843,56.97385311126709
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Wild cats are in the",3.5370726585388184,True,277,1742641853.1433604,57.03662919998169
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Dogs",2.7582671642303467,True,278,1742641853.1807432,57.07401204109192
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Because cats have a habit of",3.7200684547424316,True,279,1742641853.3816488,57.27491760253906
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Cats can be found mostly near the",4.430936813354492,True,280,1742641853.4197857,57.31305456161499
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Dogs are mammals, because they belong",4.288952350616455,True,281,1742641853.570558,57.46382689476013
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer:
+
+In",2.1004638671875,True,282,1742641853.6432986,57.5365674495697
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: There are at least three types:",3.721123695373535,True,283,1742641853.743902,57.63717079162598
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: It's not natural. The birds",3.8367934226989746,True,284,1742641853.7888436,57.68211245536804
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: You need to buy the right pet.",4.216329574584961,True,285,1742641853.8271997,57.720468521118164
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+Hummingbirds have",3.034925699234009,True,286,1742641853.9503765,57.843645334243774
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: They have relatively close-knit",3.507843255996704,True,287,1742641854.020879,57.91414785385132
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Dogs",2.732306718826294,True,288,1742641854.0986826,57.99195146560669
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Most of the mammals inside animals",3.6707887649536133,True,289,1742641854.142771,58.03603982925415
+Tell me about cats,"Question: Tell me about cats
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+This question has been answered by
+J",4.425370693206787,True,290,1742641854.1658015,58.059070348739624
+What are dogs?,"Question: What are dogs?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: In general, if you have a pet dog",3.9468834400177,True,291,1742641854.4254653,58.31873416900635
+Which animals can hover in the air?,"Question: Which animals can hover in the air?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: mammals and birds",2.0191140174865723,True,292,1742641854.508136,58.4014048576355
+What are some common pets?,"Question: What are some common pets?
+Context:
+Cats are small furry carnivores that are often kept as pets.
+Dogs are domesticated mammals, not natural wild animals.
+Answer: The general consensus is to keep them",3.377840757369995,True,293,1742641854.6905472,58.583816051483154
+Tell me about birds,"Question: Tell me about birds
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Answer: We’re just too young",3.217355728149414,True,294,1742641855.4681158,59.36138463020325
+How do animals communicate?,"Question: How do animals communicate?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: If you live in an animal village with",3.3070127964019775,True,295,1742641855.5540042,59.44727301597595
+What do hummingbirds eat?,"Question: What do hummingbirds eat?
+Context:
+Hummingbirds can hover in mid-air by rapidly flapping their wings.
+Dogs are domesticated mammals, not natural wild animals.
+Answer:
+
+Rising sun",2.8805298805236816,True,296,1742641855.647133,59.54040193557739
+Are all mammals warm-blooded?,"Question: Are all mammals warm-blooded?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Yes, because cats love",2.7659270763397217,True,297,1742641855.6578305,59.55109930038452
+What's the difference between reptiles and amphibians?,"Question: What's the difference between reptiles and amphibians?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer: They're much",2.339991331100464,True,298,1742641855.700105,59.59337377548218
+How do marine mammals breathe?,"Question: How do marine mammals breathe?
+Context:
+Dogs are domesticated mammals, not natural wild animals.
+Cats are small furry carnivores that are often kept as pets.
+Answer:
+Cats make a lot of",2.044908285140991,True,299,1742641855.738748,59.63201689720154

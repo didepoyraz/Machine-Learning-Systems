@@ -4,7 +4,15 @@ import triton
 import numpy as np
 import time
 import json
-from test import testdata_kmeans, testdata_knn, testdata_ann
+from test import read_data, testdata_kmeans, testdata_knn, testdata_ann
+import argparse
+
+# add arguments
+parser = argparse.ArgumentParser(description="KNN implementation with GPU and CPU")
+parser.add_argument("--distance", choices=["cosine", "l2", "dot", "manhattan"], default="manhattan",
+                    help="Choose distance metric (default: manhattan)")
+args = parser.parse_args()
+
 # ------------------------------------------------------------------------------------------------
 # Your Task 1.1 code here
 # ------------------------------------------------------------------------------------------------
@@ -26,11 +34,27 @@ def distance_manhattan(X, Y):
     # Compute Manhattan distance (L1 norm)
     return torch.sum(torch.abs(X - Y))
 
+def get_distance_function():
+    return {
+        "cosine": distance_cosine,
+        "l2": distance_l2,
+        "dot": distance_dot,
+        "manhattan": distance_manhattan
+    }[args.distance]
+
 # ------------------------------------------------------------------------------------------------
 # Your Task 1.2 code here
 # ------------------------------------------------------------------------------------------------
+# Global variable (set by argparse)
+dist_metric = None  # Placeholder for the distance metric to be set dynamically
 
-def our_knn(N, D, A, X, K, dist_metric='manhattan'):
+def set_distance_metric(metric):
+    global dist_metric
+    dist_metric = metric
+
+def our_knn(N, D, A, X, K):
+    if dist_metric is None:
+        raise ValueError("Distance metric not set. Please specify one via command-line arguments.")
     
     X_tensor = torch.from_numpy(X).cuda()
     
@@ -140,7 +164,7 @@ def distance_dot_cpu(X, Y):
 def distance_manhattan_cpu(X, Y):
     return np.sum(np.abs(X - Y))
 
-def our_knn_cpu(N, D, A, X, K, dist_metric="manhattan"):
+def our_knn_cpu(N, D, A, X, K):
     if A.shape != (N, D) or X.shape != (D,):
         raise ValueError("Input dimensions do not match.")
 
@@ -311,11 +335,13 @@ def test_knn_4m():
     print(f"Speedup 4m (CPU to GPU): {speedup:.2f}x\n")
 
 if __name__ == "__main__":
+    # Set the distance metric from command line argument
+    set_distance_metric(args.distance)
+    
+    # Run the test functions with the selected distance metric
     test_knn()
     test_knn_cpu()
     test_knn_2D()
     test_knn_215()
     test_knn_4k()
-    #test_knn_40k()
     test_knn_4m()
-  

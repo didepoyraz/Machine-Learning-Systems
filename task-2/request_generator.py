@@ -1,80 +1,97 @@
-import random
-from typing import Any, Dict, List
+import time
+import requests
+from typing import Dict, Any, List
 
-from tracestorm.constants import DEFAULT_MESSAGES
-from tracestorm.data_loader import Dataset
-from tracestorm.logger import init_logger
-
-logger = init_logger(__name__)
-
-
-def generate_request(
-    model_name: str,
-    nums: int,
-    messages: str = DEFAULT_MESSAGES,
-    datasets: List[Dataset] = [],
-    sort_strategy: str = "random",
-    seed: int = None,
-) -> List[Dict[str, Any]]:
-    # generate default requests without datasets
-    if not datasets:
-        for _ in range(nums):
-            return [
-                {
-                    "model": model_name,
-                    "messages": [{"role": "user", "content": messages}],
-                    "stream": True,
+class RequestGenerator:
+    def __init__(self, base_url: str, queries: List[str]):
+        """Initialize the request generator with base URL and sample queries."""
+        self.base_url = base_url
+        self.queries = queries
+    
+    def send_request(self, endpoint: str, query: str, k: int = 2) -> Dict[str, Any]:
+        """
+        Send a single request to a given RAG service endpoint and measure its performance.
+        """
+        try:
+            start_time = time.time()
+            response = requests.post(
+                endpoint,
+                json={"query": query, "k": k},
+                timeout=30  # Add timeout to prevent hanging
+            )
+            end_time = time.time()
+            
+            if response.status_code == 200:
+                result = response.json()
+                result["client_time"] = end_time - start_time
+                result["success"] = True
+                return result
+            else:
+                return {
+                    "success": False,
+                    "client_time": end_time - start_time,
+                    "error": f"HTTP {response.status_code}: {response.text}"
                 }
-                for _ in range(nums)
-            ]
-    else:  # Add and sort requests from the provided datasets
-        dataset_samples = []
-
-        # Total ratio to calculate number of requests for each dataset
-        total_ratio = sum(dataset_obj.select_ratio for dataset_obj in datasets)
-
-        for dataset_obj in datasets:
-            num_requests = int(
-                round(nums * dataset_obj.select_ratio / total_ratio)
-            )
-
-            # We don't have enough available prompts, repeat the dataset
-            available_prompts = dataset_obj.length
-            prompts = dataset_obj.prompts
-            if num_requests > available_prompts:
-                repeat_count = num_requests // available_prompts
-                prompts.extend(prompts * repeat_count)
-
-            assert len(prompts) >= num_requests
-
-            # Store prompts with indexing for round-robin
-            # For example, if ratio of dataset1 is 5, we will append 5 requests for each idx
-            for i, sample in enumerate(prompts[:num_requests]):
-                idx = i // dataset_obj.select_ratio
-                dataset_samples.append((idx, sample))
-
-            logger.info(
-                f"Selected {num_requests} requests from {dataset_obj.file_name}."
-            )
-
-        # 1. Randomly sort the requests
-        if sort_strategy == "random":
-            if seed is not None:
-                random.seed(seed)
-            random.shuffle(dataset_samples)
-        elif sort_strategy == "original":  # 2. original order
-            dataset_samples.sort(key=lambda x: x[0])
-        else:
-            raise ValueError(f"Unknown sorting strategy: {sort_strategy}")
-
-        # Extract the prompts from the list
-        requests = [
-            {
-                "model": model_name,
-                "messages": [{"role": "user", "content": prompt}],
-                "stream": True,
+        except Exception as e:
+            return {
+                "success": False,
+                "client_time": time.time() - start_time if 'start_time' in locals() else -1,
+                "error": str(e)
             }
-            for _, prompt in dataset_samples
-        ]
-
-    return requests
+    
+    def request_executor(self, request_id: int, endpoint: str, arrival_time: float) -> Dict[str, Any]:
+        """
+        Execute individual requests with a specific arrival time and capture the response.
+        """
+        # Wait until the arrival time
+        current_time = time.time()
+        if current_time < arrival_time:
+            time.sleep(arrival_time - current_time)
+        
+        # Select a query (round-robin from query list)
+        query = self.queries[request_id % len(self.queries)]
+        
+        # Send the request
+        result = self.send_request(endpoint, query)
+        result["request_id"] = request_id
+        result["arrival_time"] = arrival_time
+        
+        return result
+    
+    def generate_trace_test(self, endpoint: str, trace_config: Dict[str, Any], generator) -> List[Dict[str, Any]]:
+        """
+        Run a trace test, simulating a realistic workload.
+        It generates request arrival times and executes requests according to the specified rate pattern.
+        """
+        # Generate request arrival times
+        request_profile = generator.generate()
+        
+        # Execute requests according to the trace
+        results = []
+        from concurrent.futures import ThreadPoolExecutor
+        
+        with ThreadPoolExecutor(max_workers=trace_config.get("max_concurrency", 20)) as executor:
+            futures = []
+            
+            for i, arrival_time in enumerate(request_profile.arrival_times):
+                futures.append(
+                    executor.submit(
+                        self.request_executor, 
+                        i, 
+                        endpoint, 
+                        arrival_time
+                    )
+                )
+            
+            # Collect results
+            for future in futures:
+                try:
+                    result = future.result()
+                    results.append(result)
+                    # Print progress indicator
+                    if len(results) % 10 == 0:
+                        print(f"Completed {len(results)}/{len(futures)} requests")
+                except Exception as e:
+                    print(f"Error processing request: {e}")
+        
+        return results

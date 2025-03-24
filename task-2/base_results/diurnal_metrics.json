@@ -1,13 +1,13 @@
 {
   "test_name": "diurnal",
-  "total_requests": 3570,
-  "successful_requests": 3464,
-  "success_rate": 0.9703081232492997,
-  "avg_latency": 15.610985675323368,
-  "median_latency": 15.236600875854492,
-  "p95_latency": 24.586016762256623,
-  "p99_latency": 28.348666224479672,
-  "min_latency": 3.9256656169891357,
-  "max_latency": 29.951210737228394,
-  "throughput": 30.16826873760247
+  "total_requests": 3669,
+  "successful_requests": 3588,
+  "success_rate": 0.9779231398201145,
+  "avg_latency": 13.92355868037595,
+  "median_latency": 13.806204795837402,
+  "p95_latency": 23.258991360664364,
+  "p99_latency": 28.373049321174623,
+  "min_latency": 4.162976026535034,
+  "max_latency": 35.3044810295105,
+  "throughput": 30.564835487714916
 }

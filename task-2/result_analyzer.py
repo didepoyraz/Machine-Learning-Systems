@@ -1,3 +1,21 @@
+# This script implements a performance analysis tool for evaluating a RAG (Retrieval-Augmented Generation) service.
+# The ResultAnalyzer class processes test results from performance tests and creates detailed reports with visualizations.
+# Specifically:
+# Analyzes test results to calculate important performance metrics:
+# -- Success rate (percentage of successful requests)
+# -- Latency statistics (average, median, 95th percentile, 99th percentile)
+# -- Throughput (requests per second)
+
+# Saves results in multiple formats:
+# Raw JSON results
+# Calculated metrics as JSON
+# CSV data for successful requests
+
+# Creates visualizations:
+# -- Latency over time graphs (with moving averages)
+# -- Latency distribution histograms
+# Generates a comprehensive HTML report
+
 import json
 import numpy as np
 import pandas as pd

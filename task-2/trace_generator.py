@@ -1,3 +1,5 @@
+# This script defines a TraceGenerator class that simulates various request arrival patterns for performance testing, typically used to simulate how a system will behave under different load scenarios.
+
 import numpy as np
 import time
 from typing import List, Optional

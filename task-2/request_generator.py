@@ -1,3 +1,5 @@
+# This script defines a class RequestGenerator that is responsible for generating and sending requests to a given endpoint in a simulated and configurable manner.
+
 import time
 import requests
 from typing import Dict, Any, List

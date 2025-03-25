@@ -11,6 +11,8 @@ import argparse
 parser = argparse.ArgumentParser(description="KNN implementation with GPU and CPU")
 parser.add_argument("--distance", choices=["cosine", "l2", "dot", "manhattan"], default="manhattan",
                     help="Choose distance metric (default: manhattan)")
+parser.add_argument("--test", choices=["knn", "kmeans", "ann"], default="knn",
+                    help="Choose test type (default: knn)")
 args = parser.parse_args()
 
 # ------------------------------------------------------------------------------------------------
@@ -338,10 +340,15 @@ if __name__ == "__main__":
     # Set the distance metric from command line argument
     set_distance_metric(args.distance)
     
-    # Run the test functions with the selected distance metric
-    test_knn()
-    test_knn_cpu()
-    test_knn_2D()
-    test_knn_215()
-    test_knn_4k()
-    test_knn_4m()
+    # Conditional test execution based on the --test argument
+    if args.test == "knn":
+        test_knn()
+        test_knn_cpu()
+        test_knn_2D()
+        test_knn_215()
+        test_knn_4k()
+        test_knn_4m()
+    elif args.test == "kmeans":
+        test_kmeans()
+    elif args.test == "ann":
+        test_ann()

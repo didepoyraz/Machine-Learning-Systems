@@ -1,13 +1,13 @@
 {
   "test_name": "steady_low",
   "total_requests": 300,
-  "successful_requests": 290,
-  "success_rate": 0.9666666666666667,
-  "avg_latency": 5.759255467612168,
-  "median_latency": 5.48672616481781,
-  "p95_latency": 9.203244292736056,
-  "p99_latency": 19.524963102340703,
-  "min_latency": 1.6490485668182373,
-  "max_latency": 21.346051692962646,
-  "throughput": 4.842512504478241
+  "successful_requests": 300,
+  "success_rate": 1.0,
+  "avg_latency": 3.795533218383789,
+  "median_latency": 3.887312650680542,
+  "p95_latency": 4.801977050304413,
+  "p99_latency": 6.3798695349693295,
+  "min_latency": 1.461796522140503,
+  "max_latency": 7.705340147018433,
+  "throughput": 5.024424391718956
 }

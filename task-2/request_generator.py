@@ -10,6 +10,18 @@ class RequestGenerator:
         self.base_url = base_url
         self.queries = queries
     
+    def is_valid_response(self, response: Dict[str, Any]) -> bool:
+        """
+        Check if the response is valid and contains meaningful content.
+        This is a basic check and can be extended further based on your needs.
+        """
+        if "result" not in response or not response["result"]:
+            return False
+        # Additional logic for filtering out invalid responses (e.g., placeholders)
+        if "How do you categorize them?" in response["result"]:
+            return False
+        return True
+    
     def send_request(self, endpoint: str, query: str, k: int = 2) -> Dict[str, Any]:
         """
         Send a single request to a given RAG service endpoint and measure its performance.
@@ -26,7 +38,9 @@ class RequestGenerator:
             if response.status_code == 200:
                 result = response.json()
                 result["client_time"] = end_time - start_time
-                result["success"] = True
+                result["success"] = self.is_valid_response(result)  # Only mark success if the response is valid
+                if not result["success"]:
+                    result["error"] = "Invalid response content"
                 return result
             else:
                 return {

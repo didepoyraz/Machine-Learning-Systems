@@ -14,6 +14,16 @@ documents = [
     "Hummingbirds can hover in mid-air by rapidly flapping their wings."
 ]
 
+# different dataset
+# from datasets import load_dataset
+
+# Load the dataset
+# dataset = load_dataset('MAsad789565/Coding_GPT4_Data', split='train')
+# If needed, specify a different split such as 'validation' or 'test'
+
+# Extract content from the dataset
+# documents = [example['assistant'] for example in dataset]
+
 # 1. Load embedding model
 EMBED_MODEL_NAME = "intfloat/multilingual-e5-large-instruct"
 embed_tokenizer = AutoTokenizer.from_pretrained(EMBED_MODEL_NAME)

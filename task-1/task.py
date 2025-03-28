@@ -1,7 +1,8 @@
 import torch
-#import cupy as cp
+import cupy as cp
 #import triton
 from sklearn.cluster import KMeans, MiniBatchKMeans
+from cuml.cluster import KMeans as cuKMeans
 import numpy as np
 import time
 import json
@@ -201,25 +202,43 @@ def our_ann(N, D, A, X, K):
     device = "cuda"
     K_clusters = 5  # Number of clusters for K-Means
     K1 = 3  # Number of clusters and neighbors to consider
-
+    starttime = time.time()
     if isinstance(A, np.ndarray):
         A = torch.tensor(A, dtype=torch.float16)
+        print("Time taken by if isinstance1 = " + str(time.time() - starttime))
+
+    starttime = time.time()
     if isinstance(X, np.ndarray):
         X = torch.tensor(X, dtype=torch.float16)
+        print("Time taken by if isinstance2 = " + str(time.time() - starttime))
 
+    starttime = time.time()
     # Move data to GPU (if available)
     A = A.to(device)
     X = X.to(device)
+    print("Time taken to device = " + str(time.time() - starttime))
 
     # K-Means clustering
-    kmeans = KMeans(n_clusters=K_clusters, max_iter=10)
-    #kmeans = MiniBatchKMeans(n_clusters=K_clusters, max_iter=10, batch_size=10000)
+    if N < 10000:
+            starttime = time.time()
+            kmeans = KMeans(n_clusters=K_clusters, max_iter=10, n_init=5)
+            print("Time taken by kmeans = " + str(time.time() - starttime))
+    else:
+        starttime = time.time()
+        kmeans = MiniBatchKMeans(n_clusters=K_clusters, batch_size=10000, max_iter=10, n_init=5)
+        print("Time taken by kmeans = " + str(time.time() - starttime))
+    
+    starttime = time.time()
     cluster_assignments = torch.tensor(kmeans.fit_predict(A.cpu()), device=device)
+    print("Time taken by cluster assignemnt = " + str(time.time() - starttime))
+    starttime = time.time()
     cluster_centers = torch.tensor(kmeans.cluster_centers_, device=device)
+    print("Time taken by cluster center assignemnt = " + str(time.time() - starttime))
 
     # ANN search
+    starttime = time.time()
     top_k_neighbors = ann_search(A, cluster_centers, cluster_assignments, X, K1, K)
-
+    print("Time taken by ANN search = " + str(time.time() - starttime))
     # move from GPU to CPU
     print("ANN - Top K nearest neighbors indices:", top_k_neighbors.cpu().numpy())
 

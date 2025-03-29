@@ -1,17 +1,15 @@
-CPU Time (10): 0.632046 seconds
-GPU Time (10): 4.857230 seconds
-Speedup 10 (CPU to GPU): 0.13x
+hello
+Generating data with k=10
+Generated data shape: (1000000, 10)
+Unique cluster labels: [0 1 2 3 4 5 6 7 8 9]
+Generating data with k=10
+Generated data shape: (1000000, 50)
+Unique cluster labels: [0 1 2 3 4 5 6 7 8 9]
+Data generation complete!
+starting task..
+statrting k30
+CPU Time (1m_10_K30): 625.251555 seconds
+GPU Time (1m_10_K10): 2.825874 seconds
+Speedup 1m_10_K10 (CPU to GPU): 221.26x
 
-CPU Time (1000_2): 0.001683 seconds
-GPU Time (1000_2): 0.523618 seconds
-Speedup 1000_2 (CPU to GPU): 0.00x
-
-CPU Time (1000_1024): 0.086387 seconds
-GPU Time (1000_1024): 0.819499 seconds
-Speedup 1000_1024 (CPU to GPU): 0.11x
-
-CPU Time (100k): 1.201955 seconds
-GPU Time (100k): 10.463880 seconds
-Speedup 100k (CPU to GPU): 0.11x
-
-CPU Time (1m): 64.465401 seconds
+task ended..

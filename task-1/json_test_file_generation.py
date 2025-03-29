@@ -60,20 +60,37 @@ def generate_and_save_kmeans(n, d,k, prefix):
     save_metadata_kmeans(meta_file, n, d, k, a_file)
 
 # Generate and save datasets
-generate_and_save(1000, 2, "2d")
-generate_and_save(1000, 2**15, "215")
-generate_and_save(4000, 100, "4k")
-generate_and_save(40000, 100, "40k")
-generate_and_save(4000000, 100, "4m")
+# generate_and_save(1000, 2, "2d")
+# generate_and_save(1000, 2**15, "215")
+# generate_and_save(4000, 100, "4k")
+# generate_and_save(40000, 100, "40k")
+# generate_and_save(4000000, 100, "4m")
 
-generate_and_save_kmeans(10,2,3, "10")
+# generate_and_save_kmeans(10,2,3, "10")
 
-generate_and_save_kmeans(1000,2,3, "1000_2")
-generate_and_save_kmeans(1000,1024,3, "1000_1024")
+# generate_and_save_kmeans(1000,2,3, "1000_2")
+# generate_and_save_kmeans(1000,1024,3, "1000_1024")
 
-generate_and_save_kmeans(100000,2,3, "100k_2")
-generate_and_save_kmeans(100000,100,3, "100k")
+# generate_and_save_kmeans(100000,100,3, "100k")
 
-generate_and_save_kmeans(1000000,100,3, "1m")
+# generate_and_save_kmeans(100000,100,30, "100k_K30")
+
+# generate_and_save_kmeans(1000000,50,30, "1m_50_K30")
+
+# generate_and_save_kmeans(1000000,100,3, "1m")
+
+generate_and_save_kmeans(1000000,10,10, "1m_10_K10")
+
+generate_and_save_kmeans(1000000,50,10, "1m_50_K10")
+
+# generate_and_save_kmeans(1000000,100,10, "1m_K10")
+
+# generate_and_save_kmeans(1000000,100,30, "1m_K30")
+
+# generate_and_save_kmeans(1000000,100,50, "1m_K50")
+
+# generate_and_save_kmeans(1000000,100,100, "1m_K100")
+
+# generate_and_save_kmeans(2000000,200,50, "2m_K50")
 
 print("Data generation complete!")

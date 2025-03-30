@@ -4,7 +4,11 @@ from transformers import AutoTokenizer, AutoModel, pipeline
 from fastapi import FastAPI
 import uvicorn
 from pydantic import BaseModel
+import threading
+import queue
 
+MAX_BATCH_SIZE = 8
+MAX_WAITING_TIME = 5 #ms? adjust this
 app = FastAPI()
 
 # Example documents in memory
@@ -36,7 +40,7 @@ chat_pipeline = pipeline("text-generation", model="facebook/opt-125m")
 # Note: try this 1.5B model if you got enough GPU memory
 # chat_pipeline = pipeline("text-generation", model="Qwen/Qwen2.5-1.5B-Instruct")
 
-
+request_queue = queue.Queue()
 
 ## Hints:
 
@@ -67,6 +71,7 @@ def retrieve_top_k(query_emb: np.ndarray, k: int = 2) -> list:
     return [documents[i] for i in top_k_indices]
 
 def rag_pipeline(query: str, k: int = 2) -> str:
+    # whenever there is a new request the worker thread will receive it here
     # Step 1: Input embedding
     query_emb = get_embedding(query)
     
@@ -86,14 +91,37 @@ class QueryRequest(BaseModel):
     query: str
     k: int = 2
 
-@app.post("/rag")
+@app.post("/rag") 
 def predict(payload: QueryRequest):
-    result = rag_pipeline(payload.query, payload.k)
+    # result = rag_pipeline(payload.query, payload.k)
+    response_queue = queue.Queue()
+    request_queue.put(payload, response_queue)
+    
+    result = response_queue.get()
     
     return {
         "query": payload.query,
         "result": result,
     }
-
+    
+def worker():
+    # do batching by modifying this function
+    # make a second while loop inside the while True, 
+        
+    while True:
+        request = request_queue.get()
+        
+        response_queue = request[1]
+        payload = request[0]
+        
+        result = rag_pipeline(payload.query, payload.k)
+        response_queue.put(result)
+        
+        response_queue.task_done()
+        request_queue.task_done()
+        
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
+    
+    threading.Thread(target=worker, daemon=True).start()
+    # where do i do join

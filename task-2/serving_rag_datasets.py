@@ -6,9 +6,11 @@ import uvicorn
 from pydantic import BaseModel
 import threading
 import queue
+import time
+
 
 MAX_BATCH_SIZE = 8
-MAX_WAITING_TIME = 5 #ms? adjust this
+MAX_WAITING_TIME = 0.05 #50ms? adjust this
 app = FastAPI()
 
 # Example documents in memory
@@ -95,7 +97,7 @@ class QueryRequest(BaseModel):
 def predict(payload: QueryRequest):
     # result = rag_pipeline(payload.query, payload.k)
     response_queue = queue.Queue()
-    request_queue.put(payload, response_queue)
+    request_queue.put((payload, response_queue))
     
     result = response_queue.get()
     
@@ -105,23 +107,26 @@ def predict(payload: QueryRequest):
     }
     
 def worker():
-    # do batching by modifying this function
-    # make a second while loop inside the while True, 
-        
+
     while True:
-        request = request_queue.get()
+        batch = [] 
+        start_time = time.time()
         
-        response_queue = request[1]
-        payload = request[0]
-        
-        result = rag_pipeline(payload.query, payload.k)
-        response_queue.put(result)
-        
-        response_queue.task_done()
-        request_queue.task_done()
+        while len(batch) < MAX_BATCH_SIZE and (time.time() - start_time) < MAX_WAITING_TIME:
+            try:
+                req = request_queue.get(timeout=MAX_WAITING_TIME) # the timeout here is for if the queue is empty it should break
+                batch.append(req)
+            except:
+                break  # timeout hit but queue empty
+            
+        if batch:
+            for payload, response_queue in batch:
+                result = rag_pipeline(payload.query, payload.k)
+                response_queue.put(result)
+                
+                request_queue.task_done() # i do not know if these are needed because i do not use join
+                response_queue.task_done()      
         
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
-    
     threading.Thread(target=worker, daemon=True).start()
-    # where do i do join
+    uvicorn.run(app, host="0.0.0.0", port=8000)

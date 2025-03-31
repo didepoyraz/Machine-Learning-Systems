@@ -1,14 +1,17 @@
 import cupy as cp
 import torch
 import triton
+from sklearn.cluster import KMeans, MiniBatchKMeans
+from cuml.cluster import KMeans as cuKMeans
 import numpy as np
 import random
 import time
 import json
 from test import testdata_kmeans, testdata_knn, testdata_ann
 import matplotlib.pyplot as plt
-from sklearn.cluster import KMeans
 from matplotlib.colors import ListedColormap
+from test import testdata_kmeans, testdata_knn, testdata_ann, read_data
+
 # ------------------------------------------------------------------------------------------------
 # Your Task 1.1 code here
 # ------------------------------------------------------------------------------------------------
@@ -82,6 +85,7 @@ def our_knn(N, D, A, X, K, dist_metric='manhattan'):
             
     A_batch = torch.from_numpy(A[:batch_size]).cuda(non_blocking=True)  # pretransfer the first block 
 
+    # Process the batches in a loop
     for i in range(num_batches):
         start_idx = i * batch_size
         end_idx = min((i + 1) * batch_size, N)
@@ -385,10 +389,88 @@ def our_kmeans_cpu(N, D, A, K):
 # Your Task 2.2 code here
 # ------------------------------------------------------------------------------------------------
 
-# You can create any kernel here
+
+def euclidean_distance(vec1, vec2):
+    return torch.sqrt(torch.sum((vec1 - vec2) ** 2, dim=-1))
+
+def negative_dot_distance(vec1, vec2):
+    return -torch.sum(vec1 * vec2, dim=-1)
+
+def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
+    """
+    Perform Approximate Nearest Neighbor (ANN) search using K-Means clustering.
+
+    Parameters:
+        A (torch.Tensor): (N, D) Tensor containing dataset vectors.
+        cluster_centers (torch.Tensor): (K_clusters, D) Tensor of cluster centers.
+        cluster_assignments (torch.Tensor): (N,) Tensor mapping each point to its cluster.
+        X (torch.Tensor): (D,) Query vector.
+        K1 (int): Number of nearest clusters to consider.
+        K2 (int): Number of nearest neighbors to return.
+
+    Returns:
+        torch.Tensor: (K2,) Tensor containing the indices of the top K2 nearest neighbors.
+    """
+
+    cluster_distances = negative_dot_distance(X, cluster_centers)
+    nearest_clusters = torch.argsort(cluster_distances)[:K1] 
+
+    candidate_indices = torch.cat([
+        torch.where(cluster_assignments == cluster_idx)[0] for cluster_idx in nearest_clusters
+    ])
+
+    candidate_points = A[candidate_indices]
+
+    candidate_distances = negative_dot_distance(candidate_points, X)
+    nearest_neighbors = candidate_indices[torch.argsort(candidate_distances)[:K2]]
+
+    return nearest_neighbors
 
 def our_ann(N, D, A, X, K):
-    pass
+    device = "cuda"
+    K_clusters = 5  # Number of clusters for K-Means
+    K1 = 3  # Number of clusters and neighbors to consider
+    starttime = time.time()
+    if isinstance(A, np.ndarray):
+        A = torch.tensor(A, dtype=torch.float16)
+        print("Time taken by if isinstance1 = " + str(time.time() - starttime))
+
+    starttime = time.time()
+    if isinstance(X, np.ndarray):
+        X = torch.tensor(X, dtype=torch.float16)
+        print("Time taken by if isinstance2 = " + str(time.time() - starttime))
+
+    starttime = time.time()
+    # Move data to GPU (if available)
+    A = A.to(device)
+    X = X.to(device)
+    print("Time taken to device = " + str(time.time() - starttime))
+
+    # K-Means clustering
+    if N < 10000:
+            starttime = time.time()
+            kmeans = KMeans(n_clusters=K_clusters, max_iter=10, n_init=5)
+            print("Time taken by kmeans = " + str(time.time() - starttime))
+    else:
+        starttime = time.time()
+        kmeans = MiniBatchKMeans(n_clusters=K_clusters, batch_size=10000, max_iter=10, n_init=5)
+        print("Time taken by kmeans = " + str(time.time() - starttime))
+    
+    starttime = time.time()
+    cluster_assignments = torch.tensor(kmeans.fit_predict(A.cpu()), device=device)
+    print("Time taken by cluster assignemnt = " + str(time.time() - starttime))
+    starttime = time.time()
+    cluster_centers = torch.tensor(kmeans.cluster_centers_, device=device)
+    print("Time taken by cluster center assignemnt = " + str(time.time() - starttime))
+
+    # ANN search
+    starttime = time.time()
+    top_k_neighbors = ann_search(A, cluster_centers, cluster_assignments, X, K1, K)
+    print("Time taken by ANN search = " + str(time.time() - starttime))
+    # move from GPU to CPU
+    print("ANN - Top K nearest neighbors indices:", top_k_neighbors.cpu().numpy())
+
+    return top_k_neighbors
 
 # ------------------------------------------------------------------------------------------------
 # Test your code here
@@ -411,7 +493,7 @@ def test_knn_cpu():
     print(knn_result)
     
 def test_ann():
-    N, D, A, X, K = testdata_ann("test_file.json")
+    N, D, A, X, K = testdata_ann("")
     ann_result = our_ann(N, D, A, X, K)
     print(ann_result)
     
@@ -754,7 +836,144 @@ def test_kmeans_2m_K50():
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
     print(f"Speedup 2m_K50 (CPU to GPU): {speedup:.2f}x\n")
 
+def test_ann_2D():
+    print("\n\n------------------------\n\n")
+    print("For 2D: ")
+    N, D, A, X, K = testdata_knn("2d_meta.json")
+
+    # Manually check file types for A and X
+    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
+        A = read_data(A)
+    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
+        X = read_data(X)
+
+    knn_result, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(f"KNN: {gpu_time:.6f} seconds")
+
+    N, D, A, X, K = testdata_ann("2d_meta.json")
+
+    # Manually check file types for A and X
+    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
+        A = read_data(A)
+    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
+        X = read_data(X)
+
+    ann_result, gpu_time = measure_time(our_ann, N, D, A, X, K)
+    print(f"ANN Time: {gpu_time:.6f} seconds")
+
+    list1 = {int(x) for x in knn_result}
+    list2 = {int(x.cpu()) for x in ann_result}
+
+    rr = recall_rate(list1, list2)
+    print("Recall Rate: " + str(rr))
+
+def test_ann_215():
+    print("\n\n------------------------\n\n")
+    print("For 215: ")
+    # Load test data from JSON
+    N, D, A, X, K = testdata_knn("215_meta.json")
+
+    knn_result, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(f"KNN: {gpu_time:.6f} seconds")
+
+    N, D, A, X, K = testdata_ann("215_meta.json")
+
+    # Manually check file types for A and X
+    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
+        A = read_data(A)
+    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
+        X = read_data(X)
+
+    ann_result, gpu_time = measure_time(our_ann, N, D, A, X, K)
+    print(f"ANN: {gpu_time:.6f} seconds")
+
+    list1 = {int(x) for x in knn_result}
+    list2 = {int(x.cpu()) for x in ann_result}
+
+    rr = recall_rate(list1, list2)
+    print("Recall Rate: " + str(rr))
+
+def test_ann_4k():
+    print("\n\n------------------------\n\n")
+    print("For 4k ")
+    N, D, A, X, K = testdata_knn("4k_meta.json")
+
+    knn_result, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(f"KNN: {gpu_time:.6f} seconds")
+
+    N, D, A, X, K = testdata_ann("4k_meta.json")
+
+    # Manually check file types for A and X
+    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
+        A = read_data(A)
+    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
+        X = read_data(X)
+
+    ann_result, gpu_time = measure_time(our_ann, N, D, A, X, K)
+    print(f"ANN: {gpu_time:.6f} seconds")
+
+    list1 = {int(x) for x in knn_result}
+    list2 = {int(x.cpu()) for x in ann_result}
+
+    rr = recall_rate(list1, list2)
+    print("Recall Rate: " + str(rr))
+
+def test_ann_40k():
+    print("\n\n------------------------\n\n")
+    print("For 40k ")
+    N, D, A, X, K = testdata_knn("40k_meta.json")
+
+    knn_result, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(f"KNN: {gpu_time:.6f} seconds")
+
+    N, D, A, X, K = testdata_ann("40k_meta.json")
+
+    # Manually check file types for A and X
+    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
+        A = read_data(A)
+    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
+        X = read_data(X)
+
+    ann_result, gpu_time = measure_time(our_ann, N, D, A, X, K)
+    print(f"ANN: {gpu_time:.6f} seconds")
+
+    list1 = {int(x) for x in knn_result}
+    list2 = {int(x.cpu()) for x in ann_result}
+
+    rr = recall_rate(list1, list2)
+    print("Recall Rate: " + str(rr))
+
+def test_ann_4m():
+    print("\n\n------------------------\n\n")
+    print("For 4m ")
+
+    # Load test data from JSON
+    N, D, A, X, K = testdata_knn("4m_meta.json")
+
+    # Measure GPU time
+    knn_result, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(f"KNN: {gpu_time:.6f} seconds")
+
+    N, D, A, X, K = testdata_ann("4m_meta.json")
+
+    # Manually check file types for A and X
+    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
+        A = read_data(A)
+    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
+        X = read_data(X)
+
+    ann_result, gpu_time = measure_time(our_ann, N, D, A, X, K)
+    print(f"ANN: {gpu_time:.6f} seconds")
+
+    list1 = {int(x) for x in knn_result}
+    list2 = {int(x.cpu()) for x in ann_result}
+
+    rr = recall_rate(list1, list2)
+    print("Recall Rate: " + str(rr))
+
+
 if __name__ == "__main__":
+
     print("starting task..")
     # test_knn()
     # test_knn_cpu()
@@ -782,3 +1001,15 @@ if __name__ == "__main__":
     #test_kmeans_1m_K100()
     # test_kmeans_2m_K50()
     #test_kmeans_1m_K30()
+    #test_knn()
+    #test_knn_cpu()
+    #test_knn_2D()
+    #test_knn_215()
+    #test_knn_4k()
+    #test_knn_4m()
+    test_ann()
+    test_ann_2D()
+    test_ann_215()
+    test_ann_4k()
+    test_ann_40k()
+    test_ann_4m()

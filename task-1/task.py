@@ -2,14 +2,13 @@ import cupy as cp
 import torch
 import triton
 from sklearn.cluster import KMeans, MiniBatchKMeans
-from cuml.cluster import KMeans as cuKMeans
 import numpy as np
 import random
 import time
 import json
 from test import testdata_kmeans, testdata_knn, testdata_ann
-import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
+#import matplotlib.pyplot as plt
+#from matplotlib.colors import ListedColormap
 from test import testdata_kmeans, testdata_knn, testdata_ann, read_data
 
 # ------------------------------------------------------------------------------------------------
@@ -37,7 +36,7 @@ def distance_manhattan(X, Y):
 # Your Task 1.2 code here
 # ------------------------------------------------------------------------------------------------
 
-def our_knn(N, D, A, X, K, dist_metric='manhattan'):
+def our_knn(N, D, A, X, K, dist_metric='dot'):
     
     X_tensor = torch.from_numpy(X).cuda()
     
@@ -61,6 +60,7 @@ def our_knn(N, D, A, X, K, dist_metric='manhattan'):
         # Get top-K indices in this batch
         _, sorted_indices = torch.topk(dists, k=K, largest=False)
         sorted_indices = sorted_indices.cpu().numpy()
+        print("KNN - Top K nearest neighbors indices:", sorted_indices)
         return sorted_indices
 
     # Find the best batch size according to the available memory in the GPU
@@ -124,6 +124,8 @@ def our_knn(N, D, A, X, K, dist_metric='manhattan'):
     all_distances = torch.cat(distances_list)
     all_indices = torch.cat(indices_list)
     sorted_indices = all_indices[torch.argsort(all_distances)[:K]].cpu().numpy()
+
+    print("KNN - Top K nearest neighbors indices:" + str(sorted_indices))
 
     return sorted_indices
 
@@ -295,7 +297,6 @@ def our_kmeans(N, D, A, K, plot):
 
     return cluster_labels.cpu().numpy(), new_centroids.cpu().numpy() # decide on the return value based on what is needed for 2.2
 
-
 def print_kmeans(A, N, K, A_tensor, new_centroids, cluster_labels, plot, initial_indices):
     
     init_centroids = A[initial_indices]  # Use same initialization
@@ -304,6 +305,7 @@ def print_kmeans(A, N, K, A_tensor, new_centroids, cluster_labels, plot, initial
     sklearn_kmeans = KMeans(n_clusters=K, init=init_centroids, n_init=1, max_iter=100, random_state=2)
     sklearn_kmeans.fit(A)
     
+    """
     colors = ListedColormap(["blue", "green", "yellow"])
     plt.clf()
     # Scatter plot for clustered points (with smaller size and transparency)
@@ -325,6 +327,7 @@ def print_kmeans(A, N, K, A_tensor, new_centroids, cluster_labels, plot, initial
     save_path =f"figures/kmeans_gpu/kmeans_plot{plot}_{timestamp}.png"
     plt.savefig(save_path)
     print(f"Plot saved to {save_path}")
+    """
 
     gpu_ssd = ((A_tensor - new_centroids[cluster_labels]) ** 2).sum().item()
     print(f"GPU K-Means SSD: {gpu_ssd}")
@@ -389,6 +392,125 @@ def our_kmeans_cpu(N, D, A, K):
 # Your Task 2.2 code here
 # ------------------------------------------------------------------------------------------------
 
+def our_kmeans_tensor(N, D, A, K, plot):
+    dist_metric = "l2"
+    
+    max_iterations = 300 #decide
+    centroid_shift_tolerance = 1e-5 # decide
+    converged = False
+    
+    new_centroids = torch.empty((K,D), dtype=torch.float32, device="cuda")
+    # new_centroids = torch.zeros((K, D), device="cuda")
+    
+    # an empty matrix of shape (K, N) on the GPU, initialized with -1 (to represent empty slots)
+    cluster_labels_batches = []
+    cluster_labels = torch.full((K,N), -1, dtype=torch.int32, device="cuda")
+    counts = torch.zeros(K, dtype=torch.float32, device="cuda")
+    distances = torch.empty(N, device="cuda")
+    
+    #------------------------------------------------------------------------#
+    # Find the best batch size according to the available memory in the GPU and transfer A in batches
+    MAX_FRACTION = 0.8
+    MAX_BATCH_SIZE = 100_000
+    
+    device = torch.cuda.current_device()
+    total_memory = torch.cuda.get_device_properties(device).total_memory
+    allocated_memory = torch.cuda.memory_allocated(device)
+    available_memory = total_memory - allocated_memory
+    usable_memory = available_memory * MAX_FRACTION
+    
+    bytes_per_vec_element = 4
+    bytes_per_vec = D * bytes_per_vec_element
+    
+    batch_size = int(usable_memory // bytes_per_vec) # num of vectors per batch
+    batch_size = min(batch_size, MAX_BATCH_SIZE)  
+    
+    num_batches = (N + batch_size - 1) // batch_size
+    # print("batch size for 1m: ", batch_size, "usable memory: ", usable_memory, "num batches: ", num_batches)
+    
+    A_gpu_batches = [] #does not need to be on the GPU
+    for i in range(num_batches):
+        start_idx = i * batch_size
+        end_idx = min((i + 1) * batch_size, N)
+        
+        A_batch = (A[start_idx : end_idx])
+        A_gpu_batches.append(A_batch)
+    #--------------------------------------------------------------------------#
+    
+    #--------------------------------------------------------------------------------------#
+    # this was used for transferring A to the GPU and choosing indices, without any batching
+    # A_tensor = torch.from_numpy(A).to(dtype=torch.float32, device="cuda", non_blocking=True)
+    # indices = torch.randint(0, N, (K,), device="cuda") # select K random indices from the indices of A
+    # init_centroids_d = A_tensor[indices]  #filter the chosen K random vectors directly on GPU //question whether this is on the gpu
+    #--------------------------------------------------------------------------------------#
+    
+    initial_indices = np.random.choice(N, K, replace=False)
+    init_centroids_d = torch.tensor(A[initial_indices], device="cuda", dtype=torch.float32)
+
+    #-----------------------------------------------------------------------------#
+    # Use this initialisation of random centroids if you would like to compare sklearns with controlled init conditions in print_kmeans()
+    # np.random.seed(2)
+    # initial_indices = np.random.choice(N, K, replace=False)
+    # init_centroids_d = torch.tensor(A[initial_indices], device="cuda", dtype=torch.float32)
+    #-----------------------------------------------------------------------------#
+    
+    stream1 = torch.cuda.Stream()  # For distance calculation
+    stream2 = torch.cuda.Stream()  # For centroid labels and counts calculation
+    
+    iteration = 0
+    while not converged and iteration < max_iterations:
+        iteration += 1
+        
+        # assign clusters to all vectors
+        # start_idx = 0
+        for i, batch in enumerate(A_gpu_batches):
+            # start_idx = i * batch_size
+            # end_idx = min((i + 1) * batch_size, N)
+            new_centroids.zero_()
+            counts.zero_()
+            cluster_labels_batches.clear()
+            
+            #---- stream1
+            with torch.cuda.stream(stream1):
+                if dist_metric == "l2":
+                    distances = torch.sum((batch[:,None] - init_centroids_d)**2, dim=2)
+                    # distances = torch.cdist(A_tensor, init_centroids_d, p=2) ** 2
+                elif dist_metric == "cosine":
+                    A_norm = torch.nn.functional.normalize(batch, p=2, dim=1)
+                    C_norm = torch.nn.functional.normalize(init_centroids_d, p=2, dim=0)
+                    similarities = torch.matmul(A_norm, C_norm.T) #take transpose of centroids to make it (D,K) so matmul can give (N,K)
+                    distances = 1 - similarities
+                else:
+                    raise ValueError("Invalid distance metric")
+              
+            #---- stream2
+            with torch.cuda.stream(stream2):
+                stream2.wait_stream(stream1)  # Ensure batch is available before computing
+                
+                batch_cluster_labels = torch.argmin(distances, dim=1)
+                new_centroids.scatter_add_(0, batch_cluster_labels[:, None].expand(-1, D), batch.to(torch.float32)) # cumulatively adds all vectors belonging to the same cluster
+                counts.scatter_add_(0, batch_cluster_labels, torch.ones_like(batch_cluster_labels, dtype=torch.float32)) # for each cluster index in batch_labels, it adds 1.0 to counts at that position.
+                
+                cluster_labels_batches.append(batch_cluster_labels) # append the batches of cluster labels to concatenate at the end 
+                
+        torch.cuda.synchronize()  
+        
+        cluster_labels = torch.cat(cluster_labels_batches, dim=0)
+        counts[counts == 0] = 1  # avoid division by zero
+        new_centroids /= counts.unsqueeze(1)
+
+        centroid_shift = torch.norm(new_centroids - init_centroids_d, dim=1)
+        init_centroids_d = new_centroids.clone()
+
+        # if torch.mean(centroid_shift) <= centroid_shift_tolerance:
+        if torch.max(centroid_shift) <= centroid_shift_tolerance:
+            converged = True
+        
+        # gpu_ssd = ((A - new_centroids[cluster_labels]) ** 2).sum().item()
+        # print("gpu ssd: ", gpu_ssd)
+        # print_kmeans(A, N, K, A_tensor, new_centroids, cluster_labels, plot, initial_indices)
+
+    return cluster_labels, new_centroids # decide on the return value based on what is needed for 2.2
 
 def euclidean_distance(vec1, vec2):
     return torch.sqrt(torch.sum((vec1 - vec2) ** 2, dim=-1))
@@ -412,12 +534,15 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
         torch.Tensor: (K2,) Tensor containing the indices of the top K2 nearest neighbors.
     """
 
+    if isinstance(X, np.ndarray):
+        X = torch.tensor(X, dtype=torch.float16, device="cuda")
+
     cluster_distances = negative_dot_distance(X, cluster_centers)
     nearest_clusters = torch.argsort(cluster_distances)[:K1] 
 
     candidate_indices = torch.cat([
         torch.where(cluster_assignments == cluster_idx)[0] for cluster_idx in nearest_clusters
-    ])
+    ]).to("cuda")
 
     candidate_points = A[candidate_indices]
 
@@ -430,46 +555,20 @@ def our_ann(N, D, A, X, K):
     device = "cuda"
     K_clusters = 5  # Number of clusters for K-Means
     K1 = 3  # Number of clusters and neighbors to consider
-    starttime = time.time()
+
     if isinstance(A, np.ndarray):
-        A = torch.tensor(A, dtype=torch.float16)
-        print("Time taken by if isinstance1 = " + str(time.time() - starttime))
-
-    starttime = time.time()
-    if isinstance(X, np.ndarray):
-        X = torch.tensor(X, dtype=torch.float16)
-        print("Time taken by if isinstance2 = " + str(time.time() - starttime))
-
-    starttime = time.time()
-    # Move data to GPU (if available)
-    A = A.to(device)
-    X = X.to(device)
-    print("Time taken to device = " + str(time.time() - starttime))
-
-    # K-Means clustering
-    if N < 10000:
-            starttime = time.time()
-            kmeans = KMeans(n_clusters=K_clusters, max_iter=10, n_init=5)
-            print("Time taken by kmeans = " + str(time.time() - starttime))
-    else:
         starttime = time.time()
-        kmeans = MiniBatchKMeans(n_clusters=K_clusters, batch_size=10000, max_iter=10, n_init=5)
-        print("Time taken by kmeans = " + str(time.time() - starttime))
-    
-    starttime = time.time()
-    cluster_assignments = torch.tensor(kmeans.fit_predict(A.cpu()), device=device)
-    print("Time taken by cluster assignemnt = " + str(time.time() - starttime))
-    starttime = time.time()
-    cluster_centers = torch.tensor(kmeans.cluster_centers_, device=device)
-    print("Time taken by cluster center assignemnt = " + str(time.time() - starttime))
+        A = torch.as_tensor(A, device="cuda", dtype=torch.float32)
+        print("A to torch tensor took - " + str(time.time() - starttime))
 
-    # ANN search
+    starttime = time.time()
+    cluster_assignments, cluster_centers = our_kmeans_tensor(N, D, A, K1, "ann")
+    print("our_kmeans took - " + str(time.time() - starttime))
+
     starttime = time.time()
     top_k_neighbors = ann_search(A, cluster_centers, cluster_assignments, X, K1, K)
-    print("Time taken by ANN search = " + str(time.time() - starttime))
-    # move from GPU to CPU
+    print('ann_search function took - ' + str(time.time() - starttime))
     print("ANN - Top K nearest neighbors indices:", top_k_neighbors.cpu().numpy())
-
     return top_k_neighbors
 
 # ------------------------------------------------------------------------------------------------
@@ -992,9 +1091,9 @@ if __name__ == "__main__":
     
     # test_kmeans_1m()
     # test_kmeans_1m_K10()
-    test_kmeans_1m_10_K10()
+    #test_kmeans_1m_10_K10()
     
-    print("task ended..")
+    #print("task ended..")
     # test_kmeans_1m_50_K30
     
     #test_kmeans_1m_K50()

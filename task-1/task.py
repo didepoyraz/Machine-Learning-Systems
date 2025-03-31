@@ -2,7 +2,7 @@ import cupy as cp
 import torch
 import triton
 from sklearn.cluster import KMeans, MiniBatchKMeans
-from cuml.cluster import KMeans as cuKMeans
+# from cuml.cluster import KMeans as cuKMeans
 import numpy as np
 import random
 import time
@@ -992,11 +992,11 @@ if __name__ == "__main__":
     
     # test_kmeans_1m()
     # test_kmeans_1m_K10()
-    test_kmeans_1m_10_K10()
+    #test_kmeans_1m_10_K10()
     
+
+    test_kmeans_1m_50_K30
     print("task ended..")
-    # test_kmeans_1m_50_K30
-    
     #test_kmeans_1m_K50()
     #test_kmeans_1m_K100()
     # test_kmeans_2m_K50()
@@ -1007,9 +1007,10 @@ if __name__ == "__main__":
     #test_knn_215()
     #test_knn_4k()
     #test_knn_4m()
-    test_ann()
-    test_ann_2D()
-    test_ann_215()
-    test_ann_4k()
-    test_ann_40k()
-    test_ann_4m()
+    
+    # test_ann()
+    # test_ann_2D()
+    # test_ann_215()
+    # test_ann_4k()
+    # test_ann_40k()
+    # test_ann_4m()

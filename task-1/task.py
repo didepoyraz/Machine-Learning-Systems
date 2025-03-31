@@ -1,11 +1,15 @@
-import torch
 import cupy as cp
-#import triton
+import torch
+import triton
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from cuml.cluster import KMeans as cuKMeans
 import numpy as np
+import random
 import time
 import json
+from test import testdata_kmeans, testdata_knn, testdata_ann
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
 from test import testdata_kmeans, testdata_knn, testdata_ann, read_data
 
 # ------------------------------------------------------------------------------------------------
@@ -33,42 +37,68 @@ def distance_manhattan(X, Y):
 # Your Task 1.2 code here
 # ------------------------------------------------------------------------------------------------
 
-def our_knn(N, D, A, X, K, dist_metric='dot'):
-    # Move X to GPU (A is moved in batches below)
+def our_knn(N, D, A, X, K, dist_metric='manhattan'):
+    
     X_tensor = torch.from_numpy(X).cuda()
+    
+    if N <= 100000:
+        A_tensor = torch.from_numpy(A).cuda(non_blocking=True)  
+    
+        if dist_metric == "l2":
+            dists = torch.norm(A_tensor - X_tensor, dim=1)
+        elif dist_metric == "cosine":
+            A_norm = torch.nn.functional.normalize(A_tensor, p=2, dim=1)
+            X_norm = torch.nn.functional.normalize(X_tensor, p=2, dim=0)
+            similarities = torch.matmul(A_norm, X_norm)
+            dists = 1 - similarities
+        elif dist_metric == "dot":
+            dists = -torch.matmul(A_tensor, X_tensor)  # Negate so smaller is better
+        elif dist_metric == "manhattan":
+            dists = torch.sum(torch.abs(A_tensor - X_tensor), dim=1)
+        else:
+            raise ValueError("Invalid distance metric")
+     
+        # Get top-K indices in this batch
+        _, sorted_indices = torch.topk(dists, k=K, largest=False)
+        sorted_indices = sorted_indices.cpu().numpy()
+        return sorted_indices
 
-    # Automatically determine batch size based on N
-    if N <= 500:
-        batch_size = 64
-    elif N <= 1000:
-        batch_size = 128
-    elif N <= 10_000:
-        batch_size = 1024
-    elif N <= 100_000:
-        batch_size = 4096
-    else:
-        batch_size = 8192  # Large batch for very large datasets
-
-    num_batches = (N + batch_size - 1) // batch_size  # Compute number of batches
+    # Find the best batch size according to the available memory in the GPU
+    MAX_FRACTION = 0.8
+    device = torch.cuda.current_device()
+    total_memory = torch.cuda.get_device_properties(device).total_memory
+    allocated_memory = torch.cuda.memory_allocated(device)
+    available_memory = total_memory - allocated_memory
+    usable_memory = available_memory * MAX_FRACTION
+    
+    bytes_per_vec_element = 8
+    bytes_per_vec = D * bytes_per_vec_element
+    batch_size = int(usable_memory // bytes_per_vec)
+    
     distances_list = []
     indices_list = []
 
-    # Create a small pool of CUDA streams (e.g., 4 streams)
-    num_streams = 4
-    streams = [torch.cuda.Stream() for _ in range(num_streams)]
+    num_batches = (N + batch_size - 1) // batch_size
+    
+    stream1 = torch.cuda.Stream()  # For memory transfer
+    stream2 = torch.cuda.Stream()  # For computation
+            
+    A_batch = torch.from_numpy(A[:batch_size]).cuda(non_blocking=True)  # pretransfer the first block 
 
     # Process the batches in a loop
     for i in range(num_batches):
         start_idx = i * batch_size
         end_idx = min((i + 1) * batch_size, N)
+        
+        with torch.cuda.stream(stream1):
+            # Transfer next batch to the GPU
+            if i < num_batches - 1: 
+                A_batch = torch.from_numpy(A[end_idx : end_idx + batch_size]).cuda(non_blocking=True)
 
-        # Move only the current batch of A to GPU
-        A_batch = torch.from_numpy(A[start_idx:end_idx]).cuda()
-
-        # Use a stream from the pool to overlap computation
-        stream = streams[i % num_streams]  # Reuse streams in a round-robin manner
-
-        with torch.cuda.stream(stream):  # Use the selected stream
+        with torch.cuda.stream(stream2):
+            stream2.wait_stream(stream1)  # Ensure batch is available before computing
+        
+            # Compute distances
             if dist_metric == "l2":
                 dists = torch.norm(A_batch - X_tensor, dim=1)
             elif dist_metric == "cosine":
@@ -83,25 +113,18 @@ def our_knn(N, D, A, X, K, dist_metric='dot'):
             else:
                 raise ValueError("Invalid distance metric")
 
-            # Get top-K indices in this batch
+            # Get top-K indices
             batch_dists, batch_indices = torch.topk(dists, k=K, largest=False)
 
-            # Store results (move to CPU asynchronously)
             distances_list.append(batch_dists.cpu())
-            indices_list.append((batch_indices + start_idx).cpu())  # Adjust indices
+            indices_list.append((batch_indices + start_idx).cpu())
+    
+    torch.cuda.synchronize()  
 
-    # Synchronize all CUDA streams
-    torch.cuda.synchronize()
-
-    # Concatenate all batches
     all_distances = torch.cat(distances_list)
     all_indices = torch.cat(indices_list)
+    sorted_indices = all_indices[torch.argsort(all_distances)[:K]].cpu().numpy()
 
-    # Sort overall K-nearest from all batches
-    sorted_indices = torch.argsort(all_distances)[:K]
-
-    sorted_indices = all_indices[sorted_indices].cpu().numpy()
-    print("KNN - Top K nearest neighbors indices:", sorted_indices)
     return sorted_indices
 
 
@@ -125,7 +148,7 @@ def distance_dot_cpu(X, Y):
 def distance_manhattan_cpu(X, Y):
     return np.sum(np.abs(X - Y))
 
-def our_knn_cpu(N, D, A, X, K, dist_metric="dot"):
+def our_knn_cpu(N, D, A, X, K, dist_metric="manhattan"):
     if A.shape != (N, D) or X.shape != (D,):
         raise ValueError("Input dimensions do not match.")
 
@@ -150,13 +173,218 @@ def our_knn_cpu(N, D, A, X, K, dist_metric="dot"):
 # Your Task 2.1 code here
 # ------------------------------------------------------------------------------------------------
 
-# You can create any kernel here
-# def distance_kernel(X, Y, D):
-#     pass
+NUM_INIT = None 
 
-def our_kmeans(N, D, A, K):
-    pass
+def our_kmeans(N, D, A, K, plot):
+    dist_metric = "l2"
+    
+    max_iterations = 300 #decide
+    centroid_shift_tolerance = 1e-5 # decide
+    converged = False
+    
+    new_centroids = torch.empty((K,D), dtype=torch.float32, device="cuda")
+    # new_centroids = torch.zeros((K, D), device="cuda")
+    
+    # an empty matrix of shape (K, N) on the GPU, initialized with -1 (to represent empty slots)
+    cluster_labels_batches = []
+    cluster_labels = torch.full((K,N), -1, dtype=torch.int32, device="cuda")
+    counts = torch.zeros(K, dtype=torch.float32, device="cuda")
+    distances = torch.empty(N, device="cuda")
+    
+    #------------------------------------------------------------------------#
+    # Find the best batch size according to the available memory in the GPU and transfer A in batches
+    MAX_FRACTION = 0.8
+    MAX_BATCH_SIZE = 100_000
+    
+    device = torch.cuda.current_device()
+    total_memory = torch.cuda.get_device_properties(device).total_memory
+    allocated_memory = torch.cuda.memory_allocated(device)
+    available_memory = total_memory - allocated_memory
+    usable_memory = available_memory * MAX_FRACTION
+    
+    bytes_per_vec_element = 4
+    bytes_per_vec = D * bytes_per_vec_element
+    
+    batch_size = int(usable_memory // bytes_per_vec) # num of vectors per batch
+    batch_size = min(batch_size, MAX_BATCH_SIZE)  
+    
+    num_batches = (N + batch_size - 1) // batch_size
+    # print("batch size for 1m: ", batch_size, "usable memory: ", usable_memory, "num batches: ", num_batches)
+    
+    A_gpu_batches = [] #does not need to be on the GPU
+    for i in range(num_batches):
+        start_idx = i * batch_size
+        end_idx = min((i + 1) * batch_size, N)
+        
+        A_batch = torch.from_numpy(A[start_idx : end_idx]).cuda(non_blocking=True)
+        A_gpu_batches.append(A_batch)
+    #--------------------------------------------------------------------------#
+    
+    #--------------------------------------------------------------------------------------#
+    # this was used for transferring A to the GPU and choosing indices, without any batching
+    # A_tensor = torch.from_numpy(A).to(dtype=torch.float32, device="cuda", non_blocking=True)
+    # indices = torch.randint(0, N, (K,), device="cuda") # select K random indices from the indices of A
+    # init_centroids_d = A_tensor[indices]  #filter the chosen K random vectors directly on GPU //question whether this is on the gpu
+    #--------------------------------------------------------------------------------------#
+    
+    initial_indices = np.random.choice(N, K, replace=False)
+    init_centroids_d = torch.tensor(A[initial_indices], device="cuda", dtype=torch.float32)
 
+    #-----------------------------------------------------------------------------#
+    # Use this initialisation of random centroids if you would like to compare sklearns with controlled init conditions in print_kmeans()
+    # np.random.seed(2)
+    # initial_indices = np.random.choice(N, K, replace=False)
+    # init_centroids_d = torch.tensor(A[initial_indices], device="cuda", dtype=torch.float32)
+    #-----------------------------------------------------------------------------#
+    
+    stream1 = torch.cuda.Stream()  # For distance calculation
+    stream2 = torch.cuda.Stream()  # For centroid labels and counts calculation
+    
+    iteration = 0
+    while not converged and iteration < max_iterations:
+        iteration += 1
+        
+        # assign clusters to all vectors
+        # start_idx = 0
+        for i, batch in enumerate(A_gpu_batches):
+            # start_idx = i * batch_size
+            # end_idx = min((i + 1) * batch_size, N)
+            new_centroids.zero_()
+            counts.zero_()
+            cluster_labels_batches.clear()
+            
+            #---- stream1
+            with torch.cuda.stream(stream1):
+                if dist_metric == "l2":
+                    distances = torch.sum((batch[:,None] - init_centroids_d)**2, dim=2)
+                    # distances = torch.cdist(A_tensor, init_centroids_d, p=2) ** 2
+                elif dist_metric == "cosine":
+                    A_norm = torch.nn.functional.normalize(batch, p=2, dim=1)
+                    C_norm = torch.nn.functional.normalize(init_centroids_d, p=2, dim=0)
+                    similarities = torch.matmul(A_norm, C_norm.T) #take transpose of centroids to make it (D,K) so matmul can give (N,K)
+                    distances = 1 - similarities
+                else:
+                    raise ValueError("Invalid distance metric")
+              
+            #---- stream2
+            with torch.cuda.stream(stream2):
+                stream2.wait_stream(stream1)  # Ensure batch is available before computing
+                
+                batch_cluster_labels = torch.argmin(distances, dim=1)
+                new_centroids.scatter_add_(0, batch_cluster_labels[:, None].expand(-1, D), batch.to(torch.float32)) # cumulatively adds all vectors belonging to the same cluster
+                counts.scatter_add_(0, batch_cluster_labels, torch.ones_like(batch_cluster_labels, dtype=torch.float32)) # for each cluster index in batch_labels, it adds 1.0 to counts at that position.
+                
+                cluster_labels_batches.append(batch_cluster_labels) # append the batches of cluster labels to concatenate at the end 
+                
+        torch.cuda.synchronize()  
+        
+        cluster_labels = torch.cat(cluster_labels_batches, dim=0)
+        counts[counts == 0] = 1  # avoid division by zero
+        new_centroids /= counts.unsqueeze(1)
+
+        centroid_shift = torch.norm(new_centroids - init_centroids_d, dim=1)
+        init_centroids_d = new_centroids.clone()
+
+        # if torch.mean(centroid_shift) <= centroid_shift_tolerance:
+        if torch.max(centroid_shift) <= centroid_shift_tolerance:
+            converged = True
+        
+        # gpu_ssd = ((A - new_centroids[cluster_labels]) ** 2).sum().item()
+        # print("gpu ssd: ", gpu_ssd)
+        # print_kmeans(A, N, K, A_tensor, new_centroids, cluster_labels, plot, initial_indices)
+
+    return cluster_labels.cpu().numpy(), new_centroids.cpu().numpy() # decide on the return value based on what is needed for 2.2
+
+
+def print_kmeans(A, N, K, A_tensor, new_centroids, cluster_labels, plot, initial_indices):
+    
+    init_centroids = A[initial_indices]  # Use same initialization
+    
+    # change init to "kmeans++" if you would like to see better init conditions for improved cluster alignment
+    sklearn_kmeans = KMeans(n_clusters=K, init=init_centroids, n_init=1, max_iter=100, random_state=2)
+    sklearn_kmeans.fit(A)
+    
+    colors = ListedColormap(["blue", "green", "yellow"])
+    plt.clf()
+    # Scatter plot for clustered points (with smaller size and transparency)
+    plt.scatter(A[:, 0], A[:, 1], c=sklearn_kmeans.labels_, cmap=colors, alpha=0.2, s=2)
+
+    plt.title("K-Means Clustering Results SKLEARN")
+    plt.legend()
+    timestamp = int(time.time())  # Generate a unique filename
+    save_path =f"figures/kmeans_sklearns/kmeans_plot_sklearns_{plot}_{timestamp}.png"
+    plt.savefig(save_path)
+    print(f"sklearns Plot saved to kmeans_sklearns_plot{plot}.png")  
+    
+    plt.clf()
+    plt.scatter(A[:, 0], A[:, 1], c=cluster_labels.cpu().numpy(), cmap=colors, alpha=0.2, s=2)
+    plt.title("K-Means Clustering Results GPU")
+    plt.legend()
+    
+    timestamp = int(time.time())  # Generate a unique filename
+    save_path =f"figures/kmeans_gpu/kmeans_plot{plot}_{timestamp}.png"
+    plt.savefig(save_path)
+    print(f"Plot saved to {save_path}")
+
+    gpu_ssd = ((A_tensor - new_centroids[cluster_labels]) ** 2).sum().item()
+    print(f"GPU K-Means SSD: {gpu_ssd}")
+
+    sklearn_ssd = sklearn_kmeans.inertia_
+    print(f"Sklearn K-Means SSD: {sklearn_ssd}")
+
+    # Compare
+    ssd_diff = abs(gpu_ssd - sklearn_ssd)
+    print(f"SSD Difference: {ssd_diff:.4f}")
+    torch_centroids = new_centroids.cpu().numpy()
+    sklearn_centroids = sklearn_kmeans.cluster_centers_
+
+    print("K-Means Centroids:\n", torch_centroids)
+    print("Sklearn K-Means Centroids:\n", sklearn_centroids)
+    
+    centroid_error = np.linalg.norm(torch_centroids - sklearn_centroids, axis=1).mean()
+    print(f"Average centroid difference: {centroid_error:.4f}")
+
+    if np.array_equal(cluster_labels.cpu().numpy(), sklearn_kmeans.labels_):
+        print("All cluster labels match exactly!")
+    else:
+        print("Some cluster assignments differ, skleanrs: ", sklearn_kmeans.labels_, "gpu: ", cluster_labels.cpu().numpy())
+
+def our_kmeans_cpu(N, D, A, K):
+    """
+    NumPy-only K-Means implementation (CPU only).
+    A: (N, D) NumPy array of data points
+    K: Number of clusters
+    """
+    max_iterations=300
+    tol=1e-5
+    # Randomly initialize K centroids from data points
+    indices = np.random.choice(N, K, replace=False)
+    centroids = A[indices]
+    
+    converged = False
+    iteration = 0
+    
+    while not converged and iteration < max_iterations:
+        # print(f"iteration {iteration}")
+        iteration += 1
+
+        distances = np.linalg.norm(A[:, None, :] - centroids[None, :, :], axis=2)  # Shape (N, K)
+        cluster_labels = np.argmin(distances, axis=1)  # Shape (N,)
+
+        new_centroids = np.zeros((K, D))
+
+        for k in range(K):
+            assigned_points = A[cluster_labels == k]
+            if len(assigned_points) > 0:
+                new_centroids[k] = assigned_points.mean(axis=0)
+
+        centroid_shift = np.linalg.norm(new_centroids - centroids, axis=1).max()
+        centroids = new_centroids
+        
+        if centroid_shift < tol:
+            converged =True
+       
+    return cluster_labels, centroids
 # ------------------------------------------------------------------------------------------------
 # Your Task 2.2 code here
 # ------------------------------------------------------------------------------------------------
@@ -306,7 +534,7 @@ def test_knn_2D():
 
     # Calculate Speedup
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup (CPU to GPU): {speedup:.2f}x")
+    print(f"Speedup (CPU to GPU): {speedup:.2f}x\n")
 
 
 def test_knn_215():
@@ -323,7 +551,7 @@ def test_knn_215():
 
     # Calculate Speedup
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup (CPU to GPU): {speedup:.2f}x")
+    print(f"Speedup 2*15 (CPU to GPU): {speedup:.2f}x\n")
 
 def test_knn_4k():
     # Load test data from JSON
@@ -339,7 +567,23 @@ def test_knn_4k():
 
     # Calculate Speedup
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup (CPU to GPU): {speedup:.2f}x")
+    print(f"Speedup 4k (CPU to GPU): {speedup:.2f}x\n")
+    
+def test_knn_40k():
+    # Load test data from JSON
+    N, D, A, X, K = testdata_knn("40k_meta.json")
+
+    # Measure CPU time
+    _, cpu_time = measure_time(our_knn_cpu, N, D, A, X, K)
+    print(f"CPU Time (40k): {cpu_time:.6f} seconds")
+
+    # Measure GPU time
+    _, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(f"GPU Time (40k): {gpu_time:.6f} seconds")
+
+    # Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 40k (CPU to GPU): {speedup:.2f}x\n")
 
 def test_knn_4m():
     # Load test data from JSON
@@ -355,7 +599,242 @@ def test_knn_4m():
 
     # Calculate Speedup
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup (CPU to GPU): {speedup:.2f}x")
+    print(f"Speedup 4m (CPU to GPU): {speedup:.2f}x\n")
+
+def test_kmeans_10():
+    # Load test data from JSON
+    N, D, A, K = testdata_kmeans("10_meta.json")
+
+    # Measure CPU time
+    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
+    print(f"CPU Time (10): {cpu_time:.6f} seconds")
+    plot = "10"
+    # Measure GPU time
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    print(f"GPU Time (10): {gpu_time:.6f} seconds")
+
+    #Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 10 (CPU to GPU): {speedup:.2f}x\n")
+    
+
+def test_kmeans_1000_2():
+    # Load test data from JSON
+    N, D, A, K = testdata_kmeans("1000_2_meta.json")
+
+    # # Measure CPU time
+    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
+    print(f"CPU Time (1000_2): {cpu_time:.6f} seconds")
+    plot = "1000_2"
+    # Measure GPU time
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    print(f"GPU Time (1000_2): {gpu_time:.6f} seconds")
+
+    #Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 1000_2 (CPU to GPU): {speedup:.2f}x\n")
+
+
+def test_kmeans_1000_1024():
+    # Load test data from JSON
+    N, D, A, K = testdata_kmeans("1000_1024_meta.json")
+
+    # Measure CPU time
+    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
+    print(f"CPU Time (1000_1024): {cpu_time:.6f} seconds")
+    plot = "1000_1024"
+    # Measure GPU time
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    print(f"GPU Time (1000_1024): {gpu_time:.6f} seconds")
+
+    #Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 1000_1024 (CPU to GPU): {speedup:.2f}x\n")
+    
+def test_kmeans_100k():
+    # Load test data from JSON
+    N, D, A, K = testdata_kmeans("100k_meta.json")
+
+    # # Measure CPU time
+    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
+    print(f"CPU Time (100k): {cpu_time:.6f} seconds")
+    plot = "100k"
+    
+    # Measure GPU time
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    print(f"GPU Time (100k): {gpu_time:.6f} seconds")
+
+    #Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 100k (CPU to GPU): {speedup:.2f}x\n")
+
+def test_kmeans_100k_K30():
+    # Load test data from JSON
+    print("Starting testing: ")
+    N, D, A, K = testdata_kmeans("100k_K30_meta.json")
+
+    # # Measure CPU time
+    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
+    print(f"CPU Time (100k_K30): {cpu_time:.6f} seconds")
+    plot = "100k_K30"
+    
+    # Measure GPU time
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    print(f"GPU Time (100k_K30): {gpu_time:.6f} seconds")
+
+    #Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 100k_K30 (CPU to GPU): {speedup:.2f}x\n")
+
+def test_kmeans_1m():
+    # Load test data from JSON
+    N, D, A, K = testdata_kmeans("1m_meta.json")
+
+    # # Measure CPU time
+    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
+    print(f"CPU Time (1m): {cpu_time:.6f} seconds")
+    plot = "1m"
+    # Measure GPU time
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    print(f"GPU Time (1m): {gpu_time:.6f} seconds")
+
+    # #Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 1m (CPU to GPU): {speedup:.2f}x\n")
+
+
+def test_kmeans_1m_K10():
+    # Load test data from JSON
+    N, D, A, K = testdata_kmeans("1m_K10_meta.json")
+
+    # # Measure CPU time
+    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
+    print(f"CPU Time (1m_K10): {cpu_time:.6f} seconds")
+    plot = "1m_K10"
+    # Measure GPU time
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    print(f"GPU Time (1m_K10): {gpu_time:.6f} seconds")
+
+    # #Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 1m_K10 (CPU to GPU): {speedup:.2f}x\n")
+
+def test_kmeans_1m_K50():
+    # Load test data from JSON
+    N, D, A, K = testdata_kmeans("1m_K50_meta.json")
+
+    # # Measure CPU time
+    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
+    print(f"CPU Time (1m_K50): {cpu_time:.6f} seconds")
+    plot = "1m_K50"
+    # Measure GPU time
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    print(f"GPU Time (1m_K50): {gpu_time:.6f} seconds")
+
+    # #Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 1m_K50 (CPU to GPU): {speedup:.2f}x\n")
+
+def test_kmeans_1m_10_K10():
+    # Load test data from JSON
+    print("statrting k30")
+    N, D, A, K = testdata_kmeans("1m_10_K10_meta.json")
+
+    # # Measure CPU time
+    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
+    print(f"CPU Time (1m_10_K10): {cpu_time:.6f} seconds")
+    plot = "1m_10_K10"
+    # Measure GPU time
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    print(f"GPU Time (1m_10_K10): {gpu_time:.6f} seconds")
+
+    # #Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 1m_10_K10 (CPU to GPU): {speedup:.2f}x\n")
+
+def test_kmeans_1m_50_K10():
+    # Load test data from JSON
+    print("statrting k30")
+    N, D, A, K = testdata_kmeans("1m_50_K10_meta.json")
+
+    # # Measure CPU time
+    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
+    print(f"CPU Time (1m_50_K30): {cpu_time:.6f} seconds")
+    plot = "1m_50_K10"
+    # Measure GPU time
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    print(f"GPU Time (1m_50_K10): {gpu_time:.6f} seconds")
+
+    # #Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 1m_50_K10 (CPU to GPU): {speedup:.2f}x\n")
+
+
+def test_kmeans_1m_K30():
+    # Load test data from JSON
+    N, D, A, K = testdata_kmeans("1m_K30_meta.json")
+
+    # # Measure CPU time
+    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
+    print(f"CPU Time (1m_K30): {cpu_time:.6f} seconds")
+    plot = "1m_K30"
+    # Measure GPU time
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    print(f"GPU Time (1m_K30): {gpu_time:.6f} seconds")
+
+    # #Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 1m_K30 (CPU to GPU): {speedup:.2f}x\n")
+
+
+def test_kmeans_1m_50_K30():
+    # Load test data from JSON
+    print("statrting k30")
+    N, D, A, K = testdata_kmeans("1m_50_K30_meta.json")
+
+    # # Measure CPU time
+    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
+    print(f"CPU Time (1m_50_K30): {cpu_time:.6f} seconds")
+    plot = "1m_50_K30"
+    # Measure GPU time
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    print(f"GPU Time (1m_50_K30): {gpu_time:.6f} seconds")
+
+    # #Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 1m_50_K30 (CPU to GPU): {speedup:.2f}x\n")
+
+def test_kmeans_1m_K100():
+    # Load test data from JSON
+    N, D, A, K = testdata_kmeans("1m_K100_meta.json")
+
+    # # Measure CPU time
+    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
+    print(f"CPU Time (1m_K100): {cpu_time:.6f} seconds")
+    plot = "1m_K100"
+    # Measure GPU time
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    print(f"GPU Time (1m_K100): {gpu_time:.6f} seconds")
+
+    # #Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 1m_K100 (CPU to GPU): {speedup:.2f}x\n")
+
+def test_kmeans_2m_K50():
+    # Load test data from JSON
+    N, D, A, K = testdata_kmeans("2m_K50_meta.json")
+
+    # # Measure CPU time
+    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
+    print(f"CPU Time (2m_K50): {cpu_time:.6f} seconds")
+    plot = "2m_K50"
+    # Measure GPU time
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    print(f"GPU Time (2m_K50): {gpu_time:.6f} seconds")
+
+    # #Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 2m_K50 (CPU to GPU): {speedup:.2f}x\n")
 
 def test_ann_2D():
     print("\n\n------------------------\n\n")
@@ -494,6 +973,34 @@ def test_ann_4m():
 
 
 if __name__ == "__main__":
+
+    print("starting task..")
+    # test_knn()
+    # test_knn_cpu()
+    # test_knn_2D()
+    # test_knn_215()
+    #test_knn_4k()
+    # #test_knn_40k()
+    # test_knn_4m()
+    
+    # test_kmeans_10()
+    #test_kmeans_1000_2()
+    # test_kmeans_1000_1024()
+    # test_kmeans_100k()
+    
+    # test_kmeans_100k_K30
+    
+    # test_kmeans_1m()
+    # test_kmeans_1m_K10()
+    test_kmeans_1m_10_K10()
+    
+    print("task ended..")
+    # test_kmeans_1m_50_K30
+    
+    #test_kmeans_1m_K50()
+    #test_kmeans_1m_K100()
+    # test_kmeans_2m_K50()
+    #test_kmeans_1m_K30()
     #test_knn()
     #test_knn_cpu()
     #test_knn_2D()

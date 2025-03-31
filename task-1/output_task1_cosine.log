@@ -1,14 +1,15 @@
-[357 215 854 128 747 949 305 808 553 328]
-[131 466 329 567 228 976 688 511 459 589]
-CPU Time (2D): 0.015343 seconds
-GPU Time (2D): 0.016399 seconds
-Speedup (CPU to GPU): 0.94x
-CPU Time (2^15): 0.059463 seconds
-GPU Time (2^15): 0.042227 seconds
-Speedup (CPU to GPU): 1.41x
-CPU Time (4k): 0.059430 seconds
-GPU Time (4k): 0.005413 seconds
-Speedup (CPU to GPU): 10.98x
-CPU Time (4m): 57.467883 seconds
-GPU Time (4m): 0.546145 seconds
-Speedup (CPU to GPU): 105.22x
+hello
+Generating data with k=10
+Generated data shape: (1000000, 10)
+Unique cluster labels: [0 1 2 3 4 5 6 7 8 9]
+Generating data with k=10
+Generated data shape: (1000000, 50)
+Unique cluster labels: [0 1 2 3 4 5 6 7 8 9]
+Data generation complete!
+starting task..
+statrting k30
+CPU Time (1m_10_K30): 625.251555 seconds
+GPU Time (1m_10_K10): 2.825874 seconds
+Speedup 1m_10_K10 (CPU to GPU): 221.26x
+
+task ended..

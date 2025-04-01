@@ -1,13 +1,7 @@
 {
   "test_name": "steady_high",
   "total_requests": 1200,
-  "successful_requests": 1146,
-  "success_rate": 0.955,
-  "avg_latency": 12.867442244634578,
-  "median_latency": 12.898221731185913,
-  "p95_latency": 19.690229892730713,
-  "p99_latency": 27.871546328067776,
-  "min_latency": 3.1852331161499023,
-  "max_latency": 29.969937801361084,
-  "throughput": 19.11724172129727
+  "successful_requests": 0,
+  "success_rate": 0,
+  "error": "No successful requests"
 }

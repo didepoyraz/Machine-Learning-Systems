@@ -1,13 +1,7 @@
 {
   "test_name": "steady_low",
   "total_requests": 300,
-  "successful_requests": 300,
-  "success_rate": 1.0,
-  "avg_latency": 3.795533218383789,
-  "median_latency": 3.887312650680542,
-  "p95_latency": 4.801977050304413,
-  "p99_latency": 6.3798695349693295,
-  "min_latency": 1.461796522140503,
-  "max_latency": 7.705340147018433,
-  "throughput": 5.024424391718956
+  "successful_requests": 0,
+  "success_rate": 0,
+  "error": "No successful requests"
 }

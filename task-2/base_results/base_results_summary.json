@@ -2,53 +2,29 @@
   "steady_low": {
     "test_name": "steady_low",
     "total_requests": 300,
-    "successful_requests": 300,
-    "success_rate": 1.0,
-    "avg_latency": 3.795533218383789,
-    "median_latency": 3.887312650680542,
-    "p95_latency": 4.801977050304413,
-    "p99_latency": 6.3798695349693295,
-    "min_latency": 1.461796522140503,
-    "max_latency": 7.705340147018433,
-    "throughput": 5.024424391718956
+    "successful_requests": 0,
+    "success_rate": 0,
+    "error": "No successful requests"
   },
   "steady_high": {
     "test_name": "steady_high",
     "total_requests": 1200,
-    "successful_requests": 1146,
-    "success_rate": 0.955,
-    "avg_latency": 12.867442244634578,
-    "median_latency": 12.898221731185913,
-    "p95_latency": 19.690229892730713,
-    "p99_latency": 27.871546328067776,
-    "min_latency": 3.1852331161499023,
-    "max_latency": 29.969937801361084,
-    "throughput": 19.11724172129727
+    "successful_requests": 0,
+    "success_rate": 0,
+    "error": "No successful requests"
   },
   "burst": {
     "test_name": "burst",
-    "total_requests": 1141,
-    "successful_requests": 1053,
-    "success_rate": 0.922874671340929,
-    "avg_latency": 12.936360898067695,
-    "median_latency": 13.462068319320679,
-    "p95_latency": 17.748912811279297,
-    "p99_latency": 24.053876447677613,
-    "min_latency": 0.8604974746704102,
-    "max_latency": 29.879393100738525,
-    "throughput": 11.851772348305202
+    "total_requests": 1146,
+    "successful_requests": 0,
+    "success_rate": 0,
+    "error": "No successful requests"
   },
   "diurnal": {
     "test_name": "diurnal",
-    "total_requests": 3592,
-    "successful_requests": 3474,
-    "success_rate": 0.9671492204899778,
-    "avg_latency": 13.435819242971,
-    "median_latency": 13.260032296180725,
-    "p95_latency": 22.254355406761167,
-    "p99_latency": 27.832666292190552,
-    "min_latency": 3.986579418182373,
-    "max_latency": 30.054609060287476,
-    "throughput": 48.16559733135244
+    "total_requests": 3693,
+    "successful_requests": 0,
+    "success_rate": 0,
+    "error": "No successful requests"
   }
 }

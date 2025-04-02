@@ -11,7 +11,7 @@ import argparse
 parser = argparse.ArgumentParser(description="KNN implementation with GPU and CPU")
 parser.add_argument("--distance", choices=["cosine", "l2", "dot", "manhattan"], default="manhattan",
                     help="Choose distance metric (default: manhattan)")
-parser.add_argument("--test", choices=["knn", "kmeans", "ann"], default="knn",
+parser.add_argument("--test", choices=["dist", "knn", "kmeans", "ann"], default="knn",
                     help="Choose test type (default: knn)")
 args = parser.parse_args()
 
@@ -336,12 +336,110 @@ def test_knn_4m():
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
     print(f"Speedup 4m (CPU to GPU): {speedup:.2f}x\n")
 
+def test_distance_functions(dim=2, num_samples=1000):
+    # Create random vectors for testing
+    X_cpu = np.random.rand(dim).astype(np.float32)
+    Y_cpu = np.random.rand(num_samples, dim).astype(np.float32)
+    
+    X_gpu = torch.from_numpy(X_cpu).cuda()
+    Y_gpu = torch.from_numpy(Y_cpu).cuda()
+    
+    # Test each distance function
+    for dist_name in ["cosine", "l2", "dot", "manhattan"]:
+        # Get CPU distance function
+        cpu_func = {
+            "cosine": distance_cosine_cpu,
+            "l2": distance_l2_cpu,
+            "dot": distance_dot_cpu,
+            "manhattan": distance_manhattan_cpu
+        }[dist_name]
+        
+        # Get GPU distance function
+        gpu_func = {
+            "cosine": distance_cosine,
+            "l2": distance_l2,
+            "dot": distance_dot,
+            "manhattan": distance_manhattan
+        }[dist_name]
+        
+        # Measure CPU time (compute all distances)
+        start = time.perf_counter()
+        for i in range(num_samples):
+            cpu_func(X_cpu, Y_cpu[i])
+        cpu_time = time.perf_counter() - start
+        
+        # Measure GPU time (compute all distances)
+        start = time.perf_counter()
+        for i in range(num_samples):
+            gpu_func(X_gpu, Y_gpu[i])
+        torch.cuda.synchronize()  # Ensure GPU computations are complete
+        gpu_time = time.perf_counter() - start
+        
+        # Calculate speedup
+        speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')
+        
+        print(f"{dist_name.upper()} Distance (dim={dim}):")
+        print(f"  CPU time: {cpu_time:.6f} seconds")
+        print(f"  GPU time: {gpu_time:.6f} seconds")
+        print(f"  Speedup: {speedup:.2f}x\n")
+
+def test_distance_functions_batch(dim=2, num_samples=1000):
+    # Create random vectors for testing
+    X_cpu = np.random.rand(dim).astype(np.float32)
+    Y_cpu = np.random.rand(num_samples, dim).astype(np.float32)
+    
+    X_gpu = torch.from_numpy(X_cpu).cuda()
+    Y_gpu = torch.from_numpy(Y_cpu).cuda()
+    
+    # Test each distance function
+    for dist_name in ["cosine", "l2", "dot", "manhattan"]:
+        cpu_func = {
+            "cosine": distance_cosine_cpu,
+            "l2": distance_l2_cpu,
+            "dot": distance_dot_cpu,
+            "manhattan": distance_manhattan_cpu
+        }[dist_name]
+        
+        gpu_func = {
+            "cosine": distance_cosine,
+            "l2": distance_l2,
+            "dot": distance_dot,
+            "manhattan": distance_manhattan
+        }[dist_name]
+
+        # CPU: Fully vectorized
+        start = time.perf_counter()
+        cpu_dists = np.apply_along_axis(cpu_func, 1, Y_cpu, X_cpu)
+        cpu_time = time.perf_counter() - start
+
+        # GPU: Fully vectorized
+        start = time.perf_counter()
+        if dist_name == "dot":
+            gpu_dists = torch.matmul(Y_gpu, X_gpu)  # Batch-friendly dot product
+        else:
+            gpu_dists = gpu_func(Y_gpu, X_gpu)
+        torch.cuda.synchronize()
+        gpu_time = time.perf_counter() - start
+
+        speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')
+
+        print(f"{dist_name.upper()} Distance (dim={dim}):")
+        print(f"  CPU time: {cpu_time:.6f} seconds")
+        print(f"  GPU time: {gpu_time:.6f} seconds")
+        print(f"  Speedup: {speedup:.2f}x\n")
+
+
 if __name__ == "__main__":
     # Set the distance metric from command line argument
     set_distance_metric(args.distance)
     
     # Conditional test execution based on the --test argument
-    if args.test == "knn":
+    if args.test == 'dist':
+        test_distance_functions(dim=2)
+        test_distance_functions(dim=2**15)
+        test_distance_functions_batch(dim=2)
+        test_distance_functions_batch(dim=2**15)
+    elif args.test == "knn":
         test_knn()
         test_knn_cpu()
         test_knn_2D()

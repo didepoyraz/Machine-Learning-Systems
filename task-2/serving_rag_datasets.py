@@ -9,8 +9,8 @@ import queue
 import time
 
 
-MAX_BATCH_SIZE = 8
-MAX_WAITING_TIME = 0.05 #50ms? adjust this
+MAX_BATCH_SIZE = 16
+MAX_WAITING_TIME = 0.1 #50ms? adjust this
 app = FastAPI()
 
 # Example documents in memory
@@ -25,7 +25,9 @@ from datasets import load_dataset
 
 print('loading dataset')
 # Load the dataset
-dataset = load_dataset('MAsad789565/Coding_GPT4_Data', split='train')
+# dataset = load_dataset('MAsad789565/Coding_GPT4_Data', split='train')
+dataset = load_dataset('MAsad789565/Coding_GPT4_Data', split='train', trust_remote_code=True)
+
 # If needed, specify a different split such as 'validation' or 'test'
 
 # Extract content from the dataset
@@ -36,14 +38,18 @@ print('dataset loaded')
 EMBED_MODEL_NAME = "intfloat/multilingual-e5-large-instruct"
 embed_tokenizer = AutoTokenizer.from_pretrained(EMBED_MODEL_NAME)
 embed_model = AutoModel.from_pretrained(EMBED_MODEL_NAME)
+print("loaded embedding model")
 
 # Basic Chat LLM
 chat_pipeline = pipeline("text-generation", model="facebook/opt-125m")
 # Note: try this 1.5B model if you got enough GPU memory
 # chat_pipeline = pipeline("text-generation", model="Qwen/Qwen2.5-1.5B-Instruct")
 
+print("starting request queue")
 request_queue = queue.Queue()
 
+doc_embeddings = np.load("doc_embeddings.npy")
+print("loaded embeddings")
 ## Hints:
 
 ### Step 3.1:
@@ -56,6 +62,7 @@ request_queue = queue.Queue()
 # 2. Process the batched requests
 
 def get_embedding(text: str) -> np.ndarray:
+    # print("getting embeddings.")
     """Compute a simple average-pool embedding."""
     inputs = embed_tokenizer(text, return_tensors="pt", truncation=True)
     with torch.no_grad():
@@ -63,16 +70,19 @@ def get_embedding(text: str) -> np.ndarray:
     return outputs.last_hidden_state.mean(dim=1).cpu().numpy()
 
 # Precompute document embeddings
-doc_embeddings = np.vstack([get_embedding(doc) for doc in documents])
+# doc_embeddings = np.vstack([get_embedding(doc) for doc in documents])
+# np.save("doc_embeddings.npy", doc_embeddings)
 
 ### You may want to use your own top-k retrieval method (task 1)
 def retrieve_top_k(query_emb: np.ndarray, k: int = 2) -> list:
     """Retrieve top-k docs via dot-product similarity."""
+    # print("Retrieving top-k")
     sims = doc_embeddings @ query_emb.T
     top_k_indices = np.argsort(sims.ravel())[::-1][:k]
     return [documents[i] for i in top_k_indices]
 
 def rag_pipeline(query: str, k: int = 2) -> str:
+    # print("in rag pipeline")
     # whenever there is a new request the worker thread will receive it here
     # Step 1: Input embedding
     query_emb = get_embedding(query)
@@ -96,6 +106,7 @@ class QueryRequest(BaseModel):
 @app.post("/rag") 
 def predict(payload: QueryRequest):
     # result = rag_pipeline(payload.query, payload.k)
+    # print("predicting")
     response_queue = queue.Queue()
     request_queue.put((payload, response_queue))
     
@@ -107,7 +118,7 @@ def predict(payload: QueryRequest):
     }
     
 def worker():
-
+    print("👷 Worker thread started")
     while True:
         batch = [] 
         start_time = time.time()
@@ -129,4 +140,4 @@ def worker():
         
 if __name__ == "__main__":
     threading.Thread(target=worker, daemon=True).start()
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8002)

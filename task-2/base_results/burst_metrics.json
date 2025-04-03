@@ -1,13 +1,13 @@
 {
   "test_name": "burst",
-  "total_requests": 1141,
-  "successful_requests": 1053,
-  "success_rate": 0.922874671340929,
-  "avg_latency": 12.936360898067695,
-  "median_latency": 13.462068319320679,
-  "p95_latency": 17.748912811279297,
-  "p99_latency": 24.053876447677613,
-  "min_latency": 0.8604974746704102,
-  "max_latency": 29.879393100738525,
-  "throughput": 11.851772348305202
+  "total_requests": 1170,
+  "successful_requests": 1098,
+  "success_rate": 0.9384615384615385,
+  "avg_latency": 15.789929817500227,
+  "median_latency": 15.58880615234375,
+  "p95_latency": 21.29336936473846,
+  "p99_latency": 23.33129019737242,
+  "min_latency": 0.5857574939727783,
+  "max_latency": 30.43523931503296,
+  "throughput": 12.394306783878706
 }

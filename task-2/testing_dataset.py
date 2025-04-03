@@ -13,7 +13,7 @@ from result_analyzer import ResultAnalyzer
 from data_loader import load_datasets
 
 class RAGServiceTester:
-    def __init__(self, host: str = "localhost", port: int = 8000, output_dir: str = "results"):
+    def __init__(self, host: str = "localhost", port: int = 8002, output_dir: str = "results"):
         """Initialize the RAG service tester."""
         self.base_url = f"http://{host}:{port}"
         self.endpoint = f"{self.base_url}/rag"
@@ -145,7 +145,7 @@ class RAGServiceTester:
 def main():
     parser = argparse.ArgumentParser(description="Test RAG service base performance using TracéStorm")
     parser.add_argument("--host", type=str, default="localhost", help="Host of the RAG service")
-    parser.add_argument("--port", type=int, default=8000, help="Port of the RAG service")
+    parser.add_argument("--port", type=int, default=8002, help="Port of the RAG service")
     parser.add_argument("--output", type=str, default="base_results", help="Output directory for results")
     args = parser.parse_args()
     

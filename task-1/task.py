@@ -391,8 +391,69 @@ def our_kmeans_cpu(N, D, A, K):
 # ------------------------------------------------------------------------------------------------
 # Your Task 2.2 code here
 # ------------------------------------------------------------------------------------------------
-
+"""
 def our_kmeans_tensor(N, D, A, K, plot):
+    
+        # gpu_ssd = ((A - new_centroids[cluster_labels]) ** 2).sum().item()
+        # print("gpu ssd: ", gpu_ssd)
+        # print_kmeans(A, N, K, A_tensor, new_centroids, cluster_labels, plot, initial_indices)
+
+    return cluster_labels, new_centroids # decide on the return value based on what is needed for 2.2
+"""
+
+def euclidean_distance(vec1, vec2):
+    return torch.sqrt(torch.sum((vec1 - vec2) ** 2, dim=-1))
+
+def negative_dot_distance(vec1, vec2):
+    return -torch.sum(vec1 * vec2, dim=-1)
+
+def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
+    """
+    Perform Approximate Nearest Neighbor (ANN) search using K-Means clustering.
+
+    Parameters:
+        A (torch.Tensor): (N, D) Tensor containing dataset vectors.
+        cluster_centers (torch.Tensor): (K_clusters, D) Tensor of cluster centers.
+        cluster_assignments (torch.Tensor): (N,) Tensor mapping each point to its cluster.
+        X (torch.Tensor): (D,) Query vector.
+        K1 (int): Number of nearest clusters to consider.
+        K2 (int): Number of nearest neighbors to return.
+
+    Returns:
+        torch.Tensor: (K2,) Tensor containing the indices of the top K2 nearest neighbors.
+    """
+
+    if isinstance(X, np.ndarray):
+        X = torch.tensor(X, dtype=torch.float16, device="cuda")
+
+    cluster_distances = negative_dot_distance(X, cluster_centers)
+    #cluster_distances = -torch.sum(X * cluster_centers, dim=-1)
+    nearest_clusters = torch.argsort(cluster_distances)[:K1] 
+
+    candidate_indices = torch.cat([
+        torch.where(cluster_assignments == cluster_idx)[0] for cluster_idx in nearest_clusters
+    ]).to("cuda")
+
+    candidate_points = A[candidate_indices]
+
+    candidate_distances = negative_dot_distance(candidate_points, X)
+    #candidate_distances = -torch.sum(candidate_points * X, dim=-1)
+    nearest_neighbors = candidate_indices[torch.argsort(candidate_distances)[:K2]]
+
+    return nearest_neighbors
+
+def our_ann(N, D, A, X, K):
+    device = "cuda"
+    #K_clusters = 5  # Number of clusters for K-Means
+    K1 = K
+    K = int(np.sqrt(K))  # Number of clusters and neighbors to consider
+
+    if isinstance(A, np.ndarray):
+        starttime = time.time()
+        A = torch.as_tensor(A, device="cuda", dtype=torch.float32)
+        print("A to torch tensor took - " + str(time.time() - starttime))
+
+    starttime = time.time()
     dist_metric = "l2"
     
     max_iterations = 300 #decide
@@ -505,68 +566,12 @@ def our_kmeans_tensor(N, D, A, K, plot):
         # if torch.mean(centroid_shift) <= centroid_shift_tolerance:
         if torch.max(centroid_shift) <= centroid_shift_tolerance:
             converged = True
-        
-        # gpu_ssd = ((A - new_centroids[cluster_labels]) ** 2).sum().item()
-        # print("gpu ssd: ", gpu_ssd)
-        # print_kmeans(A, N, K, A_tensor, new_centroids, cluster_labels, plot, initial_indices)
-
-    return cluster_labels, new_centroids # decide on the return value based on what is needed for 2.2
-
-def euclidean_distance(vec1, vec2):
-    return torch.sqrt(torch.sum((vec1 - vec2) ** 2, dim=-1))
-
-def negative_dot_distance(vec1, vec2):
-    return -torch.sum(vec1 * vec2, dim=-1)
-
-def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
-    """
-    Perform Approximate Nearest Neighbor (ANN) search using K-Means clustering.
-
-    Parameters:
-        A (torch.Tensor): (N, D) Tensor containing dataset vectors.
-        cluster_centers (torch.Tensor): (K_clusters, D) Tensor of cluster centers.
-        cluster_assignments (torch.Tensor): (N,) Tensor mapping each point to its cluster.
-        X (torch.Tensor): (D,) Query vector.
-        K1 (int): Number of nearest clusters to consider.
-        K2 (int): Number of nearest neighbors to return.
-
-    Returns:
-        torch.Tensor: (K2,) Tensor containing the indices of the top K2 nearest neighbors.
-    """
-
-    if isinstance(X, np.ndarray):
-        X = torch.tensor(X, dtype=torch.float16, device="cuda")
-
-    cluster_distances = negative_dot_distance(X, cluster_centers)
-    nearest_clusters = torch.argsort(cluster_distances)[:K1] 
-
-    candidate_indices = torch.cat([
-        torch.where(cluster_assignments == cluster_idx)[0] for cluster_idx in nearest_clusters
-    ]).to("cuda")
-
-    candidate_points = A[candidate_indices]
-
-    candidate_distances = negative_dot_distance(candidate_points, X)
-    nearest_neighbors = candidate_indices[torch.argsort(candidate_distances)[:K2]]
-
-    return nearest_neighbors
-
-def our_ann(N, D, A, X, K):
-    device = "cuda"
-    K_clusters = 5  # Number of clusters for K-Means
-    K1 = 3  # Number of clusters and neighbors to consider
-
-    if isinstance(A, np.ndarray):
-        starttime = time.time()
-        A = torch.as_tensor(A, device="cuda", dtype=torch.float32)
-        print("A to torch tensor took - " + str(time.time() - starttime))
-
-    starttime = time.time()
-    cluster_assignments, cluster_centers = our_kmeans_tensor(N, D, A, K1, "ann")
+    
     print("our_kmeans took - " + str(time.time() - starttime))
 
     starttime = time.time()
-    top_k_neighbors = ann_search(A, cluster_centers, cluster_assignments, X, K1, K)
+    top_k_neighbors = ann_search(A, new_centroids, cluster_labels, X, K, K1)
+
     print('ann_search function took - ' + str(time.time() - starttime))
     print("ANN - Top K nearest neighbors indices:", top_k_neighbors.cpu().numpy())
     return top_k_neighbors

@@ -200,10 +200,10 @@ def our_knn_cpu(N, D, A, X, K):
 NUM_INIT = None 
 
 def our_kmeans(N, D, A, K):
-    local_dist_metric = dist_metric
+    global dist_metric
     if dist_metric not in ["l2", "cosine"]:
         print(f"Warning: K-means only supports l2 and cosine distances. Using l2 instead of {dist_metric}.")
-        local_dist_metric = "l2"  # Set a fallback metric
+        dist_metric = "l2"  # Set a fallback metric
     
     max_iterations = 300 #decide
     centroid_shift_tolerance = 1e-5 # decide
@@ -282,10 +282,10 @@ def our_kmeans(N, D, A, K):
             
             #---- stream1
             with torch.cuda.stream(stream1):
-                if local_dist_metric == "l2":
+                if dist_metric == "l2":
                     distances = torch.sum((batch[:,None] - init_centroids_d)**2, dim=2)
                     # distances = torch.cdist(A_tensor, init_centroids_d, p=2) ** 2
-                elif local_dist_metric == "cosine":
+                elif dist_metric == "cosine":
                     A_norm = torch.nn.functional.normalize(batch, p=2, dim=1)
                     C_norm = torch.nn.functional.normalize(init_centroids_d, p=2, dim=0)
                     similarities = torch.matmul(A_norm, C_norm.T) #take transpose of centroids to make it (D,K) so matmul can give (N,K)

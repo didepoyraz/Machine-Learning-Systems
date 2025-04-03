@@ -463,13 +463,13 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
 def our_ann(N, D, A, X, K):
     device = "cuda"
     #K_clusters = 5  # Number of clusters for K-Means
-    K1 = K
-    K = int(np.sqrt(K))  # Number of clusters and neighbors to consider
+    K1 = 2*K
+    K = min(int(np.sqrt(N)), 100)  # Number of clusters and neighbors to consider
 
-    local_dist_metric = dist_metric
+    global dist_metric
     if dist_metric not in ["l2", "cosine"]:
         print(f"Warning: K-means only supports l2 and cosine distances. Using l2 instead of {dist_metric}.")
-        local_dist_metric = "l2"  # Set a fallback metric
+        dist_metric = "l2"  # Set a fallback metric
 
     if isinstance(A, np.ndarray):
         starttime = time.time()
@@ -555,10 +555,10 @@ def our_ann(N, D, A, X, K):
             
             #---- stream1
             with torch.cuda.stream(stream1):
-                if local_dist_metric == "l2":
+                if dist_metric == "l2":
                     distances = torch.sum((batch[:,None] - init_centroids_d)**2, dim=2)
                     # distances = torch.cdist(A_tensor, init_centroids_d, p=2) ** 2
-                elif local_dist_metric == "cosine":
+                elif dist_metric == "cosine":
                     A_norm = torch.nn.functional.normalize(batch, p=2, dim=1)
                     C_norm = torch.nn.functional.normalize(init_centroids_d, p=2, dim=0)
                     similarities = torch.matmul(A_norm, C_norm.T) #take transpose of centroids to make it (D,K) so matmul can give (N,K)
@@ -1202,7 +1202,7 @@ if __name__ == "__main__":
     elif args.test == "kmeans":
         test_kmeans()
     elif args.test == "ann":
-        # test_ann()
+        test_ann()
         test_ann_2D()
         test_ann_215()
         test_ann_4k()

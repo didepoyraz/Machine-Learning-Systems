@@ -7,8 +7,8 @@ import random
 import time
 import json
 from test import testdata_kmeans, testdata_knn, testdata_ann
-#import matplotlib.pyplot as plt
-#from matplotlib.colors import ListedColormap
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
 from test import testdata_kmeans, testdata_knn, testdata_ann, read_data
 
 # ------------------------------------------------------------------------------------------------
@@ -305,7 +305,6 @@ def print_kmeans(A, N, K, A_tensor, new_centroids, cluster_labels, plot, initial
     sklearn_kmeans = KMeans(n_clusters=K, init=init_centroids, n_init=1, max_iter=100, random_state=2)
     sklearn_kmeans.fit(A)
     
-    """
     colors = ListedColormap(["blue", "green", "yellow"])
     plt.clf()
     # Scatter plot for clustered points (with smaller size and transparency)
@@ -327,7 +326,6 @@ def print_kmeans(A, N, K, A_tensor, new_centroids, cluster_labels, plot, initial
     save_path =f"figures/kmeans_gpu/kmeans_plot{plot}_{timestamp}.png"
     plt.savefig(save_path)
     print(f"Plot saved to {save_path}")
-    """
 
     gpu_ssd = ((A_tensor - new_centroids[cluster_labels]) ** 2).sum().item()
     print(f"GPU K-Means SSD: {gpu_ssd}")
@@ -391,15 +389,6 @@ def our_kmeans_cpu(N, D, A, K):
 # ------------------------------------------------------------------------------------------------
 # Your Task 2.2 code here
 # ------------------------------------------------------------------------------------------------
-"""
-def our_kmeans_tensor(N, D, A, K, plot):
-    
-        # gpu_ssd = ((A - new_centroids[cluster_labels]) ** 2).sum().item()
-        # print("gpu ssd: ", gpu_ssd)
-        # print_kmeans(A, N, K, A_tensor, new_centroids, cluster_labels, plot, initial_indices)
-
-    return cluster_labels, new_centroids # decide on the return value based on what is needed for 2.2
-"""
 
 def euclidean_distance(vec1, vec2):
     return torch.sqrt(torch.sum((vec1 - vec2) ** 2, dim=-1))

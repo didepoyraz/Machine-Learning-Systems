@@ -254,14 +254,14 @@ def our_kmeans(N, D, A, K):
     # init_centroids_d = A_tensor[indices]  #filter the chosen K random vectors directly on GPU //question whether this is on the gpu
     #--------------------------------------------------------------------------------------#
     
-    initial_indices = np.random.choice(N, K, replace=False)
-    init_centroids_d = torch.tensor(A[initial_indices], device="cuda", dtype=torch.float32)
+    # initial_indices = np.random.choice(N, K, replace=False)
+    # init_centroids_d = torch.tensor(A[initial_indices], device="cuda", dtype=torch.float32)
 
     #-----------------------------------------------------------------------------#
     # Use this initialisation of random centroids if you would like to compare sklearns with controlled init conditions in print_kmeans()
-    # np.random.seed(2)
-    # initial_indices = np.random.choice(N, K, replace=False)
-    # init_centroids_d = torch.tensor(A[initial_indices], device="cuda", dtype=torch.float32)
+    np.random.seed(2)
+    initial_indices = np.random.choice(N, K, replace=False)
+    init_centroids_d = torch.tensor(A[initial_indices], device="cuda", dtype=torch.float32)
     #-----------------------------------------------------------------------------#
     
     stream1 = torch.cuda.Stream()  # For distance calculation
@@ -318,13 +318,13 @@ def our_kmeans(N, D, A, K):
         
         # gpu_ssd = ((A - new_centroids[cluster_labels]) ** 2).sum().item()
         # print("gpu ssd: ", gpu_ssd)
-        # print_kmeans(A, N, K, A_tensor, new_centroids, cluster_labels, plot, initial_indices)
+        print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices)
 
     return cluster_labels.cpu().numpy(), new_centroids.cpu().numpy() # decide on the return value based on what is needed for 2.2
 
 
-def print_kmeans(A, N, K, A_tensor, new_centroids, cluster_labels, plot, initial_indices):
-    
+def print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices):
+    plot = "1m_10_k10"
     init_centroids = A[initial_indices]  # Use same initialization
     
     # change init to "kmeans++" if you would like to see better init conditions for improved cluster alignment
@@ -353,7 +353,7 @@ def print_kmeans(A, N, K, A_tensor, new_centroids, cluster_labels, plot, initial
     plt.savefig(save_path)
     print(f"Plot saved to {save_path}")
 
-    gpu_ssd = ((A_tensor - new_centroids[cluster_labels]) ** 2).sum().item()
+    gpu_ssd = ((A - new_centroids[cluster_labels]) ** 2).sum().item()
     print(f"GPU K-Means SSD: {gpu_ssd}")
 
     sklearn_ssd = sklearn_kmeans.inertia_
@@ -1206,7 +1206,7 @@ if __name__ == "__main__":
         test_knn_4k()
         test_knn_4m()
     elif args.test == "kmeans":
-        test_kmeans()
+        test_kmeans_1m_10_K10()
     elif args.test == "ann":
         # test_ann()
         test_ann_2D()

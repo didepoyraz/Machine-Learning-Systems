@@ -1,11 +1,42 @@
-Generating data with k=3
-Generated data shape: (1000, 10)
-Unique cluster labels: [0 1 2]
-Generating data with k=10
-Generated data shape: (1000000, 10)
-Unique cluster labels: [0 1 2 3 4 5 6 7 8 9]
-Generating data with k=10
-Generated data shape: (1000000, 50)
-Unique cluster labels: [0 1 2 3 4 5 6 7 8 9]
-Data generation complete!
-CPU Time (1000_2): 0.681327 seconds
+
+
+------------------------
+
+
+For 4m 
+KNN: 0.841505 seconds
+starting kmeans
+GPU K-Means SSD: 11584764928.0
+Sklearn K-Means SSD: 1500668032.0
+SSD Difference: 10084096896.0000
+Average centroid difference: 40.3190
+Some cluster assignments differ, skleanrs
+kmeans finishing total iterations:  150
+starting kmeans
+GPU K-Means SSD: 11744546816.0
+Sklearn K-Means SSD: 4180000256.0
+SSD Difference: 7564546560.0000
+Average centroid difference: 40.8740
+Some cluster assignments differ, skleanrs
+kmeans finishing total iterations:  150
+starting kmeans
+GPU K-Means SSD: 11548826624.0
+Sklearn K-Means SSD: 1469552768.0
+SSD Difference: 10079273856.0000
+Average centroid difference: 37.9283
+Some cluster assignments differ, skleanrs
+kmeans finishing total iterations:  150
+starting kmeans
+GPU K-Means SSD: 12378920960.0
+Sklearn K-Means SSD: 1516999168.0
+SSD Difference: 10861921792.0000
+Average centroid difference: 43.9082
+Some cluster assignments differ, skleanrs
+kmeans finishing total iterations:  27
+starting kmeans
+GPU K-Means SSD: 12047247360.0
+Sklearn K-Means SSD: 2792136704.0
+SSD Difference: 9255110656.0000
+Average centroid difference: 40.9275
+Some cluster assignments differ, skleanrs
+kmeans finishing total iterations:  150

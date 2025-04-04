@@ -44,7 +44,7 @@ def generate_and_save_kmeans(n, d,k, prefix):
     print(f"Generating data with k={k}")
     
     A, labels = make_blobs(n_samples=n, centers=k, n_features=d,random_state=42)
-    
+    A = A.astype(np.float32)
     plt.clf()
     print(f"Generated data shape: {A.shape}")
     print(f"Unique cluster labels: {np.unique(labels)}")    
@@ -71,11 +71,13 @@ def save_metadata_ann(filename, n, d, k, a_file, x_file):
         json.dump(metadata, f, indent=4)
         
 
-def generate_and_save_ann(n, d,k, prefix):
+def generate_and_save_ann(n, d,k1, prefix, k2=10):
+    #this assumes that the wanted num of top vectors are 10 always
     """Generates data and saves it in .npy format along with metadata."""
-    print(f"Generating data with k={k}")
+    print(f"Generating data with k={k1}")
     
-    A, labels = make_blobs(n_samples=n, centers=k, n_features=d,random_state=42)
+    A, labels = make_blobs(n_samples=n, centers=k1, n_features=d,random_state=42)
+    A = A.astype(np.float32)
     X = np.random.randn(d).astype(np.float32)
     
     plt.clf()
@@ -91,7 +93,7 @@ def generate_and_save_ann(n, d,k, prefix):
     np.save(x_file, X)
     np.save(a_file, A)
     
-    save_metadata_kmeans(meta_file, n, d, k, a_file, x_file)
+    save_metadata_ann(meta_file, n, d, k2, a_file, x_file)
 
 
 
@@ -99,7 +101,7 @@ def generate_and_save_ann(n, d,k, prefix):
 
 # generate_and_save_kmeans(1000,10,3, "1000_2")
 
-generate_and_save_kmeans(1000,32768,10, "1000_215")
+# generate_and_save_kmeans(1000,32768,10, "1000_215")
 
 # generate_and_save_kmeans(1000,1024,3, "1000_1024")
 
@@ -128,10 +130,16 @@ generate_and_save_kmeans(1000,32768,10, "1000_215")
 
 
 # Generate and save datasets
-generate_and_save(1000, 2, "2d")
-generate_and_save(1000, 2**15, "215")
-generate_and_save(4000, 100, "4k")
-generate_and_save(40000, 100, "40k")
-generate_and_save(4000000, 100, "4m")
+# generate_and_save(1000, 2, "2d")
+# generate_and_save(1000, 2**15, "215")
+# generate_and_save(4000, 100, "4k")
+# generate_and_save(40000, 100, "40k")
+# generate_and_save(4000000, 100, "4m")
+
+generate_and_save_ann(1000, 2, 3, "2d")
+generate_and_save_ann(1000, 2**15, 3, "215")
+generate_and_save_ann(4000, 100, 3, "4k")
+generate_and_save_ann(40000, 100, 4, "40k")
+generate_and_save_ann(4000000, 100, 10, "4m")
 
 print("Data generation complete!")

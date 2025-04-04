@@ -8,5 +8,6 @@
 source ~/miniconda3/bin/activate  # Activate base environment
 conda activate mlsys  # Activate your environment
 
+# python json_test_file_generation.py
 # Run Python script with cosine distance metric
-python task.py --test ann --distance cosine
+python task.py --test ann --distance l2

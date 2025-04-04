@@ -1,18 +1,18 @@
-[602 812 449 519 537 540 613  28 166 172]
-[324 788 149 121 140 900 798  24  48 865]
-CPU Time (2D): 0.011909 seconds
-GPU Time (2D): 0.014242 seconds
-Speedup (CPU to GPU): 0.84x
+[849 919 592 786 385 463 644 946 568 125]
+[434 973 287 209 722 785 626 912 406 142]
+CPU Time (2D): 0.005883 seconds
+GPU Time (2D): 0.000885 seconds
+Speedup (CPU to GPU): 6.65x
 
-CPU Time (2^15): 0.054834 seconds
-GPU Time (2^15): 0.029150 seconds
-Speedup 2*15 (CPU to GPU): 1.88x
+CPU Time (2^15): 0.044349 seconds
+GPU Time (2^15): 0.023808 seconds
+Speedup 2*15 (CPU to GPU): 1.86x
 
-CPU Time (4k): 0.025960 seconds
-GPU Time (4k): 0.000998 seconds
-Speedup 4k (CPU to GPU): 26.00x
+CPU Time (4k): 0.023412 seconds
+GPU Time (4k): 0.000809 seconds
+Speedup 4k (CPU to GPU): 28.95x
 
-CPU Time (4m): 23.417786 seconds
-GPU Time (4m): 0.606750 seconds
-Speedup 4m (CPU to GPU): 38.60x
+CPU Time (4m): 23.404620 seconds
+GPU Time (4m): 0.354904 seconds
+Speedup 4m (CPU to GPU): 65.95x
 

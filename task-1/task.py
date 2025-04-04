@@ -57,13 +57,20 @@ def get_distance_function():
 
 def our_knn(N, D, A, X, K):
 
+    global dist_metric
+
     if dist_metric is None:
         raise ValueError("Distance metric not set. Please specify one via command-line arguments.")
     
-    X_tensor = torch.from_numpy(X).cuda()
+    X_tensor = X.cuda() if isinstance(X, torch.Tensor) else torch.from_numpy(X).cuda()
+
+    if isinstance(A, np.ndarray):
+        A_source = 'numpy'
+    else:
+        A_source = 'tensor'
     
     if N <= 100000:
-        A_tensor = torch.from_numpy(A).cuda(non_blocking=True)  
+        A_tensor = torch.from_numpy(A).cuda(non_blocking=True) if A_source == 'numpy' else A  
     
         if dist_metric == "l2":
             dists = torch.norm(A_tensor - X_tensor, dim=1)
@@ -442,7 +449,7 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
     """
 
     if isinstance(X, np.ndarray):
-        X = torch.tensor(X, dtype=torch.float16, device="cuda")
+        X = torch.tensor(X, dtype=torch.float32, device="cuda")
 
     if dist_metric == "l2":
         cluster_distances = euclidean_distance(X, cluster_centers)
@@ -451,7 +458,9 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
         X_norm = torch.nn.functional.normalize(X.unsqueeze(0), p=2, dim=1).squeeze(0)
         centers_norm = torch.nn.functional.normalize(cluster_centers, p=2, dim=1)
         cluster_distances = negative_dot_distance(X_norm, centers_norm)
-
+    else:
+        raise ValueError(f"Unsupported distance metric for clustering: {dist_metric}")
+    
     nearest_clusters = torch.argsort(cluster_distances)[:K1] 
 
     candidate_indices = torch.cat([
@@ -460,15 +469,21 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
 
     candidate_points = A[candidate_indices]
 
-    if dist_metric == "cosine":
-        candidate_points = torch.nn.functional.normalize(candidate_points, dim=1)
-        X = torch.nn.functional.normalize(X, dim=0)
-        candidate_distances = negative_dot_distance(candidate_points, X)
-    else:
-        candidate_distances = euclidean_distance(candidate_points, X)
+    # Convert candidate points and query vector to numpy for our_knn
+    candidate_points_np = candidate_points.detach().cpu().numpy()
+    X_np = X.detach().cpu().numpy()
 
-    nearest_neighbors = candidate_indices[torch.argsort(candidate_distances)[:K2]]
+    # Run custom KNN on candidate set
+    top_k_local_indices = our_knn(
+        N=candidate_points_np.shape[0],
+        D=X_np.shape[0],
+        A=candidate_points_np,
+        X=X_np,
+        K=K2
+    )
 
+    # Map local indices back to original dataset indices
+    nearest_neighbors = candidate_indices[top_k_local_indices]
     return nearest_neighbors
 
 def our_ann(N, D, A, X, K):

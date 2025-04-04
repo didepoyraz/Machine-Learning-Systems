@@ -422,6 +422,14 @@ def our_kmeans_cpu(N, D, A, K):
 def euclidean_distance(vec1, vec2):
     return torch.sqrt(torch.sum((vec1 - vec2) ** 2, dim=-1))
 
+def euclidean_distance_batched(vecs, query, batch_size=100_000):
+    distances = []
+    for i in range(0, vecs.shape[0], batch_size):
+        chunk = vecs[i:i+batch_size]
+        dist = torch.norm(chunk - query, dim=1)
+        distances.append(dist)
+    return torch.cat(distances)
+
 def negative_dot_distance(vec1, vec2):
     return -torch.sum(vec1 * vec2, dim=-1)
 
@@ -468,7 +476,7 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
         X = torch.nn.functional.normalize(X, dim=0)
         candidate_distances = negative_dot_distance(candidate_points, X)
     else:
-        candidate_distances = euclidean_distance(candidate_points, X)
+        candidate_distances = euclidean_distance_batched(candidate_points, X)
 
     nearest_neighbors = candidate_indices[torch.argsort(candidate_distances)[:K2]]
 

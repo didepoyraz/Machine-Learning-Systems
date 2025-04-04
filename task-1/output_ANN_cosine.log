@@ -4,39 +4,44 @@
 
 
 For 4m 
-KNN: 0.841505 seconds
+KNN: 1.541866 seconds
 starting kmeans
-GPU K-Means SSD: 11584764928.0
-Sklearn K-Means SSD: 1500668032.0
-SSD Difference: 10084096896.0000
-Average centroid difference: 40.3190
+GPU K-Means SSD: 12056196096.0
+Sklearn K-Means SSD: 1700446208.0
+SSD Difference: 10355749888.0000
+Average centroid difference: 43.1243
 Some cluster assignments differ, skleanrs
 kmeans finishing total iterations:  150
 starting kmeans
-GPU K-Means SSD: 11744546816.0
-Sklearn K-Means SSD: 4180000256.0
-SSD Difference: 7564546560.0000
-Average centroid difference: 40.8740
+GPU K-Means SSD: 11875907584.0
+Sklearn K-Means SSD: 4038090752.0
+SSD Difference: 7837816832.0000
+Average centroid difference: 40.7486
 Some cluster assignments differ, skleanrs
 kmeans finishing total iterations:  150
 starting kmeans
-GPU K-Means SSD: 11548826624.0
-Sklearn K-Means SSD: 1469552768.0
-SSD Difference: 10079273856.0000
-Average centroid difference: 37.9283
+GPU K-Means SSD: 11923347456.0
+Sklearn K-Means SSD: 1469550848.0
+SSD Difference: 10453796608.0000
+Average centroid difference: 40.3889
 Some cluster assignments differ, skleanrs
 kmeans finishing total iterations:  150
 starting kmeans
-GPU K-Means SSD: 12378920960.0
-Sklearn K-Means SSD: 1516999168.0
-SSD Difference: 10861921792.0000
-Average centroid difference: 43.9082
-Some cluster assignments differ, skleanrs
-kmeans finishing total iterations:  27
-starting kmeans
-GPU K-Means SSD: 12047247360.0
-Sklearn K-Means SSD: 2792136704.0
-SSD Difference: 9255110656.0000
-Average centroid difference: 40.9275
+GPU K-Means SSD: 12600211456.0
+Sklearn K-Means SSD: 2766844672.0
+SSD Difference: 9833366784.0000
+Average centroid difference: 47.4857
 Some cluster assignments differ, skleanrs
 kmeans finishing total iterations:  150
+starting kmeans
+GPU K-Means SSD: 11598566400.0
+Sklearn K-Means SSD: 1892184960.0
+SSD Difference: 9706381440.0000
+Average centroid difference: 37.3094
+Some cluster assignments differ, skleanrs
+kmeans finishing total iterations:  150
+ann_search function took - 2.9617831707000732
+ANN - Top K nearest neighbors indices: [2722638  342674 1614921  536411 3488162 3195048 1175662  335855 3857651
+ 3750993] kmeans best ssd:  11598566000.0
+ANN: 574.259545 seconds
+Recall Rate: 1.0

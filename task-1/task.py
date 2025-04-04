@@ -444,8 +444,14 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
     if isinstance(X, np.ndarray):
         X = torch.tensor(X, dtype=torch.float16, device="cuda")
 
-    cluster_distances = negative_dot_distance(X, cluster_centers)
-    #cluster_distances = -torch.sum(X * cluster_centers, dim=-1)
+    if dist_metric == "l2":
+        cluster_distances = euclidean_distance(X, cluster_centers)
+    elif dist_metric == "cosine":
+        # For cosine, normalize vectors first
+        X_norm = torch.nn.functional.normalize(X.unsqueeze(0), p=2, dim=1).squeeze(0)
+        centers_norm = torch.nn.functional.normalize(cluster_centers, p=2, dim=1)
+        cluster_distances = negative_dot_distance(X_norm, centers_norm)
+
     nearest_clusters = torch.argsort(cluster_distances)[:K1] 
 
     candidate_indices = torch.cat([
@@ -463,8 +469,9 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
 def our_ann(N, D, A, X, K):
     device = "cuda"
     #K_clusters = 5  # Number of clusters for K-Means
-    K1 = 2*K
+    
     K = min(int(np.sqrt(N)), 100)  # Number of clusters and neighbors to consider
+    K1 = 2*K
 
     global dist_metric
     if dist_metric not in ["l2", "cosine"]:
@@ -556,8 +563,7 @@ def our_ann(N, D, A, X, K):
             #---- stream1
             with torch.cuda.stream(stream1):
                 if dist_metric == "l2":
-                    distances = torch.sum((batch[:,None] - init_centroids_d)**2, dim=2)
-                    # distances = torch.cdist(A_tensor, init_centroids_d, p=2) ** 2
+                    distances = torch.cdist(batch, init_centroids_d, p=2.0)**2
                 elif dist_metric == "cosine":
                     A_norm = torch.nn.functional.normalize(batch, p=2, dim=1)
                     C_norm = torch.nn.functional.normalize(init_centroids_d, p=2, dim=0)
@@ -1202,7 +1208,7 @@ if __name__ == "__main__":
     elif args.test == "kmeans":
         test_kmeans()
     elif args.test == "ann":
-        test_ann()
+        # test_ann()
         test_ann_2D()
         test_ann_215()
         test_ann_4k()

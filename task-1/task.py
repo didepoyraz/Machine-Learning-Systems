@@ -462,18 +462,23 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
 
     candidate_points = A[candidate_indices]
 
-    candidate_distances = negative_dot_distance(candidate_points, X)
-    #candidate_distances = -torch.sum(candidate_points * X, dim=-1)
+    if dist_metric == "cosine":
+        candidate_points = torch.nn.functional.normalize(candidate_points, dim=1)
+        X = torch.nn.functional.normalize(X, dim=0)
+        candidate_distances = negative_dot_distance(candidate_points, X)
+    else:
+        candidate_distances = euclidean_distance(candidate_points, X)
+
     nearest_neighbors = candidate_indices[torch.argsort(candidate_distances)[:K2]]
 
     return nearest_neighbors
 
 def our_ann(N, D, A, X, K):
     device = "cuda"
-    #K_clusters = 5  # Number of clusters for K-Means
-    
-    K = min(int(np.sqrt(N)), 100)  # Number of clusters and neighbors to consider
-    K1 = 2*K
+    #K_clusters = 5
+    K1 = K
+    K2 = min(int(np.sqrt(K)), 3) 
+    K = 10
 
     global dist_metric
     if dist_metric not in ["l2", "cosine"]:

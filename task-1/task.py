@@ -328,7 +328,7 @@ def print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices):
     init_centroids = A[initial_indices]  # Use same initialization
     
     # change init to "kmeans++" if you would like to see better init conditions for improved cluster alignment
-    sklearn_kmeans = KMeans(n_clusters=K, init=init_centroids, n_init=1, max_iter=100, random_state=2)
+    sklearn_kmeans = KMeans(n_clusters=K, init=init_centroids, n_init=1, max_iter=500, random_state=2)
     sklearn_kmeans.fit(A)
     
     colors = ListedColormap(["blue", "green", "yellow"])
@@ -1206,7 +1206,8 @@ if __name__ == "__main__":
         test_knn_4k()
         test_knn_4m()
     elif args.test == "kmeans":
-        test_kmeans_1m_10_K10()
+        test_kmeans_1000_2()
+        # test_kmeans_1m_10_K10()
     elif args.test == "ann":
         # test_ann()
         test_ann_2D()

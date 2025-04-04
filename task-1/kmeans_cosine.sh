@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --gres=gpu:1
-#SBATCH --job-name=python_ANN_cosine_job
-#SBATCH --output=output_ANN_cosine.log
-#SBATCH --error=error_ANN_cosine.log
+#SBATCH --job-name=python_KMEANS_cosine_job
+#SBATCH --output=output_KMEANS_cosine.log
+#SBATCH --error=error_KMEANS_cosine.log
 
 # Load Conda into the shell
 source ~/miniconda3/bin/activate  # Activate base environment

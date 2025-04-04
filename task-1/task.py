@@ -243,7 +243,8 @@ def our_kmeans(N, D, A, K):
         start_idx = i * batch_size
         end_idx = min((i + 1) * batch_size, N)
         
-        A_batch = torch.from_numpy(A[start_idx : end_idx]).cuda(non_blocking=True)
+        # A_batch = torch.from_numpy(A[start_idx : end_idx]).cuda(non_blocking=True)
+        A_batch = torch.from_numpy(A[start_idx : end_idx]).to(dtype=torch.float32, device="cuda", non_blocking=True)
         A_gpu_batches.append(A_batch)
     #--------------------------------------------------------------------------#
     
@@ -324,9 +325,10 @@ def our_kmeans(N, D, A, K):
 
 
 def print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices):
-    plot = "1m_10_k10"
+    plot = "1002_2"
     init_centroids = A[initial_indices]  # Use same initialization
-    
+    cluster_labels = cluster_labels.cpu().numpy()
+    new_centroids = new_centroids.cpu().numpy()
     # change init to "kmeans++" if you would like to see better init conditions for improved cluster alignment
     sklearn_kmeans = KMeans(n_clusters=K, init=init_centroids, n_init=1, max_iter=500, random_state=2)
     sklearn_kmeans.fit(A)
@@ -344,7 +346,7 @@ def print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices):
     print(f"sklearns Plot saved to kmeans_sklearns_plot{plot}.png")  
     
     plt.clf()
-    plt.scatter(A[:, 0], A[:, 1], c=cluster_labels.cpu().numpy(), cmap=colors, alpha=0.2, s=2)
+    plt.scatter(A[:, 0], A[:, 1], c=cluster_labels, cmap=colors, alpha=0.2, s=2)
     plt.title("K-Means Clustering Results GPU")
     plt.legend()
     
@@ -362,7 +364,7 @@ def print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices):
     # Compare
     ssd_diff = abs(gpu_ssd - sklearn_ssd)
     print(f"SSD Difference: {ssd_diff:.4f}")
-    torch_centroids = new_centroids.cpu().numpy()
+    torch_centroids = new_centroids
     sklearn_centroids = sklearn_kmeans.cluster_centers_
 
     print("K-Means Centroids:\n", torch_centroids)
@@ -371,10 +373,10 @@ def print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices):
     centroid_error = np.linalg.norm(torch_centroids - sklearn_centroids, axis=1).mean()
     print(f"Average centroid difference: {centroid_error:.4f}")
 
-    if np.array_equal(cluster_labels.cpu().numpy(), sklearn_kmeans.labels_):
+    if np.array_equal(cluster_labels, sklearn_kmeans.labels_):
         print("All cluster labels match exactly!")
     else:
-        print("Some cluster assignments differ, skleanrs: ", sklearn_kmeans.labels_, "gpu: ", cluster_labels.cpu().numpy())
+        print("Some cluster assignments differ, skleanrs: ", sklearn_kmeans.labels_, "gpu: ", cluster_labels)
 
 def our_kmeans_cpu(N, D, A, K):
     """
@@ -832,9 +834,9 @@ def test_kmeans_10():
     # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
     print(f"CPU Time (10): {cpu_time:.6f} seconds")
-    plot = "10"
+
     # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
     print(f"GPU Time (10): {gpu_time:.6f} seconds")
 
     #Calculate Speedup
@@ -848,9 +850,8 @@ def test_kmeans_1000_2():
     # # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
     print(f"CPU Time (1000_2): {cpu_time:.6f} seconds")
-    plot = "1000_2"
     # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
     print(f"GPU Time (1000_2): {gpu_time:.6f} seconds")
 
     #Calculate Speedup
@@ -864,14 +865,29 @@ def test_kmeans_1000_1024():
     # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
     print(f"CPU Time (1000_1024): {cpu_time:.6f} seconds")
-    plot = "1000_1024"
     # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
     print(f"GPU Time (1000_1024): {gpu_time:.6f} seconds")
 
     #Calculate Speedup
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
     print(f"Speedup 1000_1024 (CPU to GPU): {speedup:.2f}x\n")
+
+
+def test_kmeans_1000_215():
+    # Load test data from JSON
+    N, D, A, K = testdata_kmeans("1000_215_meta.json")
+
+    # Measure CPU time
+    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
+    print(f"CPU Time (1000_215): {cpu_time:.6f} seconds")
+    # Measure GPU time
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
+    print(f"GPU Time (1000_215): {gpu_time:.6f} seconds")
+
+    #Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 1000_215 (CPU to GPU): {speedup:.2f}x\n")
 
 def test_kmeans_100k():
     # Load test data from JSON
@@ -880,10 +896,9 @@ def test_kmeans_100k():
     # # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
     print(f"CPU Time (100k): {cpu_time:.6f} seconds")
-    plot = "100k"
     
     # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
     print(f"GPU Time (100k): {gpu_time:.6f} seconds")
 
     #Calculate Speedup
@@ -898,10 +913,9 @@ def test_kmeans_100k_K30():
     # # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
     print(f"CPU Time (100k_K30): {cpu_time:.6f} seconds")
-    plot = "100k_K30"
     
     # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
     print(f"GPU Time (100k_K30): {gpu_time:.6f} seconds")
 
     #Calculate Speedup
@@ -915,9 +929,8 @@ def test_kmeans_1m():
     # # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
     print(f"CPU Time (1m): {cpu_time:.6f} seconds")
-    plot = "1m"
     # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
     print(f"GPU Time (1m): {gpu_time:.6f} seconds")
 
     # #Calculate Speedup
@@ -931,9 +944,8 @@ def test_kmeans_1m_K10():
     # # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
     print(f"CPU Time (1m_K10): {cpu_time:.6f} seconds")
-    plot = "1m_K10"
     # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
     print(f"GPU Time (1m_K10): {gpu_time:.6f} seconds")
 
     # #Calculate Speedup
@@ -947,9 +959,8 @@ def test_kmeans_1m_K50():
     # # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
     print(f"CPU Time (1m_K50): {cpu_time:.6f} seconds")
-    plot = "1m_K50"
     # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
     print(f"GPU Time (1m_K50): {gpu_time:.6f} seconds")
 
     # #Calculate Speedup
@@ -964,9 +975,8 @@ def test_kmeans_1m_10_K10():
     # # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
     print(f"CPU Time (1m_10_K10): {cpu_time:.6f} seconds")
-    plot = "1m_10_K10"
     # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
     print(f"GPU Time (1m_10_K10): {gpu_time:.6f} seconds")
 
     # #Calculate Speedup
@@ -981,9 +991,8 @@ def test_kmeans_1m_50_K10():
     # # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
     print(f"CPU Time (1m_50_K30): {cpu_time:.6f} seconds")
-    plot = "1m_50_K10"
     # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
     print(f"GPU Time (1m_50_K10): {gpu_time:.6f} seconds")
 
     # #Calculate Speedup
@@ -997,9 +1006,8 @@ def test_kmeans_1m_K30():
     # # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
     print(f"CPU Time (1m_K30): {cpu_time:.6f} seconds")
-    plot = "1m_K30"
     # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
     print(f"GPU Time (1m_K30): {gpu_time:.6f} seconds")
 
     # #Calculate Speedup
@@ -1014,9 +1022,8 @@ def test_kmeans_1m_50_K30():
     # # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
     print(f"CPU Time (1m_50_K30): {cpu_time:.6f} seconds")
-    plot = "1m_50_K30"
     # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
     print(f"GPU Time (1m_50_K30): {gpu_time:.6f} seconds")
 
     # #Calculate Speedup
@@ -1030,9 +1037,8 @@ def test_kmeans_1m_K100():
     # # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
     print(f"CPU Time (1m_K100): {cpu_time:.6f} seconds")
-    plot = "1m_K100"
     # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
     print(f"GPU Time (1m_K100): {gpu_time:.6f} seconds")
 
     # #Calculate Speedup
@@ -1046,9 +1052,8 @@ def test_kmeans_2m_K50():
     # # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
     print(f"CPU Time (2m_K50): {cpu_time:.6f} seconds")
-    plot = "2m_K50"
     # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K, plot)
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
     print(f"GPU Time (2m_K50): {gpu_time:.6f} seconds")
 
     # #Calculate Speedup
@@ -1206,7 +1211,8 @@ if __name__ == "__main__":
         test_knn_4k()
         test_knn_4m()
     elif args.test == "kmeans":
-        test_kmeans_1000_2()
+        # test_kmeans_1000_2()
+        test_kmeans_1000_215
         # test_kmeans_1m_10_K10()
     elif args.test == "ann":
         # test_ann()

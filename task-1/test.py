@@ -1,5 +1,7 @@
 import numpy as np
 import json
+from sklearn.datasets import make_blobs
+import matplotlib.pyplot as plt
 
 def read_data(file_path=""):
     """
@@ -11,13 +13,14 @@ def read_data(file_path=""):
         return np.load(file_path)
     else:
         return np.loadtxt(file_path)
-
+    
 def testdata_kmeans(test_file):
     if test_file == "":
         # use random data
         N = 1000
         D = 100
-        A = np.random.randn(N, D)
+        A, _ = make_blobs(n_samples=N, centers=K, n_features=2, random_state=42)
+        # np.random.randn(N, D)
         K = 10
         return N, D, A, K
     else:
@@ -28,9 +31,9 @@ def testdata_kmeans(test_file):
             D = data["d"]
             A_file = data["a_file"]
             K = data["k"]
-            A = np.loadtxt(A_file)
+            A = read_data(A_file)
         return N, D, A, K
-
+    
 def testdata_knn(test_file):
     if test_file == "":
         # use random data
@@ -54,11 +57,12 @@ def testdata_knn(test_file):
         return N, D, A, X, K
     
 def testdata_ann(test_file):
+
     if test_file == "":
         # use random data
         N = 1000
         D = 100
-        A = np.random.randn(N, D)
+        A, _ = make_blobs(n_samples=N, centers=K, n_features=2, random_state=42)
         X = np.random.randn(D)
         K = 10
         return N, D, A, X, K
@@ -71,6 +75,6 @@ def testdata_ann(test_file):
             A_file = data["a_file"]
             X_file = data["x_file"]
             K = data["k"]
-            A = np.loadtxt(A_file)
-            X = np.loadtxt(X_file)
+            A = read_data(A_file)
+            X = read_data(X_file)
         return N, D, A, X, K

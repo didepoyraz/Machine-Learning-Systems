@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/s2080063/mls_cw/Machine-Learning-Systems/task-1/task.py", line 1158, in <module>
+    test_ann_4m()
+  File "/home/s2080063/mls_cw/Machine-Learning-Systems/task-1/task.py", line 1124, in test_ann_4m
+    ann_result, gpu_time = measure_time(our_ann, N, D, A, X, K)
+  File "/home/s2080063/mls_cw/Machine-Learning-Systems/task-1/task.py", line 580, in measure_time
+    result = func(*args, **kwargs)
+  File "/home/s2080063/mls_cw/Machine-Learning-Systems/task-1/task.py", line 538, in our_ann
+    top_k_neighbors = ann_search(A, best_centroids, best_cluster_labels, X, K, K1)
+  File "/home/s2080063/mls_cw/Machine-Learning-Systems/task-1/task.py", line 493, in ann_search
+    top_k_local_indices = our_knn(
+  File "/home/s2080063/mls_cw/Machine-Learning-Systems/task-1/task.py", line 132, in our_knn
+    dists = torch.norm(A_batch - X_tensor, dim=1)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.49 GiB. GPU 0 has a total capacity of 5.92 GiB of which 1.35 GiB is free. Including non-PyTorch memory, this process has 4.58 GiB memory in use. Of the allocated memory 3.04 GiB is allocated by PyTorch, and 1.45 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

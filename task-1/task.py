@@ -57,13 +57,20 @@ def get_distance_function():
 
 def our_knn(N, D, A, X, K):
 
+    global dist_metric
+
     if dist_metric is None:
         raise ValueError("Distance metric not set. Please specify one via command-line arguments.")
     
-    X_tensor = torch.from_numpy(X).cuda()
+    X_tensor = X.cuda() if isinstance(X, torch.Tensor) else torch.from_numpy(X).cuda()
+
+    if isinstance(A, np.ndarray):
+        A_source = 'numpy'
+    else:
+        A_source = 'tensor'
     
     if N <= 100000:
-        A_tensor = torch.from_numpy(A).cuda(non_blocking=True)  
+        A_tensor = torch.from_numpy(A).cuda(non_blocking=True) if A_source == 'numpy' else A  
     
         if dist_metric == "l2":
             dists = torch.norm(A_tensor - X_tensor, dim=1)
@@ -105,7 +112,11 @@ def our_knn(N, D, A, X, K):
     stream1 = torch.cuda.Stream()  # For memory transfer
     stream2 = torch.cuda.Stream()  # For computation
             
-    A_batch = torch.from_numpy(A[:batch_size]).cuda(non_blocking=True)  # pretransfer the first block 
+    if isinstance(A, np.ndarray):
+        A_batch = torch.from_numpy(A[:batch_size]).cuda(non_blocking=True)
+    else:
+        # A is already a tensor, just get the batch
+        A_batch = A[:batch_size] 
     min_heap = []
 
     for i in range(num_batches):
@@ -113,9 +124,12 @@ def our_knn(N, D, A, X, K):
         end_idx = min((i + 1) * batch_size, N)
         
         with torch.cuda.stream(stream1):
-            # Transfer next batch to the GPU
-            if i < num_batches - 1: 
-                A_batch = torch.from_numpy(A[end_idx : end_idx + batch_size]).cuda(non_blocking=True)
+        # Transfer next batch to the GPU
+            if i < num_batches - 1:
+                if A_source == 'numpy':
+                    A_batch = torch.from_numpy(A[end_idx : end_idx + batch_size]).cuda(non_blocking=True)
+                else:  # A is already a tensor
+                    A_batch = A[end_idx : end_idx + batch_size].cuda(non_blocking=True)
 
         with torch.cuda.stream(stream2):
             stream2.wait_stream(stream1)  # Ensure batch is available before computing
@@ -449,10 +463,11 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
         torch.Tensor: (K2,) Tensor containing the indices of the top K2 nearest neighbors.
     """
     cluster_centers = torch.from_numpy(cluster_centers).to(dtype=torch.float32, device="cuda", non_blocking=True)
-    cluster_assignments = torch.from_numpy(cluster_assignments).to(dtype=torch.float32, device="cuda", non_blocking=True)
+    cluster_assignments = torch.from_numpy(cluster_assignments).to(dtype=torch.long, device="cuda", non_blocking=True)
+
     
     if isinstance(X, np.ndarray):
-        X = torch.tensor(X, dtype=torch.float16, device="cuda")
+        X = torch.from_numpy(X).to(dtype=torch.float32, device="cuda")
 
     if dist_metric == "l2":
         cluster_distances = euclidean_distance(X, cluster_centers)
@@ -464,13 +479,16 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
 
     nearest_clusters = torch.argsort(cluster_distances)[:K1] 
 
+    if isinstance(A, np.ndarray):
+        A = torch.from_numpy(A).to(dtype=torch.float32, device="cuda", non_blocking=True)
+
     candidate_indices = torch.cat([
         torch.where(cluster_assignments == cluster_idx)[0] for cluster_idx in nearest_clusters
     ]).to("cuda")
 
-    candidate_points = A[candidate_indices.cpu().numpy()]
-    candidate_points = torch.from_numpy(candidate_points).to(dtype=torch.float32, device="cuda", non_blocking=True)
+    candidate_points = A[candidate_indices]  # A should already be a CUDA tensor
 
+    # Normalize if using cosine distance
     if dist_metric == "cosine":
         candidate_points = torch.nn.functional.normalize(candidate_points, dim=1)
         X = torch.nn.functional.normalize(X, dim=0)
@@ -478,15 +496,24 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
     else:
         candidate_distances = euclidean_distance_batched(candidate_points, X)
 
-    nearest_neighbors = candidate_indices[torch.argsort(candidate_distances)[:K2]]
+    # pass CUDA tensors directly to our_knn
+    top_k_local_indices = our_knn(
+        N=candidate_points.shape[0],
+    D=X.shape[0],
+        A=candidate_points,  # Already a tensor
+        X=X,                 # Already a tensor
+        K=K2
+    )
 
+    # Map local indices back to original dataset indices
+    nearest_neighbors = candidate_indices[top_k_local_indices]
     return nearest_neighbors
 
 def our_ann(N, D, A, X, K):
     device = "cuda"
     #K_clusters = 5
-    K1 = K
-    K2 = min(int(np.sqrt(K)), 3) 
+    K1 = max(int(K * 0.3), 5)
+    K2 = K
     
     # K = 3
     if N == 4000:
@@ -507,7 +534,8 @@ def our_ann(N, D, A, X, K):
     
     for i in range(5):
         cluster_labels, new_centroids = our_kmeans(N,D,A,K)
-        ssd = ((A - new_centroids[cluster_labels]) ** 2).sum()
+        ssd = np.sum((A - new_centroids[cluster_labels]) ** 2)
+
         
         if ssd < best_ssd:
             best_ssd = ssd
@@ -515,7 +543,7 @@ def our_ann(N, D, A, X, K):
             best_cluster_labels = cluster_labels
             
     starttime = time.time()
-    top_k_neighbors = ann_search(A, best_centroids, best_cluster_labels, X, K, K1)
+    top_k_neighbors = ann_search(A, best_centroids, best_cluster_labels, X, K1, K2)
 
     print('ann_search function took - ' + str(time.time() - starttime))
     print("ANN - Top K nearest neighbors indices:", top_k_neighbors.cpu().numpy(), "kmeans best ssd: ", best_ssd)
@@ -1131,8 +1159,8 @@ if __name__ == "__main__":
         # test_kmeans_1m_10_K10()
     elif args.test == "ann":
         # test_ann()
-        # test_ann_2D()
-        # test_ann_215()
-        # test_ann_4k()
-       # test_ann_40k()
+        test_ann_2D()
+        test_ann_215()
+        test_ann_4k()
+        test_ann_40k()
         test_ann_4m()

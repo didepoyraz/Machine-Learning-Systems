@@ -3,45 +3,178 @@
 ------------------------
 
 
-For 4m 
-KNN: 1.541866 seconds
+For 2D: 
+KNN: 0.696631 seconds
 starting kmeans
-GPU K-Means SSD: 12056196096.0
-Sklearn K-Means SSD: 1700446208.0
-SSD Difference: 10355749888.0000
-Average centroid difference: 43.1243
-Some cluster assignments differ, skleanrs
-kmeans finishing total iterations:  150
+GPU K-Means SSD: 304.4570617675781
+Sklearn K-Means SSD: 304.457275390625
+SSD Difference: 0.0002
+Average centroid difference: 0.0000
+All cluster labels match exactly!
+kmeans finishing total iterations:  22
 starting kmeans
-GPU K-Means SSD: 11875907584.0
-Sklearn K-Means SSD: 4038090752.0
-SSD Difference: 7837816832.0000
-Average centroid difference: 40.7486
-Some cluster assignments differ, skleanrs
-kmeans finishing total iterations:  150
+GPU K-Means SSD: 306.43231201171875
+Sklearn K-Means SSD: 306.4324035644531
+SSD Difference: 0.0001
+Average centroid difference: 0.0000
+All cluster labels match exactly!
+kmeans finishing total iterations:  21
 starting kmeans
-GPU K-Means SSD: 11923347456.0
-Sklearn K-Means SSD: 1469550848.0
-SSD Difference: 10453796608.0000
-Average centroid difference: 40.3889
-Some cluster assignments differ, skleanrs
-kmeans finishing total iterations:  150
+GPU K-Means SSD: 303.03240966796875
+Sklearn K-Means SSD: 303.03704833984375
+SSD Difference: 0.0046
+Average centroid difference: 0.0008
+All cluster labels match exactly!
+kmeans finishing total iterations:  37
 starting kmeans
-GPU K-Means SSD: 12600211456.0
-Sklearn K-Means SSD: 2766844672.0
-SSD Difference: 9833366784.0000
-Average centroid difference: 47.4857
-Some cluster assignments differ, skleanrs
-kmeans finishing total iterations:  150
+GPU K-Means SSD: 310.7616882324219
+Sklearn K-Means SSD: 310.7663879394531
+SSD Difference: 0.0047
+Average centroid difference: 0.0009
+All cluster labels match exactly!
+kmeans finishing total iterations:  24
 starting kmeans
-GPU K-Means SSD: 11598566400.0
-Sklearn K-Means SSD: 1892184960.0
-SSD Difference: 9706381440.0000
-Average centroid difference: 37.3094
-Some cluster assignments differ, skleanrs
-kmeans finishing total iterations:  150
-ann_search function took - 2.9617831707000732
-ANN - Top K nearest neighbors indices: [2722638  342674 1614921  536411 3488162 3195048 1175662  335855 3857651
- 3750993] kmeans best ssd:  11598566000.0
-ANN: 574.259545 seconds
+GPU K-Means SSD: 311.4671325683594
+Sklearn K-Means SSD: 311.4673767089844
+SSD Difference: 0.0002
+Average centroid difference: 0.0000
+All cluster labels match exactly!
+kmeans finishing total iterations:  21
+ann_search function took - 0.08282709121704102
+ANN - Top K nearest neighbors indices: [917 210 405 216 269 835 637 286 186 549] kmeans best ssd:  303.0324
+ANN Time: 0.559928 seconds
 Recall Rate: 1.0
+
+
+------------------------
+
+
+For 215: 
+KNN: 0.025986 seconds
+starting kmeans
+GPU K-Means SSD: 32424252.0
+Sklearn K-Means SSD: 32424238.0
+SSD Difference: 14.0000
+Average centroid difference: 0.0000
+All cluster labels match exactly!
+kmeans finishing total iterations:  2
+starting kmeans
+GPU K-Means SSD: 32425222.0
+Sklearn K-Means SSD: 32425270.0
+SSD Difference: 48.0000
+Average centroid difference: 0.0000
+All cluster labels match exactly!
+kmeans finishing total iterations:  2
+starting kmeans
+GPU K-Means SSD: 32424020.0
+Sklearn K-Means SSD: 32424038.0
+SSD Difference: 18.0000
+Average centroid difference: 0.0000
+All cluster labels match exactly!
+kmeans finishing total iterations:  2
+starting kmeans
+GPU K-Means SSD: 32426462.0
+Sklearn K-Means SSD: 32426490.0
+SSD Difference: 28.0000
+Average centroid difference: 0.0000
+All cluster labels match exactly!
+kmeans finishing total iterations:  2
+starting kmeans
+GPU K-Means SSD: 32425456.0
+Sklearn K-Means SSD: 32425428.0
+SSD Difference: 28.0000
+Average centroid difference: 0.0000
+All cluster labels match exactly!
+kmeans finishing total iterations:  2
+ann_search function took - 0.2533843517303467
+ANN - Top K nearest neighbors indices: [445 334 704 412 435 692 957 173 254  20] kmeans best ssd:  32424020.0
+ANN: 5.287046 seconds
+Recall Rate: 1.0
+
+
+------------------------
+
+
+For 4k 
+KNN: 0.001034 seconds
+starting kmeans
+GPU K-Means SSD: 394306.59375
+Sklearn K-Means SSD: 394306.71875
+SSD Difference: 0.1250
+Average centroid difference: 0.0000
+All cluster labels match exactly!
+kmeans finishing total iterations:  50
+starting kmeans
+GPU K-Means SSD: 394252.90625
+Sklearn K-Means SSD: 394252.96875
+SSD Difference: 0.0625
+Average centroid difference: 0.0000
+All cluster labels match exactly!
+kmeans finishing total iterations:  67
+starting kmeans
+GPU K-Means SSD: 394380.5
+Sklearn K-Means SSD: 394380.40625
+SSD Difference: 0.0938
+Average centroid difference: 0.0000
+All cluster labels match exactly!
+kmeans finishing total iterations:  44
+starting kmeans
+GPU K-Means SSD: 394320.40625
+Sklearn K-Means SSD: 394320.1875
+SSD Difference: 0.2188
+Average centroid difference: 0.0050
+All cluster labels match exactly!
+kmeans finishing total iterations:  68
+starting kmeans
+GPU K-Means SSD: 394318.09375
+Sklearn K-Means SSD: 394332.96875
+SSD Difference: 14.8750
+Average centroid difference: 0.0872
+Some cluster assignments differ, skleanrs
+kmeans finishing total iterations:  56
+ann_search function took - 0.003054380416870117
+ANN - Top K nearest neighbors indices: [2998 2067  699 1928 1405 3196  454  159 1622  590] kmeans best ssd:  394252.9
+ANN: 0.529982 seconds
+Recall Rate: 1.0
+
+
+------------------------
+
+
+For 4m 
+KNN: 0.459338 seconds
+starting kmeans
+GPU K-Means SSD: 398836736.0
+Sklearn K-Means SSD: 389592416.0
+SSD Difference: 9244320.0000
+Average centroid difference: 1.5922
+Some cluster assignments differ, skleanrs
+kmeans finishing total iterations:  150
+starting kmeans
+GPU K-Means SSD: 399156384.0
+Sklearn K-Means SSD: 389603744.0
+SSD Difference: 9552640.0000
+Average centroid difference: 1.5390
+Some cluster assignments differ, skleanrs
+kmeans finishing total iterations:  150
+starting kmeans
+GPU K-Means SSD: 398830080.0
+Sklearn K-Means SSD: 389596480.0
+SSD Difference: 9233600.0000
+Average centroid difference: 1.5597
+Some cluster assignments differ, skleanrs
+kmeans finishing total iterations:  150
+starting kmeans
+GPU K-Means SSD: 398658624.0
+Sklearn K-Means SSD: 389614112.0
+SSD Difference: 9044512.0000
+Average centroid difference: 1.5588
+Some cluster assignments differ, skleanrs
+kmeans finishing total iterations:  150
+starting kmeans
+GPU K-Means SSD: 398653952.0
+Sklearn K-Means SSD: 389614496.0
+SSD Difference: 9039456.0000
+Average centroid difference: 1.5682
+Some cluster assignments differ, skleanrs
+kmeans finishing total iterations:  150

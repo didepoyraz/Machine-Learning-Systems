@@ -8,8 +8,9 @@ import json
 from test import read_data, testdata_kmeans, testdata_knn, testdata_ann
 from sklearn.cluster import KMeans, MiniBatchKMeans
 import random
-import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
+import math
+#import matplotlib.pyplot as plt
+#from matplotlib.colors import ListedColormap
 import argparse
 
 # add arguments
@@ -447,6 +448,17 @@ def euclidean_distance_batched(vecs, query, batch_size=100_000):
 def negative_dot_distance(vec1, vec2):
     return -torch.sum(vec1 * vec2, dim=-1)
 
+def negative_dot_distance_batched(vecs, query, batch_size=100_000):
+    distances = []
+    for i in range(0, vecs.shape[0], batch_size):
+        chunk = vecs[i:i+batch_size]
+        dist = -torch.sum(chunk * query, dim=1)
+        distances.append(dist)
+    return torch.cat(distances)
+
+def numpy_to_cuda(arr, dtype=torch.float32):
+    return torch.from_numpy(arr).pin_memory().to(dtype=dtype, device="cuda", non_blocking=True)
+
 def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
     """
     Perform Approximate Nearest Neighbor (ANN) search using K-Means clustering.
@@ -462,39 +474,41 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
     Returns:
         torch.Tensor: (K2,) Tensor containing the indices of the top K2 nearest neighbors.
     """
-    cluster_centers = torch.from_numpy(cluster_centers).to(dtype=torch.float32, device="cuda", non_blocking=True)
-    cluster_assignments = torch.from_numpy(cluster_assignments).to(dtype=torch.long, device="cuda", non_blocking=True)
-
-    
+    if isinstance(cluster_centers, np.ndarray):
+        cluster_centers = numpy_to_cuda_fast(cluster_centers)
+    if isinstance(cluster_assignments, np.ndarray):
+        cluster_assignments = torch.from_numpy(cluster_assignments).to(
+            dtype=torch.long, device="cuda", non_blocking=True
+        )
+    if isinstance(A, np.ndarray):
+        A = numpy_to_cuda_fast(A)
     if isinstance(X, np.ndarray):
-        X = torch.from_numpy(X).to(dtype=torch.float32, device="cuda")
+        X = numpy_to_cuda_fast(X)
 
     if dist_metric == "l2":
-        cluster_distances = euclidean_distance(X, cluster_centers)
+        cluster_distances = euclidean_distance_batched(cluster_centers, X)
     elif dist_metric == "cosine":
         # For cosine, normalize vectors first
         X_norm = torch.nn.functional.normalize(X.unsqueeze(0), p=2, dim=1).squeeze(0)
         centers_norm = torch.nn.functional.normalize(cluster_centers, p=2, dim=1)
         cluster_distances = negative_dot_distance(X_norm, centers_norm)
 
-    nearest_clusters = torch.argsort(cluster_distances)[:K1] 
+    nearest_clusters = torch.argsort(cluster_distances)[:K1]
 
-    if isinstance(A, np.ndarray):
-        A = torch.from_numpy(A).to(dtype=torch.float32, device="cuda", non_blocking=True)
+    # Safely gather candidate indices and points
+    candidate_indices = []
+    for cluster_idx in nearest_clusters:
+        idx = torch.where(cluster_assignments == cluster_idx)[0]
+        candidate_indices.append(idx)
 
-    candidate_indices = torch.cat([
-        torch.where(cluster_assignments == cluster_idx)[0] for cluster_idx in nearest_clusters
-    ]).to("cuda")
+    candidate_indices = torch.cat(candidate_indices)
 
-    candidate_points = A[candidate_indices]  # A should already be a CUDA tensor
-
-    # Normalize if using cosine distance
-    if dist_metric == "cosine":
-        candidate_points = torch.nn.functional.normalize(candidate_points, dim=1)
-        X = torch.nn.functional.normalize(X, dim=0)
-        candidate_distances = negative_dot_distance(candidate_points, X)
-    else:
-        candidate_distances = euclidean_distance_batched(candidate_points, X)
+    # Batch the candidate point gathering (optional for large A)
+    candidate_points = []
+    for i in range(0, candidate_indices.shape[0], batch_size):
+        idx_chunk = candidate_indices[i:i+batch_size]
+        candidate_points.append(A[idx_chunk])
+    candidate_points = torch.cat(candidate_points, dim=0)
 
     # pass CUDA tensors directly to our_knn
     top_k_local_indices = our_knn(
@@ -512,16 +526,23 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
 def our_ann(N, D, A, X, K):
     device = "cuda"
     #K_clusters = 5
-    K1 = max(int(K * 0.3), 5)
+    print(str(K) + " nearest neighbors to find")
     K2 = K
     
-    # K = 3
-    if N == 4000:
-        K =3
-    elif N == 40000:
-        K=4
-    else: 
-        K=10
+    #K = 3
+    if N < 10000:
+        K = 3
+
+    elif N < 100000:
+        K = 5
+    elif N < 1000000:
+        K = 10
+    else:
+        K = 200
+
+    print(str(K) + " clusters using KMeans")
+    K1 = math.ceil(K * 0.3)
+    print("If K1 is assigned after K - " + str(K1))
 
     global dist_metric
     if dist_metric not in ["l2", "cosine"]:

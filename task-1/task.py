@@ -496,17 +496,12 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2, batch_size = 
     nearest_clusters = torch.argsort(cluster_distances)[:K1]
 
     # # Safely gather candidate indices and points
-    # candidate_indices = []
-    # for cluster_idx in nearest_clusters:
-    #     idx = torch.where(cluster_assignments == cluster_idx)[0]
-    #     candidate_indices.append(idx)
+    candidate_indices = []
+    for cluster_idx in nearest_clusters:
+        idx = torch.where(cluster_assignments == cluster_idx)[0]
+        candidate_indices.append(idx)
 
-    # candidate_indices = torch.cat(candidate_indices)
-    
-    # try this for candidate indices
-    mask = (cluster_assignments.unsqueeze(1) == nearest_clusters).any(dim=1)
-    candidate_indices = torch.nonzero(mask, as_tuple=False).squeeze(1)
-
+    candidate_indices = torch.cat(candidate_indices)
 
     # Batch the candidate point gathering (optional for large A)
     candidate_points = []
@@ -1184,7 +1179,7 @@ if __name__ == "__main__":
         test_kmeans_1000_215
         # test_kmeans_1m_10_K10()
     elif args.test == "ann":
-        # test_ann()
+        test_ann()
         test_ann_2D()
         test_ann_215()
         test_ann_4k()

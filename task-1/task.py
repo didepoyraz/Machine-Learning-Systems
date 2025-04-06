@@ -68,7 +68,7 @@ def our_knn(N, D, A, X, K):
         A_source = 'numpy'
     else:
         A_source = 'tensor'
-    
+    #------------------------------------Small-datasets-----------------------------------------------------------------#
     if N <= 100000:
         A_tensor = torch.from_numpy(A).cuda(non_blocking=True) if A_source == 'numpy' else A  
     
@@ -91,7 +91,8 @@ def our_knn(N, D, A, X, K):
         sorted_indices = torch.argsort(dists)[:K]  # Get the indices of the top K smallest distances
         sorted_indices = sorted_indices.cpu().numpy()
         return sorted_indices
-
+    
+    #------------------------------------Large_scale-datasets-----------------------------------------------------------------#
     # Find the best batch size according to the available memory in the GPU
     MAX_FRACTION = 0.8
     device = torch.cuda.current_device()
@@ -469,6 +470,9 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
     if isinstance(X, np.ndarray):
         X = torch.from_numpy(X).to(dtype=torch.float32, device="cuda")
 
+    if isinstance(A, np.ndarray):
+        A = torch.from_numpy(A).to(dtype=torch.float32, device="cuda", non_blocking=True)
+
     if dist_metric == "l2":
         cluster_distances = euclidean_distance(X, cluster_centers)
     elif dist_metric == "cosine":
@@ -478,10 +482,7 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
         cluster_distances = negative_dot_distance(X_norm, centers_norm)
 
     nearest_clusters = torch.argsort(cluster_distances)[:K1] 
-
-    if isinstance(A, np.ndarray):
-        A = torch.from_numpy(A).to(dtype=torch.float32, device="cuda", non_blocking=True)
-
+  
     candidate_indices = torch.cat([
         torch.where(cluster_assignments == cluster_idx)[0] for cluster_idx in nearest_clusters
     ]).to("cuda")

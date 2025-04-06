@@ -459,7 +459,7 @@ def negative_dot_distance_batched(vecs, query, batch_size=100_000):
 def numpy_to_cuda(arr, dtype=torch.float32):
     return torch.from_numpy(arr).pin_memory().to(dtype=dtype, device="cuda", non_blocking=True)
 
-def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2):
+def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2, batch_size = 100_000):
     """
     Perform Approximate Nearest Neighbor (ANN) search using K-Means clustering.
 

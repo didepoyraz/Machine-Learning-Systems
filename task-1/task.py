@@ -475,15 +475,15 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2, batch_size = 
         torch.Tensor: (K2,) Tensor containing the indices of the top K2 nearest neighbors.
     """
     if isinstance(cluster_centers, np.ndarray):
-        cluster_centers = numpy_to_cuda_fast(cluster_centers)
+        cluster_centers = numpy_to_cuda(cluster_centers)
     if isinstance(cluster_assignments, np.ndarray):
         cluster_assignments = torch.from_numpy(cluster_assignments).to(
             dtype=torch.long, device="cuda", non_blocking=True
         )
     if isinstance(A, np.ndarray):
-        A = numpy_to_cuda_fast(A)
+        A = numpy_to_cuda(A)
     if isinstance(X, np.ndarray):
-        X = numpy_to_cuda_fast(X)
+        X = numpy_to_cuda(X)
 
     if dist_metric == "l2":
         cluster_distances = euclidean_distance_batched(cluster_centers, X)
@@ -491,7 +491,7 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2, batch_size = 
         # For cosine, normalize vectors first
         X_norm = torch.nn.functional.normalize(X.unsqueeze(0), p=2, dim=1).squeeze(0)
         centers_norm = torch.nn.functional.normalize(cluster_centers, p=2, dim=1)
-        cluster_distances = negative_dot_distance(X_norm, centers_norm)
+        cluster_distances = negative_dot_distance_batched(X_norm, centers_norm)
 
     nearest_clusters = torch.argsort(cluster_distances)[:K1]
 

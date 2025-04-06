@@ -453,8 +453,16 @@ def negative_dot_distance_batched(vecs, query, batch_size=100_000):
         distances.append(dist)
     return torch.cat(distances)
 
-def numpy_to_cuda(arr, dtype=torch.float32):
-    return torch.from_numpy(arr).pin_memory().to(dtype=dtype, device="cuda", non_blocking=True)
+def numpy_to_cuda(arr, dtype=torch.float32, batch_size=100_000):
+    assert isinstance(arr, np.ndarray), "Input must be a NumPy array"
+    
+    cuda_chunks = []
+    for i in range(0, arr.shape[0], batch_size):
+        chunk = arr[i:i+batch_size]
+        chunk_torch = torch.from_numpy(chunk).pin_memory().to(dtype=dtype, device="cuda", non_blocking=True)
+        cuda_chunks.append(chunk_torch)
+
+    return torch.cat(cuda_chunks, dim=0)
 
 def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2, batch_size = 100_000):
     """
@@ -472,42 +480,58 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2, batch_size = 
         torch.Tensor: (K2,) Tensor containing the indices of the top K2 nearest neighbors.
     """
     if isinstance(cluster_centers, np.ndarray):
+        #start = time.time()
         cluster_centers = numpy_to_cuda(cluster_centers)
+        #print("Cluster centers to tensor: " + str(time.time() - start))
     if isinstance(cluster_assignments, np.ndarray):
+        #start = time.time()
         cluster_assignments = torch.from_numpy(cluster_assignments).to(
             dtype=torch.long, device="cuda", non_blocking=True
         )
+        #print("Cluster assignments to tensor: " + str(time.time() - start))
     if isinstance(A, np.ndarray):
+        #start = time.time()
         A = numpy_to_cuda(A)
+        #print("A to cuda: " + str(time.time() - start))
     if isinstance(X, np.ndarray):
+        #start = time.time()
         X = numpy_to_cuda(X)
+        #print("X to cuda: " + str(time.time() - start))
 
     if dist_metric == "l2":
+        #start = time.time()
         cluster_distances = euclidean_distance_batched(cluster_centers, X)
+        #print("Cluster distances calculated via euclidean: " + str(time.time() - start))
     elif dist_metric == "cosine":
         # For cosine, normalize vectors first
         X_norm = torch.nn.functional.normalize(X.unsqueeze(0), p=2, dim=1).squeeze(0)
         centers_norm = torch.nn.functional.normalize(cluster_centers, p=2, dim=1)
         cluster_distances = negative_dot_distance_batched(X_norm, centers_norm)
-
+    #start = time.time()
     nearest_clusters = torch.argsort(cluster_distances)[:K1]
+    #print("finding nearest clusters: " + str(time.time() - start))
 
     # Safely gather candidate indices and points
+    #start = time.time()
     candidate_indices = []
     for cluster_idx in nearest_clusters:
         idx = torch.where(cluster_assignments == cluster_idx)[0]
         candidate_indices.append(idx)
 
     candidate_indices = torch.cat(candidate_indices)
+    #print("candidate indices: " + str(time.time() - start))
 
     # Batch the candidate point gathering (optional for large A)
+    #start = time.time()
     candidate_points = []
     for i in range(0, candidate_indices.shape[0], batch_size):
         idx_chunk = candidate_indices[i:i+batch_size]
         candidate_points.append(A[idx_chunk])
     candidate_points = torch.cat(candidate_points, dim=0)
+    #print("Candidate points: " + str(time.time() - start))
 
     # pass CUDA tensors directly to our_knn
+    #start = time.time()
     top_k_local_indices = our_knn(
         N=candidate_points.shape[0],
     D=X.shape[0],
@@ -518,6 +542,7 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2, batch_size = 
 
     # Map local indices back to original dataset indices
     nearest_neighbors = candidate_indices[top_k_local_indices]
+    #print("Top K and finding indices: " + str(time.time() - start))
     return nearest_neighbors
 
 def our_ann(N, D, A, X, K):
@@ -527,22 +552,21 @@ def our_ann(N, D, A, X, K):
     K2 = K
     i = 5
     #K = 3
+
     if N < 5000:
         K = 3
-        K1 = math.ceil(K * 0.6)
+
     elif N < 100000:
         K = 5
-        K1 = math.ceil(K * 0.6)
+
     elif N < 1000000:
         K = 10
-        K1 = math.ceil(K * 0.6)
     else:
         K = 200
-        K1 = math.ceil(K * 0.3)
 
-    print(str(K) + " clusters using KMeans")
-    K1 = math.ceil(K * 0.3)
-    print("If K1 is assigned after K - " + str(K1))
+    #print(str(K) + " clusters using KMeans")
+    K1 = math.ceil(K * 0.6)
+    #print("If K1 is assigned after K - " + str(K1))
 
     global dist_metric
     if dist_metric not in ["l2", "cosine"]:
@@ -1035,6 +1059,7 @@ def test_ann_2D():
         X = read_data(X)
 
     knn_result, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(knn_result)
     print(f"KNN: {gpu_time:.6f} seconds")
 
     N, D, A, X, K = testdata_ann("2d_meta.json")
@@ -1061,6 +1086,7 @@ def test_ann_215():
     N, D, A, X, K = testdata_knn("215_meta.json")
 
     knn_result, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(knn_result)
     print(f"KNN: {gpu_time:.6f} seconds")
 
     N, D, A, X, K = testdata_ann("215_meta.json")
@@ -1086,6 +1112,7 @@ def test_ann_4k():
     N, D, A, X, K = testdata_knn("4k_meta.json")
 
     knn_result, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(knn_result)
     print(f"KNN: {gpu_time:.6f} seconds")
 
     N, D, A, X, K = testdata_ann("4k_meta.json")
@@ -1111,6 +1138,7 @@ def test_ann_40k():
     N, D, A, X, K = testdata_knn("40k_meta.json")
 
     knn_result, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(knn_result)
     print(f"KNN: {gpu_time:.6f} seconds")
 
     N, D, A, X, K = testdata_ann("40k_meta.json")
@@ -1139,9 +1167,36 @@ def test_ann_4m():
 
     # Measure GPU time
     knn_result, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(knn_result)
     print(f"KNN: {gpu_time:.6f} seconds")
 
     N, D, A, X, K = testdata_ann("4m_meta.json")
+
+    # Manually check file types for A and X
+    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
+        A = read_data(A)
+    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
+        X = read_data(X)
+
+    ann_result, gpu_time = measure_time(our_ann, N, D, A, X, K)
+    print(f"ANN: {gpu_time:.6f} seconds")
+
+    list1 = {int(x) for x in knn_result}
+    list2 = {int(x.cpu()) for x in ann_result}
+
+    rr = recall_rate(list1, list2)
+    print("Recall Rate: " + str(rr))
+
+def test_ann_100k():
+    print("\n\n------------------------\n\n")
+    print("For 100k vectors with 1024 dimensions")
+    N, D, A, X, K = testdata_knn("100k_meta.json")
+
+    knn_result, gpu_time = measure_time(our_knn, N, D, A, X, K)
+    print(knn_result)
+    print(f"KNN: {gpu_time:.6f} seconds")
+
+    N, D, A, X, K = testdata_ann("100k_meta.json")
 
     # Manually check file types for A and X
     if isinstance(A, str):  # If A is a file path (for .txt or .npy)
@@ -1184,3 +1239,4 @@ if __name__ == "__main__":
         test_ann_4k()
         test_ann_40k()
         test_ann_4m()
+        test_ann_100k()

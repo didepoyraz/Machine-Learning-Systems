@@ -138,6 +138,7 @@ def generate_and_save_ann(n, d,k1, prefix, k2=10):
 
 generate_and_save_ann(1000, 2, 3, "2d")
 generate_and_save_ann(1000, 2**15, 5, "215")
+generate_and_save_ann(100000, 1024, "100k")
 generate_and_save_ann(4000, 100, 3, "4k")
 generate_and_save_ann(40000, 100, 5, "40k")
 generate_and_save_ann(4000000, 100, 200, "4m")

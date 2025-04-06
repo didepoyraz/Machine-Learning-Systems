@@ -512,7 +512,6 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2, batch_size = 
     #print("finding nearest clusters: " + str(time.time() - start))
 
     # Safely gather candidate indices and points
-    #start = time.time()
     candidate_indices = []
     for cluster_idx in nearest_clusters:
         idx = torch.where(cluster_assignments == cluster_idx)[0]
@@ -1233,7 +1232,7 @@ if __name__ == "__main__":
         test_kmeans_1000_215
         # test_kmeans_1m_10_K10()
     elif args.test == "ann":
-        # test_ann()
+        test_ann()
         test_ann_2D()
         test_ann_215()
         test_ann_4k()

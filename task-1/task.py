@@ -215,7 +215,6 @@ def our_knn_cpu(N, D, A, X, K):
 NUM_INIT = None 
 
 def our_kmeans(N, D, A, K):
-    print("starting kmeans")
     global dist_metric
     if dist_metric not in ["l2", "cosine"]:
         print(f"Warning: K-means only supports l2 and cosine distances. Using l2 instead of {dist_metric}.")
@@ -335,10 +334,8 @@ def our_kmeans(N, D, A, K):
         
         # gpu_ssd = ((A - new_centroids[cluster_labels]) ** 2).sum().item()
         # print("gpu ssd: ", gpu_ssd)
-        
     cluster_labels = torch.cat(cluster_labels_batches, dim=0)
-    print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices)
-    print("kmeans finishing total iterations: ", iteration)
+    #print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices)
     return cluster_labels.cpu().numpy(), new_centroids.cpu().numpy() # decide on the return value based on what is needed for 2.2
 
 
@@ -528,17 +525,20 @@ def our_ann(N, D, A, X, K):
     #K_clusters = 5
     print(str(K) + " nearest neighbors to find")
     K2 = K
-    
+    i = 5
     #K = 3
-    if N < 10000:
+    if N < 5000:
         K = 3
-
+        K1 = math.ceil(K * 0.6)
     elif N < 100000:
         K = 5
+        K1 = math.ceil(K * 0.6)
     elif N < 1000000:
         K = 10
+        K1 = math.ceil(K * 0.6)
     else:
         K = 200
+        K1 = math.ceil(K * 0.3)
 
     print(str(K) + " clusters using KMeans")
     K1 = math.ceil(K * 0.3)
@@ -553,10 +553,9 @@ def our_ann(N, D, A, X, K):
     best_centroids = None
     best_cluster_labels = None
     
-    for i in range(5):
+    for i in range(i):
         cluster_labels, new_centroids = our_kmeans(N,D,A,K)
         ssd = np.sum((A - new_centroids[cluster_labels]) ** 2)
-
         
         if ssd < best_ssd:
             best_ssd = ssd

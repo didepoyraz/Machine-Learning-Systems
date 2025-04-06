@@ -1,7 +1,7 @@
 import numpy as np
 import json
 from sklearn.datasets import make_blobs
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 def save_metadata(filename, n, d, a_file, x_file, k=10):
     """Saves metadata as a JSON file."""
@@ -45,11 +45,11 @@ def generate_and_save_kmeans(n, d,k, prefix):
     
     A, labels = make_blobs(n_samples=n, centers=k, n_features=d,random_state=42)
     A = A.astype(np.float32)
-    plt.clf()
+    #plt.clf()
     print(f"Generated data shape: {A.shape}")
     print(f"Unique cluster labels: {np.unique(labels)}")    
-    plt.scatter(A[:, 0], A[:, 1], s=2, alpha=0.5)
-    plt.savefig(f"figures/TEST_{prefix}.png")
+    #plt.scatter(A[:, 0], A[:, 1], s=2, alpha=0.5)
+    #plt.savefig(f"figures/TEST_{prefix}.png")
       
     a_file = f"{prefix}_A.npy"
     meta_file = f"{prefix}_meta.json"
@@ -80,11 +80,11 @@ def generate_and_save_ann(n, d,k1, prefix, k2=10):
     A = A.astype(np.float32)
     X = np.random.randn(d).astype(np.float32)
     
-    plt.clf()
+    #plt.clf()
     print(f"Generated data shape: {A.shape}")
     print(f"Unique cluster labels: {np.unique(labels)}")    
-    plt.scatter(A[:, 0], A[:, 1], s=2, alpha=0.5)
-    plt.savefig(f"figures/TEST_{prefix}.png")
+    #plt.scatter(A[:, 0], A[:, 1], s=2, alpha=0.5)
+    #plt.savefig(f"figures/TEST_{prefix}.png")
       
     a_file = f"{prefix}_A.npy"
     x_file = f"{prefix}_X.npy"
@@ -137,9 +137,9 @@ def generate_and_save_ann(n, d,k1, prefix, k2=10):
 # generate_and_save(4000000, 100, "4m")
 
 generate_and_save_ann(1000, 2, 3, "2d")
-generate_and_save_ann(1000, 2**15, 3, "215")
+generate_and_save_ann(1000, 2**15, 5, "215")
 generate_and_save_ann(4000, 100, 3, "4k")
-generate_and_save_ann(40000, 100, 4, "40k")
-generate_and_save_ann(4000000, 100, 10, "4m")
+generate_and_save_ann(40000, 100, 5, "40k")
+generate_and_save_ann(4000000, 100, 200, "4m")
 
 print("Data generation complete!")

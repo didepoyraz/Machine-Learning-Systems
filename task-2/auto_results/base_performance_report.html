@@ -1,0 +1,103 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>RAG Service Base Performance Test Report</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                h1, h2, h3 { color: #333; }
+                table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+                tr:nth-child(even) { background-color: #f9f9f9; }
+                .figure { margin: 20px 0; text-align: center; }
+                .figure img { max-width: 100%; }
+            </style>
+        </head>
+        <body>
+            <h1>RAG Service Base Performance Test Report</h1>
+            <p>Test Date: 2025-04-07 00:23:34</p>
+            
+            <h2>Summary</h2>
+            <table>
+                <tr>
+                    <th>Workload Pattern</th>
+                    <th>Total Requests</th>
+                    <th>Success Rate</th>
+                    <th>Avg Latency (s)</th>
+                    <th>P95 Latency (s)</th>
+                    <th>Throughput (req/s)</th>
+                </tr>
+        
+                <tr>
+                    <td><b>steady_low</b></td>
+                    <td>300</td>
+                    <td>100.00%</td>
+                    <td>4.8309</td>
+                    <td>8.7292</td>
+                    <td>5.0210</td>
+                </tr>
+            
+                <tr>
+                    <td><b>steady_high</b></td>
+                    <td>1200</td>
+                    <td>73.08%</td>
+                    <td>14.1459</td>
+                    <td>27.4181</td>
+                    <td>14.6183</td>
+                </tr>
+            
+                <tr>
+                    <td><b>burst</b></td>
+                    <td>1099</td>
+                    <td>74.07%</td>
+                    <td>13.7688</td>
+                    <td>27.4049</td>
+                    <td>9.0944</td>
+                </tr>
+            
+                <tr>
+                    <td><b>diurnal</b></td>
+                    <td>3732</td>
+                    <td>68.94%</td>
+                    <td>14.6462</td>
+                    <td>27.7480</td>
+                    <td>23.3746</td>
+                </tr>
+            
+            </table>
+            
+            <h2>Detailed Results by Pattern</h2>
+        
+            <h3>steady_low Pattern</h3>
+            <div class="figure">
+                <img src="steady_low_latency.png" alt="steady_low Latency">
+                <p>Latency distribution for steady_low workload</p>
+            </div>
+            
+            <h3>steady_high Pattern</h3>
+            <div class="figure">
+                <img src="steady_high_latency.png" alt="steady_high Latency">
+                <p>Latency distribution for steady_high workload</p>
+            </div>
+            
+            <h3>burst Pattern</h3>
+            <div class="figure">
+                <img src="burst_latency.png" alt="burst Latency">
+                <p>Latency distribution for burst workload</p>
+            </div>
+            
+            <h3>diurnal Pattern</h3>
+            <div class="figure">
+                <img src="diurnal_latency.png" alt="diurnal Latency">
+                <p>Latency distribution for diurnal workload</p>
+            </div>
+            
+            <h2>Conclusion</h2>
+            <p>
+                This report shows the performance of the base RAG implementation across different workload patterns.
+                These results can be used as a baseline for comparing optimized implementations.
+            </p>
+        </body>
+        </html>
+        

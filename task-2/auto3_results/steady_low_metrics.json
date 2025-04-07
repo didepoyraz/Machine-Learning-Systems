@@ -1,0 +1,13 @@
+{
+  "test_name": "steady_low",
+  "total_requests": 300,
+  "successful_requests": 300,
+  "success_rate": 1.0,
+  "avg_latency": 2.2033531061808267,
+  "median_latency": 1.999558687210083,
+  "p95_latency": 3.644257032871247,
+  "p99_latency": 5.276094052791596,
+  "min_latency": 1.584012746810913,
+  "max_latency": 5.280778646469116,
+  "throughput": 5.012031508997932
+}

@@ -143,7 +143,7 @@ class RAGServiceTester:
         self.result_analyzer.create_final_report(all_results)
 
 def main():
-    parser = argparse.ArgumentParser(description="Test RAG service base performance using TracéStorm")
+    parser = argparse.ArgumentParser(description="Test RAG service performance using TracéStorm")
     parser.add_argument("--host", type=str, default="localhost", help="Host of the RAG service")
     parser.add_argument("--port", type=int, default=8002, help="Port of the RAG service")
     parser.add_argument("--output", type=str, default="base_results", help="Output directory for results")

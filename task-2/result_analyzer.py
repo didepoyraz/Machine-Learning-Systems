@@ -156,7 +156,7 @@ class ResultAnalyzer:
         <!DOCTYPE html>
         <html>
         <head>
-            <title>RAG Service Base Performance Test Report</title>
+            <title>RAG Service Autoscaler and Load Balancing Performance Test Report</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 20px; }}
                 h1, h2, h3 {{ color: #333; }}
@@ -169,7 +169,7 @@ class ResultAnalyzer:
             </style>
         </head>
         <body>
-            <h1>RAG Service Base Performance Test Report</h1>
+            <h1>RAG Service Autoscaler and Load Balancing Performance Test Report</h1>
             <p>Test Date: {time.strftime("%Y-%m-%d %H:%M:%S")}</p>
             
             <h2>Summary</h2>
@@ -219,15 +219,14 @@ class ResultAnalyzer:
         html_report += """
             <h2>Conclusion</h2>
             <p>
-                This report shows the performance of the base RAG implementation across different workload patterns.
-                These results can be used as a baseline for comparing optimized implementations.
+                This report shows the performance of the optimised autoscaler and load balancer RAG implementation across different workload patterns.
             </p>
         </body>
         </html>
         """
         
         # Save the HTML report
-        with open(f"{self.output_dir}/base_performance_report.html", "w") as f:
+        with open(f"{self.output_dir}/autoscaler_performance_report.html", "w") as f:
             f.write(html_report)
         
-        print(f"Final report generated at {self.output_dir}/base_performance_report.html")
+        print(f"Final report generated at {self.output_dir}/autoscaler_performance_report.html")

@@ -1,143 +1,245 @@
 import torch
 import numpy as np
 from transformers import AutoTokenizer, AutoModel, pipeline
-from fastapi import FastAPI
-import uvicorn
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import uvicorn
 import threading
 import queue
 import time
+import psutil
+import logging
+import os
+import faiss
+from typing import List
+from functools import lru_cache
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("rag-service")
 
+# Constants
 MAX_BATCH_SIZE = 16
-MAX_WAITING_TIME = 0.1 #50ms? adjust this
+MAX_WAITING_TIME = 0.1
+MIN_WORKERS = 1
+MAX_WORKERS = 8
+SCALING_COOLDOWN_PERIOD = 60
+HEALTH_CHECK_INTERVAL = 10
+
 app = FastAPI()
 
-# Example documents in memory
-# documents = [
-#    "Cats are small furry carnivores that are often kept as pets.",
-#    "Dogs are domesticated mammals, not natural wild animals.",
-#    "Hummingbirds can hover in mid-air by rapidly flapping their wings."
-#]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# different dataset
+# Load dataset
 from datasets import load_dataset
-
-print('loading dataset')
-# Load the dataset
-# dataset = load_dataset('MAsad789565/Coding_GPT4_Data', split='train')
+logger.info('Loading dataset')
 dataset = load_dataset('MAsad789565/Coding_GPT4_Data', split='train', trust_remote_code=True)
-
-# If needed, specify a different split such as 'validation' or 'test'
-
-# Extract content from the dataset
 documents = [example['assistant'] for example in dataset]
-print('dataset loaded')
+logger.info(f'Loaded {len(documents)} documents')
 
-# 1. Load embedding model
+# Embedding model
 EMBED_MODEL_NAME = "intfloat/multilingual-e5-large-instruct"
 embed_tokenizer = AutoTokenizer.from_pretrained(EMBED_MODEL_NAME)
 embed_model = AutoModel.from_pretrained(EMBED_MODEL_NAME)
-print("loaded embedding model")
+embed_model.eval()
+logger.info("Embedding model loaded")
 
-# Basic Chat LLM
-chat_pipeline = pipeline("text-generation", model="facebook/opt-125m")
-# Note: try this 1.5B model if you got enough GPU memory
-# chat_pipeline = pipeline("text-generation", model="Qwen/Qwen2.5-1.5B-Instruct")
+# Chat model
+chat_pipeline = pipeline("text-generation", model="facebook/opt-125m", device=0 if torch.cuda.is_available() else -1)
+logger.info("Chat model loaded")
 
-print("starting request queue")
+# Load document embeddings and FAISS index
+index_path = "faiss_index.index"
+
+if os.path.exists(index_path):
+    index = faiss.read_index(index_path)
+    logger.info("FAISS index loaded from disk")
+else:
+    doc_embeddings = np.load("doc_embeddings.npy").astype("float32")
+    index = faiss.IndexFlatIP(doc_embeddings.shape[1])
+    index.add(doc_embeddings)
+    faiss.write_index(index, index_path)
+    logger.info("FAISS index created and saved")
+
+# Request queue
 request_queue = queue.Queue()
 
-doc_embeddings = np.load("doc_embeddings.npy")
-print("loaded embeddings")
-## Hints:
+# Worker metrics
+class WorkerMetrics:
+    def __init__(self):
+        self.active_workers = 0
+        self.total_requests_processed = 0
+        self.requests_per_minute = 0
+        self.average_processing_time = 0.0
+        self.last_scaling_time = time.time()
+        self.request_timestamps = []
+        self.processing_times = []
 
-### Step 3.1:
-# 1. Initialize a request queue
-# 2. Initialize a background thread to process the request (via calling the rag_pipeline function)
-# 3. Modify the predict function to put the request in the queue, instead of processing it immediately
+worker_metrics = WorkerMetrics()
+worker_locks = threading.Lock()
 
-### Step 3.2:
-# 1. Take up to MAX_BATCH_SIZE requests from the queue or wait until MAX_WAITING_TIME
-# 2. Process the batched requests
-
-def get_embedding(text: str) -> np.ndarray:
-    # print("getting embeddings.")
-    """Compute a simple average-pool embedding."""
+# Utilities
+@lru_cache(maxsize=1024)
+def get_cached_embedding(text: str) -> np.ndarray:
     inputs = embed_tokenizer(text, return_tensors="pt", truncation=True)
     with torch.no_grad():
         outputs = embed_model(**inputs)
     return outputs.last_hidden_state.mean(dim=1).cpu().numpy()
 
-# Precompute document embeddings
-# doc_embeddings = np.vstack([get_embedding(doc) for doc in documents])
-# np.save("doc_embeddings.npy", doc_embeddings)
+def get_embeddings(texts: List[str]) -> np.ndarray:
+    inputs = embed_tokenizer(texts, return_tensors="pt", padding=True, truncation=True)
+    with torch.no_grad():
+        outputs = embed_model(**inputs)
+    return outputs.last_hidden_state.mean(dim=1).cpu().numpy()
 
-### You may want to use your own top-k retrieval method (task 1)
-def retrieve_top_k(query_emb: np.ndarray, k: int = 2) -> list:
-    """Retrieve top-k docs via dot-product similarity."""
-    # print("Retrieving top-k")
-    sims = doc_embeddings @ query_emb.T
-    top_k_indices = np.argsort(sims.ravel())[::-1][:k]
-    return [documents[i] for i in top_k_indices]
+def retrieve_top_k(query_emb: np.ndarray, k: int = 2) -> List[str]:
+    D, I = index.search(query_emb, k)
+    return [[documents[i] for i in ii] for ii in I]
 
-def rag_pipeline(query: str, k: int = 2) -> str:
-    # print("in rag pipeline")
-    # whenever there is a new request the worker thread will receive it here
-    # Step 1: Input embedding
-    query_emb = get_embedding(query)
-    
+def rag_batch_pipeline(queries: List[str], k: int = 2) -> List[str]:
+    start_time = time.time()
+
+    # Step 1: Batch embeddings
+    query_embs = get_embeddings(queries)
+
     # Step 2: Retrieval
-    retrieved_docs = retrieve_top_k(query_emb, k)
-    
-    # Construct the prompt from query + retrieved docs
-    context = "\n".join(retrieved_docs)
-    prompt = f"Question: {query}\nContext:\n{context}\nAnswer:"
-    
-    # Step 3: LLM Output
-    generated = chat_pipeline(prompt, max_length=50, do_sample=True)[0]["generated_text"]
-    return generated
+    top_k_docs = retrieve_top_k(query_embs, k)
 
-# Define request model
+    # Step 3: Prompt construction and generation
+    prompts = []
+    for query, context in zip(queries, top_k_docs):
+        joined_context = "\n".join(context)
+        prompt = f"Question: {query}\nContext:\n{joined_context}\nAnswer:"
+        prompts.append(prompt)
+
+    results = chat_pipeline(prompts, max_length=50, do_sample=True)
+
+    responses = [res[0]["generated_text"] for res in results]
+
+    processing_time = time.time() - start_time
+    with worker_locks:
+        worker_metrics.processing_times.append(processing_time)
+        worker_metrics.processing_times = worker_metrics.processing_times[-100:]
+        worker_metrics.average_processing_time = sum(worker_metrics.processing_times) / len(worker_metrics.processing_times)
+
+    return responses
+
+# Request schema
 class QueryRequest(BaseModel):
     query: str
     k: int = 2
 
-@app.post("/rag") 
+@app.post("/rag")
 def predict(payload: QueryRequest):
-    # result = rag_pipeline(payload.query, payload.k)
-    # print("predicting")
+    with worker_locks:
+        now = time.time()
+        worker_metrics.request_timestamps.append(now)
+        worker_metrics.request_timestamps = [ts for ts in worker_metrics.request_timestamps if now - ts <= 60]
+        worker_metrics.requests_per_minute = len(worker_metrics.request_timestamps)
+
     response_queue = queue.Queue()
     request_queue.put((payload, response_queue))
-    
     result = response_queue.get()
-    
+
+    with worker_locks:
+        worker_metrics.total_requests_processed += 1
+
+    return {"query": payload.query, "result": result}
+
+@app.get("/health")
+def health_check():
     return {
-        "query": payload.query,
-        "result": result,
+        "status": "healthy",
+        "metrics": {
+            "cpu_usage": psutil.cpu_percent(),
+            "memory_usage": psutil.virtual_memory().percent,
+            "active_workers": worker_metrics.active_workers,
+            "queue_size": request_queue.qsize(),
+            "requests_per_minute": worker_metrics.requests_per_minute,
+            "total_requests_processed": worker_metrics.total_requests_processed,
+            "average_processing_time": worker_metrics.average_processing_time
+        }
     }
-    
+
 def worker():
-    print("👷 Worker thread started")
+    worker_id = threading.get_ident()
+    logger.info(f"Worker {worker_id} started")
+    with worker_locks:
+        worker_metrics.active_workers += 1
+
+    try:
+        while True:
+            batch = []
+            start_time = time.time()
+
+            while len(batch) < MAX_BATCH_SIZE and (time.time() - start_time) < MAX_WAITING_TIME:
+                try:
+                    req = request_queue.get(timeout=MAX_WAITING_TIME)
+                    batch.append(req)
+                except queue.Empty:
+                    break
+
+            if batch:
+                queries = [req[0].query for req in batch]
+                ks = [req[0].k for req in batch]
+                k = max(ks) if ks else 2
+                results = rag_batch_pipeline(queries, k)
+
+                for (_, resp_q), result in zip(batch, results):
+                    resp_q.put(result)
+                    request_queue.task_done()
+    finally:
+        with worker_locks:
+            worker_metrics.active_workers -= 1
+        logger.info(f"Worker {worker_id} exited")
+
+def autoscaler():
+    logger.info("Autoscaler started")
     while True:
-        batch = [] 
-        start_time = time.time()
-        
-        while len(batch) < MAX_BATCH_SIZE and (time.time() - start_time) < MAX_WAITING_TIME:
-            try:
-                req = request_queue.get(timeout=MAX_WAITING_TIME) # the timeout here is for if the queue is empty it should break
-                batch.append(req)
-            except:
-                break  # timeout hit but queue empty
-            
-        if batch:
-            for payload, response_queue in batch:
-                result = rag_pipeline(payload.query, payload.k)
-                response_queue.put(result)
-                
-                request_queue.task_done() # i do not know if these are needed because i do not use join
-                response_queue.task_done()      
-        
+        time.sleep(HEALTH_CHECK_INTERVAL)
+        if time.time() - worker_metrics.last_scaling_time < SCALING_COOLDOWN_PERIOD:
+            continue
+
+        cpu = psutil.cpu_percent()
+        mem = psutil.virtual_memory().percent
+        queue_size = request_queue.qsize()
+
+        with worker_locks:
+            curr_workers = worker_metrics.active_workers
+            rpm = worker_metrics.requests_per_minute
+
+        target = curr_workers
+        if cpu > 80 or mem > 80 or (queue_size > curr_workers * 5 and rpm > curr_workers * 30):
+            target = min(curr_workers + 1, MAX_WORKERS)
+        elif cpu < 20 and mem < 20 and queue_size < 2 and rpm < curr_workers * 10:
+            target = max(curr_workers - 1, MIN_WORKERS)
+
+        if target > curr_workers:
+            logger.info(f"Scaling up: {curr_workers} -> {target}")
+            for _ in range(target - curr_workers):
+                threading.Thread(target=worker, daemon=True).start()
+            with worker_locks:
+                worker_metrics.last_scaling_time = time.time()
+        elif target < curr_workers:
+            logger.info(f"Scaling down: {curr_workers} -> {target}")
+            with worker_locks:
+                worker_metrics.last_scaling_time = time.time()
+
+@app.middleware("http")
+async def rate_limiter(request: Request, call_next):
+    # Placeholder for future rate limiting
+    return await call_next(request)
+
 if __name__ == "__main__":
-    threading.Thread(target=worker, daemon=True).start()
+    for _ in range(MIN_WORKERS):
+        threading.Thread(target=worker, daemon=True).start()
+    threading.Thread(target=autoscaler, daemon=True).start()
+    logger.info("Starting FastAPI server")
     uvicorn.run(app, host="0.0.0.0", port=8002)

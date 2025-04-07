@@ -215,7 +215,7 @@ def our_knn_cpu(N, D, A, X, K):
 NUM_INIT = None 
 
 def our_kmeans(N, D, A, K):
-    print("starting kmeans")
+    # print("starting kmeans")
     global dist_metric
     if dist_metric not in ["l2", "cosine"]:
         print(f"Warning: K-means only supports l2 and cosine distances. Using l2 instead of {dist_metric}.")
@@ -337,10 +337,10 @@ def our_kmeans(N, D, A, K):
         # print("gpu ssd: ", gpu_ssd)
         
     cluster_labels = torch.cat(cluster_labels_batches, dim=0)
-    print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices)
-    print("kmeans finishing total iterations: ", iteration)
+    # print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices)
+    # print("kmeans finishing total iterations: ", iteration)
     return cluster_labels.cpu().numpy(), new_centroids.cpu().numpy() # decide on the return value based on what is needed for 2.2
-
+ 
 
 def print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices):
     # plot = "1002_2"
@@ -771,21 +771,6 @@ def test_distance_functions_batch(dim=2, num_samples=1000):
         print(f"  GPU time: {gpu_time:.6f} seconds")
         print(f"  Speedup: {speedup:.2f}x\n")
 
-def test_kmeans_10():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("10_meta.json")
-
-    # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (10): {cpu_time:.6f} seconds")
-
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (10): {gpu_time:.6f} seconds")
-
-    #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 10 (CPU to GPU): {speedup:.2f}x\n")
 
 def test_kmeans_1000_2():
     # Load test data from JSON
@@ -817,54 +802,36 @@ def test_kmeans_1000_1024():
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
     print(f"Speedup 1000_1024 (CPU to GPU): {speedup:.2f}x\n")
 
-
-def test_kmeans_1000_215():
+def test_kmeans_100k_1024():
     # Load test data from JSON
-    N, D, A, K = testdata_kmeans("1000_215_meta.json")
+    N, D, A, K = testdata_kmeans("100k_1024_meta.json")
 
     # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1000_215): {cpu_time:.6f} seconds")
+    print(f"CPU Time (100k_1024): {cpu_time:.6f} seconds")
     # Measure GPU time
     _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1000_215): {gpu_time:.6f} seconds")
+    print(f"GPU Time (100k_1024): {gpu_time:.6f} seconds")
 
     #Calculate Speedup
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1000_215 (CPU to GPU): {speedup:.2f}x\n")
+    print(f"Speedup 100k_1024 (CPU to GPU): {speedup:.2f}x\n")
 
-def test_kmeans_100k():
+
+def test_kmeans_100k_2():
     # Load test data from JSON
-    N, D, A, K = testdata_kmeans("100k_meta.json")
+    N, D, A, K = testdata_kmeans("100k_2_meta.json")
 
     # # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (100k): {cpu_time:.6f} seconds")
-    
+    print(f"CPU Time (100k_2): {cpu_time:.6f} seconds")
     # Measure GPU time
     _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (100k): {gpu_time:.6f} seconds")
+    print(f"GPU Time (100k_2): {gpu_time:.6f} seconds")
 
     #Calculate Speedup
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 100k (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_100k_K30():
-    # Load test data from JSON
-    print("Starting testing: ")
-    N, D, A, K = testdata_kmeans("100k_K30_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (100k_K30): {cpu_time:.6f} seconds")
-    
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (100k_K30): {gpu_time:.6f} seconds")
-
-    #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 100k_K30 (CPU to GPU): {speedup:.2f}x\n")
+    print(f"Speedup 100k_2 (CPU to GPU): {speedup:.2f}x\n")
 
 def test_kmeans_1m():
     # Load test data from JSON
@@ -880,36 +847,6 @@ def test_kmeans_1m():
     # #Calculate Speedup
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
     print(f"Speedup 1m (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_1m_K10():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("1m_K10_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1m_K10): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1m_K10): {gpu_time:.6f} seconds")
-
-    # #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1m_K10 (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_1m_K50():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("1m_K50_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1m_K50): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1m_K50): {gpu_time:.6f} seconds")
-
-    # #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1m_K50 (CPU to GPU): {speedup:.2f}x\n")
 
 def test_kmeans_1m_10_K10():
     # Load test data from JSON
@@ -927,83 +864,7 @@ def test_kmeans_1m_10_K10():
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
     print(f"Speedup 1m_10_K10 (CPU to GPU): {speedup:.2f}x\n")
 
-def test_kmeans_1m_50_K10():
-    # Load test data from JSON
-    print("statrting k30")
-    N, D, A, K = testdata_kmeans("1m_50_K10_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1m_50_K30): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1m_50_K10): {gpu_time:.6f} seconds")
-
-    # #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1m_50_K10 (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_1m_K30():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("1m_K30_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1m_K30): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1m_K30): {gpu_time:.6f} seconds")
-
-    # #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1m_K30 (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_1m_50_K30():
-    # Load test data from JSON
-    print("statrting k30")
-    N, D, A, K = testdata_kmeans("1m_50_K30_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1m_50_K30): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1m_50_K30): {gpu_time:.6f} seconds")
-
-    # #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1m_50_K30 (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_1m_K100():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("1m_K100_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1m_K100): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1m_K100): {gpu_time:.6f} seconds")
-
-    # #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1m_K100 (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_2m_K50():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("2m_K50_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (2m_K50): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (2m_K50): {gpu_time:.6f} seconds")
-
-    # #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 2m_K50 (CPU to GPU): {speedup:.2f}x\n")
-
+#-------------------------------------------------------------------------------------------------------------------#
 def test_ann_2D():
     print("\n\n------------------------\n\n")
     print("For 2D: ")
@@ -1156,7 +1017,16 @@ if __name__ == "__main__":
         test_knn_4m()
     elif args.test == "kmeans":
         # test_kmeans_1000_2()
-        test_kmeans_1000_215
+        # test_kmeans_1000_215
+        
+        # test_kmeans_1000_2()
+        # test_kmeans_1000_1024()
+        
+        # test_kmeans_100k_2()
+        test_kmeans_100k_1024()
+        
+
+        
         # test_kmeans_1m_10_K10()
     elif args.test == "ann":
         # test_ann()

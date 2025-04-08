@@ -431,6 +431,136 @@ def our_kmeans_cpu(N, D, A, K):
 
 # You can create any kernel here
 
+def our_kmeans_for_ann(N, D, A, K):
+    global dist_metric
+    if dist_metric not in ["l2", "cosine"]:
+        print(f"Warning: K-means only supports l2 and cosine distances. Using l2 instead of {dist_metric}.")
+        dist_metric = "l2"  # Set a fallback metric
+    
+    max_iterations = 150 #decide
+    centroid_shift_tolerance = 1e-5 # decide
+    converged = False
+    
+    new_centroids = torch.empty((K,D), dtype=torch.float32, device="cuda")
+    # new_centroids = torch.zeros((K, D), device="cuda")
+    
+    # an empty matrix of shape (K, N) on the GPU, initialized with -1 (to represent empty slots)
+    cluster_labels_batches = []
+    # cluster_labels = torch.full((K,N), -1, dtype=torch.int32, device="cuda")
+    counts = torch.zeros(K, dtype=torch.float32, device="cuda")
+    distances = torch.empty(N, device="cuda")
+    
+    #------------------------------------------------------------------------#
+    # Find the best batch size according to the available memory in the GPU and transfer A in batches
+    MAX_FRACTION = 0.8
+    MAX_BATCH_SIZE = 100_000
+    
+    device = torch.cuda.current_device()
+    total_memory = torch.cuda.get_device_properties(device).total_memory
+    allocated_memory = torch.cuda.memory_allocated(device)
+    available_memory = total_memory - allocated_memory
+    usable_memory = available_memory * MAX_FRACTION
+    
+    bytes_per_vec_element = 4
+    bytes_per_vec = D * bytes_per_vec_element
+    
+    batch_size = int(usable_memory // bytes_per_vec) # num of vectors per batch
+    batch_size = min(batch_size, MAX_BATCH_SIZE)  
+    
+    num_batches = (N + batch_size - 1) // batch_size
+    # print("batch size for 1m: ", batch_size, "usable memory: ", usable_memory, "num batches: ", num_batches)
+    
+    A_gpu_batches = [] #does not need to be on the GPU
+    if isinstance(A, torch.Tensor) and A.device.type == "cuda":
+    # A is already a CUDA tensor, just slice it into batches
+        for i in range(0, N, batch_size):
+            A_gpu_batches.append(A[i:i+batch_size])
+    else:
+        # A is still a NumPy array, move it to GPU in batches
+        for i in range(num_batches):
+            start_idx = i * batch_size
+            end_idx = min((i + 1) * batch_size, N)
+            A_batch = torch.from_numpy(A[start_idx:end_idx]).to(
+                dtype=torch.float32, device="cuda", non_blocking=True
+            )
+            A_gpu_batches.append(A_batch)
+    #--------------------------------------------------------------------------#
+    
+    #--------------------------------------------------------------------------------------#
+    # this was used for transferring A to the GPU and choosing indices, without any batching
+    # A_tensor = torch.from_numpy(A).to(dtype=torch.float32, device="cuda", non_blocking=True)
+    # indices = torch.randint(0, N, (K,), device="cuda") # select K random indices from the indices of A
+    # init_centroids_d = A_tensor[indices]  #filter the chosen K random vectors directly on GPU //question whether this is on the gpu
+    #--------------------------------------------------------------------------------------#
+    np.random.seed()
+    initial_indices = np.random.choice(N, K, replace=False)
+    init_centroids_d = torch.tensor(A[initial_indices], device="cuda", dtype=torch.float32)
+
+    #-----------------------------------------------------------------------------#
+    # Use this initialisation of random centroids if you would like to compare sklearns with controlled init conditions in print_kmeans()
+    # np.random.seed(2)
+    # initial_indices = np.random.choice(N, K, replace=False)
+    # init_centroids_d = torch.tensor(A[initial_indices], device="cuda", dtype=torch.float32)
+    #-----------------------------------------------------------------------------#
+    
+    stream1 = torch.cuda.Stream()  # For distance calculation
+    stream2 = torch.cuda.Stream()  # For centroid labels and counts calculation
+    
+    iteration = 0
+    while not converged and iteration < max_iterations:
+        iteration += 1
+        new_centroids.zero_()
+        counts.zero_()
+        cluster_labels_batches = []
+       
+        # assign clusters to all vectors
+        # start_idx = 0
+        for i, batch in enumerate(A_gpu_batches):
+            # start_idx = i * batch_size
+            # end_idx = min((i + 1) * batch_size, N)
+
+            #---- stream1
+            with torch.cuda.stream(stream1):
+                if dist_metric == "l2":
+                    distances = torch.sum((batch[:,None] - init_centroids_d)**2, dim=2)
+                    # distances = torch.cdist(A_tensor, init_centroids_d, p=2) ** 2
+                elif dist_metric == "cosine":
+                    A_norm = torch.nn.functional.normalize(batch, p=2, dim=1)
+                    C_norm = torch.nn.functional.normalize(init_centroids_d, p=2, dim=0)
+                    similarities = torch.matmul(A_norm, C_norm.T) #take transpose of centroids to make it (D,K) so matmul can give (N,K)
+                    distances = 1 - similarities
+                else:
+                    raise ValueError("Invalid distance metric")
+              
+            #---- stream2
+            with torch.cuda.stream(stream2):
+                stream2.wait_stream(stream1)  # Ensure batch is available before computing
+                
+                batch_cluster_labels = torch.argmin(distances, dim=1)
+                new_centroids.scatter_add_(0, batch_cluster_labels[:, None].expand(-1, D), batch.to(torch.float32)) # cumulatively adds all vectors belonging to the same cluster
+                counts.scatter_add_(0, batch_cluster_labels, torch.ones_like(batch_cluster_labels, dtype=torch.float32)) # for each cluster index in batch_labels, it adds 1.0 to counts at that position.
+                
+                cluster_labels_batches.append(batch_cluster_labels) # append the batches of cluster labels to concatenate at the end 
+                
+        torch.cuda.synchronize()  
+        
+        
+        counts[counts == 0] = 1  # avoid division by zero
+        new_centroids /= counts.unsqueeze(1)
+
+        centroid_shift = torch.norm(new_centroids - init_centroids_d, dim=1)
+        init_centroids_d = new_centroids.clone()
+        
+        # if torch.mean(centroid_shift) <= centroid_shift_tolerance:
+        if torch.max(centroid_shift) <= centroid_shift_tolerance:
+            converged = True
+        
+        # gpu_ssd = ((A - new_centroids[cluster_labels]) ** 2).sum().item()
+        # print("gpu ssd: ", gpu_ssd)
+    cluster_labels = torch.cat(cluster_labels_batches, dim=0)
+    #print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices)
+    return cluster_labels, new_centroids # decide on the return value based on what is needed for 2.2
+
 def euclidean_distance(vec1, vec2):
     return torch.sqrt(torch.sum((vec1 - vec2) ** 2, dim=-1))
 
@@ -512,6 +642,7 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2, batch_size = 
     #print("finding nearest clusters: " + str(time.time() - start))
 
     # Safely gather candidate indices and points
+    #start = time.time()
     candidate_indices = []
     for cluster_idx in nearest_clusters:
         idx = torch.where(cluster_assignments == cluster_idx)[0]
@@ -559,7 +690,7 @@ def our_ann(N, D, A, X, K):
         K = 5
 
     elif N < 1000000:
-        K = 10
+        K = 200
     else:
         K = 200
 
@@ -575,10 +706,12 @@ def our_ann(N, D, A, X, K):
     best_ssd = float("inf")
     best_centroids = None
     best_cluster_labels = None
+    A = numpy_to_cuda(A)
     
     for i in range(i):
-        cluster_labels, new_centroids = our_kmeans(N,D,A,K)
-        ssd = np.sum((A - new_centroids[cluster_labels]) ** 2)
+        
+        cluster_labels, new_centroids = our_kmeans_for_ann(N,D,A,K)
+        ssd = torch.sum((A - new_centroids[cluster_labels]) ** 2)
         
         if ssd < best_ssd:
             best_ssd = ssd
@@ -1232,7 +1365,7 @@ if __name__ == "__main__":
         test_kmeans_1000_215
         # test_kmeans_1m_10_K10()
     elif args.test == "ann":
-        test_ann()
+        # test_ann()
         test_ann_2D()
         test_ann_215()
         test_ann_4k()

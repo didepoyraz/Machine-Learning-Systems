@@ -1,0 +1,13 @@
+{
+  "test_name": "burst",
+  "total_requests": 1099,
+  "successful_requests": 814,
+  "success_rate": 0.740673339399454,
+  "avg_latency": 13.768782781734513,
+  "median_latency": 12.865921020507812,
+  "p95_latency": 27.404922235012055,
+  "p99_latency": 29.387578945159913,
+  "min_latency": 0.9731502532958984,
+  "max_latency": 30.00122308731079,
+  "throughput": 9.094417981106087
+}

@@ -1,0 +1,103 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>RAG Service Hugging Face 16-0.1 Performance Test Report</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                h1, h2, h3 { color: #333; }
+                table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+                tr:nth-child(even) { background-color: #f9f9f9; }
+                .figure { margin: 20px 0; text-align: center; }
+                .figure img { max-width: 100%; }
+            </style>
+        </head>
+        <body>
+            <h1>RAG Service Hugging Face 16-0.1  Performance Test Report</h1>
+            <p>Test Date: 2025-04-03 12:59:54</p>
+            
+            <h2>Summary</h2>
+            <table>
+                <tr>
+                    <th>Workload Pattern</th>
+                    <th>Total Requests</th>
+                    <th>Success Rate</th>
+                    <th>Avg Latency (s)</th>
+                    <th>P95 Latency (s)</th>
+                    <th>Throughput (req/s)</th>
+                </tr>
+        
+                <tr>
+                    <td><b>steady_low</b></td>
+                    <td>300</td>
+                    <td>100.00%</td>
+                    <td>5.8973</td>
+                    <td>10.6728</td>
+                    <td>5.0072</td>
+                </tr>
+            
+                <tr>
+                    <td><b>steady_high</b></td>
+                    <td>1200</td>
+                    <td>94.33%</td>
+                    <td>17.5349</td>
+                    <td>25.6807</td>
+                    <td>18.8754</td>
+                </tr>
+            
+                <tr>
+                    <td><b>burst</b></td>
+                    <td>1170</td>
+                    <td>93.85%</td>
+                    <td>15.7899</td>
+                    <td>21.2934</td>
+                    <td>12.3943</td>
+                </tr>
+            
+                <tr>
+                    <td><b>diurnal</b></td>
+                    <td>3573</td>
+                    <td>95.66%</td>
+                    <td>16.7743</td>
+                    <td>25.8764</td>
+                    <td>32.1355</td>
+                </tr>
+            
+            </table>
+            
+            <h2>Detailed Results by Pattern</h2>
+        
+            <h3>steady_low Pattern</h3>
+            <div class="figure">
+                <img src="steady_low_latency.png" alt="steady_low Latency">
+                <p>Latency distribution for steady_low workload</p>
+            </div>
+            
+            <h3>steady_high Pattern</h3>
+            <div class="figure">
+                <img src="steady_high_latency.png" alt="steady_high Latency">
+                <p>Latency distribution for steady_high workload</p>
+            </div>
+            
+            <h3>burst Pattern</h3>
+            <div class="figure">
+                <img src="burst_latency.png" alt="burst Latency">
+                <p>Latency distribution for burst workload</p>
+            </div>
+            
+            <h3>diurnal Pattern</h3>
+            <div class="figure">
+                <img src="diurnal_latency.png" alt="diurnal Latency">
+                <p>Latency distribution for diurnal workload</p>
+            </div>
+            
+            <h2>Conclusion</h2>
+            <p>
+                This report shows the performance of the Hugging Face 16-0.1  RAG implementation across different workload patterns.
+                These results can be used as a baseline for comparing optimized implementations.
+            </p>
+        </body>
+        </html>
+        

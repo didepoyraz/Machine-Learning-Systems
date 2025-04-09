@@ -1,0 +1,54 @@
+{
+  "steady_low": {
+    "test_name": "steady_low",
+    "total_requests": 300,
+    "successful_requests": 70,
+    "success_rate": 0.23333333333333334,
+    "avg_latency": 13.36525319303785,
+    "median_latency": 13.109734416007996,
+    "p95_latency": 19.044098508358,
+    "p99_latency": 22.704921896457673,
+    "min_latency": 2.73742938041687,
+    "max_latency": 22.705708742141724,
+    "throughput": 5.839269865334216
+  },
+  "steady_high": {
+    "test_name": "steady_high",
+    "total_requests": 1200,
+    "successful_requests": 463,
+    "success_rate": 0.3858333333333333,
+    "avg_latency": 15.618041941723092,
+    "median_latency": 15.9727942943573,
+    "p95_latency": 27.002554106712324,
+    "p99_latency": 29.50930703163147,
+    "min_latency": 2.058199405670166,
+    "max_latency": 29.60884976387024,
+    "throughput": 18.762537924821185
+  },
+  "burst": {
+    "test_name": "burst",
+    "total_requests": 1163,
+    "successful_requests": 949,
+    "success_rate": 0.8159931212381771,
+    "avg_latency": 14.407227319460146,
+    "median_latency": 14.422240018844604,
+    "p95_latency": 25.077904081344606,
+    "p99_latency": 29.135403356552125,
+    "min_latency": 1.9954843521118164,
+    "max_latency": 29.641393661499023,
+    "throughput": 15.71006657100579
+  },
+  "diurnal": {
+    "test_name": "diurnal",
+    "total_requests": 3627,
+    "successful_requests": 2979,
+    "success_rate": 0.8213399503722084,
+    "avg_latency": 14.858762989351517,
+    "median_latency": 14.28145718574524,
+    "p95_latency": 26.888856220245362,
+    "p99_latency": 29.688638095855712,
+    "min_latency": 1.2157766819000244,
+    "max_latency": 30.362919807434082,
+    "throughput": 24.836682629139755
+  }
+}

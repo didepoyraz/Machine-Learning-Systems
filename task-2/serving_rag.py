@@ -4,6 +4,13 @@ from transformers import AutoTokenizer, AutoModel, pipeline
 from fastapi import FastAPI
 import uvicorn
 from pydantic import BaseModel
+import threading
+import queue
+import time
+
+
+MAX_BATCH_SIZE = 8
+MAX_WAITING_TIME = 0.02 #50ms? adjust this
 
 app = FastAPI()
 
@@ -14,14 +21,27 @@ documents = [
     "Hummingbirds can hover in mid-air by rapidly flapping their wings."
 ]
 
+# different dataset
+# from datasets import load_dataset
+
+# Load the dataset
+# dataset = load_dataset('MAsad789565/Coding_GPT4_Data', split='train')
+# If needed, specify a different split such as 'validation' or 'test'
+
+# Extract content from the dataset
+# documents = [example['assistant'] for example in dataset]
+
 # 1. Load embedding model
 EMBED_MODEL_NAME = "intfloat/multilingual-e5-large-instruct"
 embed_tokenizer = AutoTokenizer.from_pretrained(EMBED_MODEL_NAME)
 embed_model = AutoModel.from_pretrained(EMBED_MODEL_NAME)
 
 # Basic Chat LLM
-chat_pipeline = pipeline("text-generation", model="Qwen/Qwen2.5-1.5B-Instruct")
+chat_pipeline = pipeline("text-generation", model="facebook/opt-125m")
+# Note: try this 1.5B model if you got enough GPU memory
+# chat_pipeline = pipeline("text-generation", model="Qwen/Qwen2.5-1.5B-Instruct")
 
+request_queue = queue.Queue()
 
 ## Hints:
 
@@ -73,12 +93,45 @@ class QueryRequest(BaseModel):
 
 @app.post("/rag")
 def predict(payload: QueryRequest):
-    result = rag_pipeline(payload.query, payload.k)
+    # result = rag_pipeline(payload.query, payload.k)
+    # print(f"🔹 Received query: {payload.query}")
+    response_queue = queue.Queue()
+    request_queue.put((payload, response_queue))
     
+    result = response_queue.get()
+
+    # return {
+    #     "query": payload.query,
+    #     "result": result,
+    # }
+    # print(f"✅ Returning result for: {payload.query}")
     return {
         "query": payload.query,
         "result": result,
+        "success": True
     }
 
+def worker():
+    print("👷 Worker thread started")
+    while True:
+        batch = [] 
+        start_time = time.time()
+        
+        while len(batch) < MAX_BATCH_SIZE and (time.time() - start_time) < MAX_WAITING_TIME:
+            try:
+                req = request_queue.get(timeout=MAX_WAITING_TIME) # the timeout here is for if the queue is empty it should break
+                batch.append(req)
+            except:
+                break  # timeout hit but queue empty
+            
+        if batch:
+            for payload, response_queue in batch:
+                result = rag_pipeline(payload.query, payload.k)
+                response_queue.put(result)
+                
+                request_queue.task_done() # i do not know if these are needed because i do not use join
+                response_queue.task_done()      
+        
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    threading.Thread(target=worker, daemon=True).start()
+    uvicorn.run(app, host="0.0.0.0", port=8002)

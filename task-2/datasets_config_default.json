@@ -1,0 +1,14 @@
+{
+    "sort_strategy": "random",
+    "huggingface_dataset": {
+        "file_name": "MAsad789565/Coding_GPT4_Data",
+        "prompt_field": "user",
+        "select_ratio": 1,
+        "split": "train"
+    },
+    "conversational_dataset": {
+        "file_name": "olathepavilion/Conversational-datasets-json",
+        "prompt_field": "messages",
+        "select_ratio": 1
+    }
+}

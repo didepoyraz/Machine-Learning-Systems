@@ -2,7 +2,7 @@
         <!DOCTYPE html>
         <html>
         <head>
-            <title>RAG Service Base Performance Test Report</title>
+            <title>RAG Service Autoscaler Initial Performance Test Report</title>
             <style>
                 body { font-family: Arial, sans-serif; margin: 20px; }
                 h1, h2, h3 { color: #333; }
@@ -15,8 +15,8 @@
             </style>
         </head>
         <body>
-            <h1>RAG Service Base Performance Test Report</h1>
-            <p>Test Date: 2025-04-07 10:33:20</p>
+            <h1>RAG Service Autoscaler Performance Test Report</h1>
+            <p>Test Date: 2025-04-07 00:23:34</p>
             
             <h2>Summary</h2>
             <table>
@@ -33,36 +33,36 @@
                     <td><b>steady_low</b></td>
                     <td>300</td>
                     <td>100.00%</td>
-                    <td>2.2795</td>
-                    <td>2.9832</td>
-                    <td>5.0236</td>
+                    <td>4.8309</td>
+                    <td>8.7292</td>
+                    <td>5.0210</td>
                 </tr>
             
                 <tr>
                     <td><b>steady_high</b></td>
                     <td>1200</td>
-                    <td>96.50%</td>
-                    <td>9.2238</td>
-                    <td>22.1770</td>
-                    <td>19.3097</td>
+                    <td>73.08%</td>
+                    <td>14.1459</td>
+                    <td>27.4181</td>
+                    <td>14.6183</td>
                 </tr>
             
                 <tr>
                     <td><b>burst</b></td>
-                    <td>1170</td>
-                    <td>96.92%</td>
-                    <td>11.6481</td>
-                    <td>21.9400</td>
-                    <td>13.1638</td>
+                    <td>1099</td>
+                    <td>74.07%</td>
+                    <td>13.7688</td>
+                    <td>27.4049</td>
+                    <td>9.0944</td>
                 </tr>
             
                 <tr>
                     <td><b>diurnal</b></td>
-                    <td>3559</td>
-                    <td>94.66%</td>
-                    <td>12.9153</td>
-                    <td>23.9598</td>
-                    <td>30.9402</td>
+                    <td>3732</td>
+                    <td>68.94%</td>
+                    <td>14.6462</td>
+                    <td>27.7480</td>
+                    <td>23.3746</td>
                 </tr>
             
             </table>
@@ -95,8 +95,7 @@
             
             <h2>Conclusion</h2>
             <p>
-                This report shows the performance of the base RAG implementation across different workload patterns.
-                These results can be used as a baseline for comparing optimized implementations.
+                This report shows the performance of the initial autoscaler and load balancing RAG implementation across different workload patterns.
             </p>
         </body>
         </html>

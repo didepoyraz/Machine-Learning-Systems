@@ -85,6 +85,10 @@ class WorkerMetrics:
 worker_metrics = WorkerMetrics()
 worker_locks = threading.Lock()
 
+# Worker control
+worker_threads = []
+worker_controls = []  # List of {"thread": ..., "stop_event": ..., "ready_event": ...}
+
 # Utilities
 @lru_cache(maxsize=1024)
 def get_cached_embedding(text: str) -> np.ndarray:
@@ -105,30 +109,16 @@ def retrieve_top_k(query_emb: np.ndarray, k: int = 2) -> List[str]:
 
 def rag_batch_pipeline(queries: List[str], k: int = 2) -> List[str]:
     start_time = time.time()
-
-    # Step 1: Batch embeddings
     query_embs = get_embeddings(queries)
-
-    # Step 2: Retrieval
     top_k_docs = retrieve_top_k(query_embs, k)
-
-    # Step 3: Prompt construction and generation
-    prompts = []
-    for query, context in zip(queries, top_k_docs):
-        joined_context = "\n".join(context)
-        prompt = f"Question: {query}\nContext:\n{joined_context}\nAnswer:"
-        prompts.append(prompt)
-
+    prompts = [f"Question: {q}\nContext:\n{chr}\nAnswer:" for q, chr in zip(queries, ["\n".join(c) for c in top_k_docs])]
     results = chat_pipeline(prompts, max_length=50, do_sample=True)
-
     responses = [res[0]["generated_text"] for res in results]
-
     processing_time = time.time() - start_time
     with worker_locks:
         worker_metrics.processing_times.append(processing_time)
         worker_metrics.processing_times = worker_metrics.processing_times[-100:]
         worker_metrics.average_processing_time = sum(worker_metrics.processing_times) / len(worker_metrics.processing_times)
-
     return responses
 
 # Request schema
@@ -146,7 +136,10 @@ def predict(payload: QueryRequest):
 
     response_queue = queue.Queue()
     request_queue.put((payload, response_queue))
-    result = response_queue.get()
+    try:
+        result = response_queue.get(timeout=10)
+    except queue.Empty:
+        result = "Timeout: No response from worker."
 
     with worker_locks:
         worker_metrics.total_requests_processed += 1
@@ -168,17 +161,21 @@ def health_check():
         }
     }
 
-def worker():
+def worker(stop_event: threading.Event, ready_event: threading.Event):
     worker_id = threading.get_ident()
-    logger.info(f"Worker {worker_id} started")
+    logger.info(f"Worker {worker_id} starting...")
+
     with worker_locks:
         worker_metrics.active_workers += 1
 
     try:
-        while True:
+        time.sleep(0.5)  # simulate warm-up if needed
+        ready_event.set()
+        logger.info(f"Worker {worker_id} is ready")
+
+        while not stop_event.is_set():
             batch = []
             start_time = time.time()
-
             while len(batch) < MAX_BATCH_SIZE and (time.time() - start_time) < MAX_WAITING_TIME:
                 try:
                     req = request_queue.get(timeout=MAX_WAITING_TIME)
@@ -224,11 +221,20 @@ def autoscaler():
         if target > curr_workers:
             logger.info(f"Scaling up: {curr_workers} -> {target}")
             for _ in range(target - curr_workers):
-                threading.Thread(target=worker, daemon=True).start()
+                stop_event = threading.Event()
+                ready_event = threading.Event()
+                t = threading.Thread(target=worker, args=(stop_event, ready_event), daemon=True)
+                t.start()
+                ready_event.wait(timeout=10)
+                worker_controls.append({"thread": t, "stop_event": stop_event, "ready_event": ready_event})
             with worker_locks:
                 worker_metrics.last_scaling_time = time.time()
         elif target < curr_workers:
             logger.info(f"Scaling down: {curr_workers} -> {target}")
+            to_stop = worker_controls[target:]
+            worker_controls[:] = worker_controls[:target]
+            for ctrl in to_stop:
+                ctrl["stop_event"].set()
             with worker_locks:
                 worker_metrics.last_scaling_time = time.time()
 
@@ -239,7 +245,13 @@ async def rate_limiter(request: Request, call_next):
 
 if __name__ == "__main__":
     for _ in range(MIN_WORKERS):
-        threading.Thread(target=worker, daemon=True).start()
+        stop_event = threading.Event()
+        ready_event = threading.Event()
+        t = threading.Thread(target=worker, args=(stop_event, ready_event), daemon=True)
+        t.start()
+        ready_event.wait(timeout=10)
+        worker_controls.append({"thread": t, "stop_event": stop_event, "ready_event": ready_event})
+
     threading.Thread(target=autoscaler, daemon=True).start()
     logger.info("Starting FastAPI server")
     uvicorn.run(app, host="0.0.0.0", port=8002)

@@ -1,0 +1,13 @@
+{
+  "test_name": "diurnal",
+  "total_requests": 3671,
+  "successful_requests": 3671,
+  "success_rate": 1.0,
+  "avg_latency": 10.045012162576674,
+  "median_latency": 10.016687631607056,
+  "p95_latency": 10.151638627052307,
+  "p99_latency": 10.428572249412538,
+  "min_latency": 10.00604772567749,
+  "max_latency": 11.664526462554932,
+  "throughput": 31.528246682250504
+}

@@ -690,7 +690,7 @@ def our_ann(N, D, A, X, K):
         K = 5
 
     elif N < 1000000:
-        K = 200
+        K = 10
     else:
         K = 200
 

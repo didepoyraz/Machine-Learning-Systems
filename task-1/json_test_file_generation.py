@@ -1,7 +1,13 @@
 import numpy as np
 import json
 from sklearn.datasets import make_blobs
-#import matplotlib.pyplot as plt
+import argparse
+
+# add arguments
+parser = argparse.ArgumentParser(description="KNN implementation with GPU and CPU")
+parser.add_argument("--test", choices=["dist", "knn", "kmeans", "ann"], default="knn",
+                    help="Choose test type (default: knn)")
+args = parser.parse_args()
 
 def save_metadata(filename, n, d, a_file, x_file, k=10):
     """Saves metadata as a JSON file."""
@@ -15,7 +21,7 @@ def save_metadata(filename, n, d, a_file, x_file, k=10):
     with open(filename, "w") as f:
         json.dump(metadata, f, indent=4)
 
-def generate_and_save(n, d, prefix):
+def generate_and_save_knn(n, d, prefix):
     """Generates data and saves it in .npy format along with metadata."""
     A = np.random.randn(n, d).astype(np.float32)
     X = np.random.randn(d).astype(np.float32)
@@ -96,51 +102,36 @@ def generate_and_save_ann(n, d,k1, prefix, k2=10):
     save_metadata_ann(meta_file, n, d, k2, a_file, x_file)
 
 
+if args.test == "knn":
+    # Generate and save datasets
+    generate_and_save_knn(1000, 2, "2d")
+    generate_and_save_knn(1000, 2**15, "215")
+    generate_and_save_knn(4000, 100, "4k")
+    generate_and_save_knn(40000, 100, "40k")
+    generate_and_save_knn(4000000, 100, "4m")
 
-# generate_and_save_kmeans(10,2,3, "10")
-
-# generate_and_save_kmeans(1000,10,3, "1000_2")
-
-# generate_and_save_kmeans(1000,32768,10, "1000_215")
-
-# generate_and_save_kmeans(1000,1024,3, "1000_1024")
-
-# generate_and_save_kmeans(100000,100,3, "100k")
-
-# generate_and_save_kmeans(100000,100,30, "100k_K30")
-
-# generate_and_save_kmeans(1000000,50,30, "1m_50_K30")
-
-# generate_and_save_kmeans(1000000,100,3, "1m")
-
-# generate_and_save_kmeans(1000000,10,10, "1m_10_K10")
-
-# generate_and_save_kmeans(1000000,50,10, "1m_50_K10")
-
-# generate_and_save_kmeans(1000000,100,10, "1m_K10")
-
-# generate_and_save_kmeans(1000000,100,30, "1m_K30")
-
-# generate_and_save_kmeans(1000000,100,50, "1m_K50")
-
-# generate_and_save_kmeans(1000000,100,100, "1m_K100")
-
-# generate_and_save_kmeans(2000000,200,50, "2m_K50")
-
-
-
-# Generate and save datasets
-# generate_and_save(1000, 2, "2d")
-# generate_and_save(1000, 2**15, "215")
-# generate_and_save(4000, 100, "4k")
-# generate_and_save(40000, 100, "40k")
-# generate_and_save(4000000, 100, "4m")
-
-generate_and_save_ann(1000, 2, 3, "2d")
-generate_and_save_ann(1000, 2**15, 5, "215")
-generate_and_save_ann(100000, 1024, "100k")
-generate_and_save_ann(4000, 100, 3, "4k")
-generate_and_save_ann(40000, 100, 5, "40k")
-generate_and_save_ann(4000000, 100, 200, "4m")
+elif args.test == "kmeans":
+    generate_and_save_kmeans(10,2,3, "10")
+    generate_and_save_kmeans(1000,10,3, "1000_2")
+    generate_and_save_kmeans(1000,32768,10, "1000_215")
+    generate_and_save_kmeans(1000,1024,3, "1000_1024")
+    generate_and_save_kmeans(100000,100,3, "100k")
+    generate_and_save_kmeans(100000,100,30, "100k_K30")
+    generate_and_save_kmeans(1000000,50,30, "1m_50_K30")
+    generate_and_save_kmeans(1000000,100,3, "1m")
+    generate_and_save_kmeans(1000000,10,10, "1m_10_K10")
+    generate_and_save_kmeans(1000000,50,10, "1m_50_K10")
+    generate_and_save_kmeans(1000000,100,10, "1m_K10")
+    generate_and_save_kmeans(1000000,100,30, "1m_K30")
+    generate_and_save_kmeans(1000000,100,50, "1m_K50")
+    generate_and_save_kmeans(1000000,100,100, "1m_K100")
+    generate_and_save_kmeans(2000000,200,50, "2m_K50")
+elif args.test == 'ann':
+    generate_and_save_ann(1000, 2, 3, "2d")
+    generate_and_save_ann(1000, 2**15, 5, "215")
+    generate_and_save_ann(100000, 1024, "100k")
+    generate_and_save_ann(4000, 100, 3, "4k")
+    generate_and_save_ann(40000, 100, 5, "40k")
+    generate_and_save_ann(4000000, 100, 200, "4m")
 
 print("Data generation complete!")

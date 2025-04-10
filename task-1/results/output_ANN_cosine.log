@@ -1,0 +1,49 @@
+
+
+------------------------
+
+
+For 40k 
+KNN: 0.540616 seconds
+10 nearest neighbors to find
+5 clusters using KMeans
+If K1 is assigned after K - 2
+starting kmeans
+GPU K-Means SSD: 3992692.25
+Sklearn K-Means SSD: 3992998.5
+SSD Difference: 306.2500
+Average centroid difference: 0.2323
+Some cluster assignments differ, skleanrs
+kmeans finishing total iterations:  150
+starting kmeans
+GPU K-Means SSD: 40319956.0
+Sklearn K-Means SSD: 3993258.75
+SSD Difference: 36326697.2500
+Average centroid difference: 20.4470
+Some cluster assignments differ, skleanrs
+kmeans finishing total iterations:  150
+starting kmeans
+GPU K-Means SSD: 4000515.0
+Sklearn K-Means SSD: 4000405.0
+SSD Difference: 110.0000
+Average centroid difference: 12.4279
+Some cluster assignments differ, skleanrs
+kmeans finishing total iterations:  150
+starting kmeans
+GPU K-Means SSD: 3992714.75
+Sklearn K-Means SSD: 3992877.5
+SSD Difference: 162.7500
+Average centroid difference: 0.1259
+Some cluster assignments differ, skleanrs
+kmeans finishing total iterations:  150
+starting kmeans
+GPU K-Means SSD: 38480012.0
+Sklearn K-Means SSD: 3993159.0
+SSD Difference: 34486853.0000
+Average centroid difference: 20.2425
+Some cluster assignments differ, skleanrs
+kmeans finishing total iterations:  150
+ann_search function took - 0.2232041358947754
+ANN - Top K nearest neighbors indices: [30648 34955 12555 32482 39394 26414 29961 25260  5786  9655] kmeans best ssd:  3992692.2
+ANN: 4.856025 seconds
+Recall Rate: 1.0

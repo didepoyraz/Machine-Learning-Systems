@@ -1,65 +1,66 @@
-# Task 2
+# **Task 2: Retrieval-Augmented Generation (RAG) Service**
 
 A FastAPI-based Retrieval-Augmented Generation (RAG) service that combines document retrieval with text generation.
 
-## Step 1:
+## **1. Environment Setup**
 
-1. Create a conda environment with the requirements.txt file
-
-TIP: Check [this example](https://github.com/ServerlessLLM/ServerlessLLM/blob/main/docs/stable/getting_started/slurm_setup.md) for how to use slurm to create a conda environment.
+Create and activate the conda environment:
 
 ```bash
-conda create -n rag python=3.10 -y
-conda activate rag
+conda create -n task2 python=3.10 -y
+conda activate task2
 ```
 
+Clone the repository and install the dependencies:
+
 ```bash
-git clone https://github.com/ed-aisys/edin-mls-25-spring.git
-cd edin-mls-25-spring/task-2
+git clone https://github.com/didepoyraz/Machine-Learning-Systems
+cd Machine-Learning-Systems/task-2
 pip install -r requirements.txt
 ```
 
-2. Run the service
+## **2. Run the RAG Service**
+
+### **Basic RAG Service**
+
+Run:
 
 ```bash
 python serving_rag.py
 ```
 
-3. Test the service
+Test with:
 
 ```bash
-curl -X POST "http://localhost:8000/rag" -H "Content-Type: application/json" -d '{"query": "Which animals can hover in the air?"}'
+python testing.py
 ```
 
-**Note:**  
-If you encounter issues while downloading model checkpoints on a GPU machine, try the following workaround:  
+### **Large Dataset RAG Service**
 
-1. Manually download the model on the host machine:  
+Run:
 
 ```bash
-conda activate rag
-huggingface-cli download <model_name>
+python serving_rag_datasets.py
 ```
 
-## Step 2:
+Test with:
 
-1. Create a new script (bash or python) to test the service with different request rates. A reference implementation is [TraceStorm](https://github.com/ServerlessLLM/TraceStorm)
+```bash
+python testing_datasets.py
+```
 
-## Step 3:
+### **Auto-Scaling RAG Service with Load Balancing (Large Dataset)**
 
-1. Implement a request queue to handle concurrent requests
+Run:
 
-A potential design:
-Create a request queue
-Put incoming requests into the queue, instead of directly processing them
-Start a background thread that listens on the request queue
+```bash
+python serving_rag_datasets_auto.py
+```
 
-2. Implement a batch processing mechanism
+Test using the same script as the large dataset:
 
-Take up to MAX_BATCH_SIZE requests from the queue or wait until MAX_WAITING_TIME
-Process the batched requests
+```bash
+python testing_datasets.py
+```
 
-
-3. Measure the performance of the optimized system compared to the original service
-
-4. Draw a conclusion
+---

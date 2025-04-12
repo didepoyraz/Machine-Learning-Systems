@@ -9,8 +9,23 @@ conda create -n task1 python=3.10 -y
 conda activate task1
 pip install -r requirements.txt
 ```
+## **2. Generate Test Data**
 
-## **2. Run the Script in Interactive Mode**
+To generate data to perform tests, run:
+
+'''bash
+python json_test_file_generation.py
+'''
+
+To create your own test case:
+1. Add a function call to json_test_generation.py with input values for the function as needed, along with the name of the file to store it as.
+   - generate_and_save_knn generates random data for distance and KNN tests of N vectors with D dimensions.
+   - generate_and_save_kmeans generates blob data of N vectors with D dimension in K number of clusters.
+   - generate_and_save_ann generates blob data of N vectors with D dimension in K number of clusters along with a vector X.
+2. Add a function to task.py which reads from the file generated above and calls the respective function.
+3. Call the respective function in the main method.
+
+## **3. Run the Script in Interactive Mode**
 
 To start the demo interactively, use:
 
@@ -18,7 +33,7 @@ To start the demo interactively, use:
 srun --gres gpu:1 --pty task.py
 ```
 
-## **3. Run the Script in Batch Mode**
+## **4. Run the Script in Batch Mode**
 
 Create a Bash script (e.g., `test.sh`) with the following content:
 
@@ -35,7 +50,7 @@ Then submit the job using:
 sbatch --gres gpu:1 test.sh
 ```
 
-## **4. Argument Input**
+## **5. Argument Input**
 
 The `task.py` file accepts two optional arguments:
 

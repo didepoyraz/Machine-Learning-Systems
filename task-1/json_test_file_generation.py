@@ -111,21 +111,11 @@ if args.test == "knn":
     generate_and_save_knn(4000000, 100, "4m")
 
 elif args.test == "kmeans":
-    generate_and_save_kmeans(10,2,3, "10")
     generate_and_save_kmeans(1000,10,3, "1000_2")
-    generate_and_save_kmeans(1000,32768,10, "1000_215")
     generate_and_save_kmeans(1000,1024,3, "1000_1024")
-    generate_and_save_kmeans(100000,100,3, "100k")
-    generate_and_save_kmeans(100000,100,30, "100k_K30")
-    generate_and_save_kmeans(1000000,50,30, "1m_50_K30")
-    generate_and_save_kmeans(1000000,100,3, "1m")
+    generate_and_save_kmeans(10000,10,3, "10k_2")
+    generate_and_save_kmeans(10000,1024,3, "10k_1024")
     generate_and_save_kmeans(1000000,10,10, "1m_10_K10")
-    generate_and_save_kmeans(1000000,50,10, "1m_50_K10")
-    generate_and_save_kmeans(1000000,100,10, "1m_K10")
-    generate_and_save_kmeans(1000000,100,30, "1m_K30")
-    generate_and_save_kmeans(1000000,100,50, "1m_K50")
-    generate_and_save_kmeans(1000000,100,100, "1m_K100")
-    generate_and_save_kmeans(2000000,200,50, "2m_K50")
 elif args.test == 'ann':
     generate_and_save_ann(1000, 2, 3, "2d")
     generate_and_save_ann(1000, 2**15, 5, "215")

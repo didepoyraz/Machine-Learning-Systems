@@ -10,7 +10,7 @@ import time
 
 
 MAX_BATCH_SIZE = 8
-MAX_WAITING_TIME = 0.02 #50ms? adjust this
+MAX_WAITING_TIME = 0.02 
 
 app = FastAPI()
 
@@ -93,18 +93,12 @@ class QueryRequest(BaseModel):
 
 @app.post("/rag")
 def predict(payload: QueryRequest):
-    # result = rag_pipeline(payload.query, payload.k)
-    # print(f"🔹 Received query: {payload.query}")
+ 
     response_queue = queue.Queue()
     request_queue.put((payload, response_queue))
     
     result = response_queue.get()
 
-    # return {
-    #     "query": payload.query,
-    #     "result": result,
-    # }
-    # print(f"✅ Returning result for: {payload.query}")
     return {
         "query": payload.query,
         "result": result,
@@ -112,7 +106,7 @@ def predict(payload: QueryRequest):
     }
 
 def worker():
-    print("👷 Worker thread started")
+    print("Worker thread started")
     while True:
         batch = [] 
         start_time = time.time()
@@ -129,7 +123,7 @@ def worker():
                 result = rag_pipeline(payload.query, payload.k)
                 response_queue.put(result)
                 
-                request_queue.task_done() # i do not know if these are needed because i do not use join
+                request_queue.task_done() 
                 response_queue.task_done()      
         
 if __name__ == "__main__":

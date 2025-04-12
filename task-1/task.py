@@ -208,10 +208,6 @@ def our_knn_cpu(N, D, A, X, K):
 # Your Task 2.1 code here
 # ------------------------------------------------------------------------------------------------
 
-# You can create any kernel here
-# def distance_kernel(X, Y, D):
-#     pass
-
 NUM_INIT = None 
 
 def our_kmeans(N, D, A, K):
@@ -220,16 +216,13 @@ def our_kmeans(N, D, A, K):
         print(f"Warning: K-means only supports l2 and cosine distances. Using l2 instead of {dist_metric}.")
         dist_metric = "l2"  # Set a fallback metric
     
-    max_iterations = 150 #decide
-    centroid_shift_tolerance = 1e-5 # decide
+    max_iterations = 150 
+    centroid_shift_tolerance = 1e-5 
     converged = False
     
     new_centroids = torch.empty((K,D), dtype=torch.float32, device="cuda")
-    # new_centroids = torch.zeros((K, D), device="cuda")
-    
-    # an empty matrix of shape (K, N) on the GPU, initialized with -1 (to represent empty slots)
+  
     cluster_labels_batches = []
-    # cluster_labels = torch.full((K,N), -1, dtype=torch.int32, device="cuda")
     counts = torch.zeros(K, dtype=torch.float32, device="cuda")
     distances = torch.empty(N, device="cuda")
     
@@ -251,24 +244,17 @@ def our_kmeans(N, D, A, K):
     batch_size = min(batch_size, MAX_BATCH_SIZE)  
     
     num_batches = (N + batch_size - 1) // batch_size
-    # print("batch size for 1m: ", batch_size, "usable memory: ", usable_memory, "num batches: ", num_batches)
     
     A_gpu_batches = [] #does not need to be on the GPU
     for i in range(num_batches):
         start_idx = i * batch_size
         end_idx = min((i + 1) * batch_size, N)
         
-        # A_batch = torch.from_numpy(A[start_idx : end_idx]).cuda(non_blocking=True)
         A_batch = torch.from_numpy(A[start_idx : end_idx]).to(dtype=torch.float32, device="cuda", non_blocking=True)
         A_gpu_batches.append(A_batch)
     #--------------------------------------------------------------------------#
     
-    #--------------------------------------------------------------------------------------#
-    # this was used for transferring A to the GPU and choosing indices, without any batching
-    # A_tensor = torch.from_numpy(A).to(dtype=torch.float32, device="cuda", non_blocking=True)
-    # indices = torch.randint(0, N, (K,), device="cuda") # select K random indices from the indices of A
-    # init_centroids_d = A_tensor[indices]  #filter the chosen K random vectors directly on GPU //question whether this is on the gpu
-    #--------------------------------------------------------------------------------------#
+    #----Choose a random initialisation point for K centroids from A
     np.random.seed()
     initial_indices = np.random.choice(N, K, replace=False)
     init_centroids_d = torch.tensor(A[initial_indices], device="cuda", dtype=torch.float32)
@@ -290,11 +276,7 @@ def our_kmeans(N, D, A, K):
         counts.zero_()
         cluster_labels_batches = []
        
-        # assign clusters to all vectors
-        # start_idx = 0
         for i, batch in enumerate(A_gpu_batches):
-            # start_idx = i * batch_size
-            # end_idx = min((i + 1) * batch_size, N)
 
             #---- stream1
             with torch.cuda.stream(stream1):
@@ -311,62 +293,49 @@ def our_kmeans(N, D, A, K):
               
             #---- stream2
             with torch.cuda.stream(stream2):
-                stream2.wait_stream(stream1)  # Ensure batch is available before computing
+                stream2.wait_stream(stream1)  # To be able to ensure batch is available before computing
                 
                 batch_cluster_labels = torch.argmin(distances, dim=1)
-                new_centroids.scatter_add_(0, batch_cluster_labels[:, None].expand(-1, D), batch.to(torch.float32)) # cumulatively adds all vectors belonging to the same cluster
-                counts.scatter_add_(0, batch_cluster_labels, torch.ones_like(batch_cluster_labels, dtype=torch.float32)) # for each cluster index in batch_labels, it adds 1.0 to counts at that position.
+                new_centroids.scatter_add_(0, batch_cluster_labels[:, None].expand(-1, D), batch.to(torch.float32)) # Cumulatively adds all vectors belonging to the same cluster
+                counts.scatter_add_(0, batch_cluster_labels, torch.ones_like(batch_cluster_labels, dtype=torch.float32)) # For each cluster index in batch_labels, it adds 1.0 to counts at that position.
                 
-                cluster_labels_batches.append(batch_cluster_labels) # append the batches of cluster labels to concatenate at the end 
+                cluster_labels_batches.append(batch_cluster_labels) # Append the batches of cluster labels to concatenate at the end 
                 
         torch.cuda.synchronize()  
         
         
-        counts[counts == 0] = 1  # avoid division by zero
+        counts[counts == 0] = 1  # This is done in order to avoid division by zero
         new_centroids /= counts.unsqueeze(1)
 
         centroid_shift = torch.norm(new_centroids - init_centroids_d, dim=1)
         init_centroids_d = new_centroids.clone()
         
-        # if torch.mean(centroid_shift) <= centroid_shift_tolerance:
         if torch.max(centroid_shift) <= centroid_shift_tolerance:
             converged = True
         
-        # gpu_ssd = ((A - new_centroids[cluster_labels]) ** 2).sum().item()
-        # print("gpu ssd: ", gpu_ssd)
+    
     cluster_labels = torch.cat(cluster_labels_batches, dim=0)
-    #print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices)
-    return cluster_labels.cpu().numpy(), new_centroids.cpu().numpy() # decide on the return value based on what is needed for 2.2
+    
+    #---Enable this line if a comparison between the library function and our implementation for KMeans is needed.
+    #print_kmeans(A, K, new_centroids, cluster_labels, initial_indices)
+    
+    return cluster_labels.cpu().numpy(), new_centroids.cpu().numpy()
 
 
-def print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices):
-    # plot = "1002_2"
-    init_centroids = A[initial_indices]  # Use same initialization
+def print_kmeans(A, K, new_centroids, cluster_labels, initial_indices):
+
+    #---------------------------------------------------------------------------------------------------------------------------------------------#
+    # Call this function at the end of kmeans if a detailed analysis between the sklearns KMeans library function and our gpu KMeans is desired. 
+    # It will output the Squared Sum of Differences (SSD), and the average centroid difference to see the accuracy of our implementation.
+    #---------------------------------------------------------------------------------------------------------------------------------------------#
+    
+    init_centroids = A[initial_indices]  
     cluster_labels = cluster_labels.cpu().numpy()
     new_centroids = new_centroids.cpu().numpy()
+    
     # change init to "kmeans++" if you would like to see better init conditions for improved cluster alignment
     sklearn_kmeans = KMeans(n_clusters=K, init=init_centroids, n_init=1, max_iter=150)
     sklearn_kmeans.fit(A)
-    
-    # colors = ListedColormap(["blue", "green", "yellow"])
-    # plt.clf()
-    # # Scatter plot for clustered points (with smaller size and transparency)
-    # plt.scatter(A[:, 0], A[:, 1], c=sklearn_kmeans.labels_, cmap=colors, alpha=0.2, s=2)
-
-    # plt.title("K-Means Clustering Results SKLEARN")
-    # timestamp = int(time.time())  # Generate a unique filename
-    # save_path =f"figures/kmeans_sklearns/kmeans_plot_sklearns_{plot}_{timestamp}.png"
-    # plt.savefig(save_path)
-    # # print(f"sklearns Plot saved to kmeans_sklearns_plot{plot}.png")  
-    
-    # plt.clf()
-    # plt.scatter(A[:, 0], A[:, 1], c=cluster_labels, cmap=colors, alpha=0.2, s=2)
-    # plt.title("K-Means Clustering Results GPU")
-    
-    # timestamp = int(time.time())  # Generate a unique filename
-    # save_path =f"figures/kmeans_gpu/kmeans_plot{plot}_{timestamp}.png"
-    # plt.savefig(save_path)
-    # # print(f"Plot saved to {save_path}")
 
     gpu_ssd = ((A - new_centroids[cluster_labels]) ** 2).sum().item()
     print(f"GPU K-Means SSD: {gpu_ssd}")
@@ -374,7 +343,6 @@ def print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices):
     sklearn_ssd = sklearn_kmeans.inertia_
     print(f"Sklearn K-Means SSD: {sklearn_ssd}")
 
-    # Compare
     ssd_diff = abs(gpu_ssd - sklearn_ssd)
     print(f"SSD Difference: {ssd_diff:.4f}")
     torch_centroids = new_centroids
@@ -389,14 +357,13 @@ def print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices):
         print("Some cluster assignments differ, skleanrs")
 
 def our_kmeans_cpu(N, D, A, K):
-    """
-    NumPy-only K-Means implementation (CPU only).
-    A: (N, D) NumPy array of data points
-    K: Number of clusters
-    """
-    max_iterations=300
+    
+    #--- KMeans CPU implementation imitating our exact logic of the GPU implementation for performance comparison.
+    
+    max_iterations=150
     tol=1e-5
-    # Randomly initialize K centroids from data points
+    
+    #---Randomly initialize K centroids from data points
     indices = np.random.choice(N, K, replace=False)
     centroids = A[indices]
     
@@ -404,7 +371,6 @@ def our_kmeans_cpu(N, D, A, K):
     iteration = 0
     
     while not converged and iteration < max_iterations:
-        # print(f"iteration {iteration}")
         iteration += 1
 
         distances = np.linalg.norm(A[:, None, :] - centroids[None, :, :], axis=2)  # Shape (N, K)
@@ -429,9 +395,11 @@ def our_kmeans_cpu(N, D, A, K):
 # Your Task 2.2 code here
 # ------------------------------------------------------------------------------------------------
 
-# You can create any kernel here
-
 def our_kmeans_for_ann(N, D, A, K):
+    
+    #---KMeans for ANN, difference from the task 2.1 KMeans implementation: returns the output in the GPU instead of the CPU 
+    # to use memory and time efficiently and prevent redundant transfers
+    
     global dist_metric
     if dist_metric not in ["l2", "cosine"]:
         print(f"Warning: K-means only supports l2 and cosine distances. Using l2 instead of {dist_metric}.")
@@ -442,11 +410,8 @@ def our_kmeans_for_ann(N, D, A, K):
     converged = False
     
     new_centroids = torch.empty((K,D), dtype=torch.float32, device="cuda")
-    # new_centroids = torch.zeros((K, D), device="cuda")
     
-    # an empty matrix of shape (K, N) on the GPU, initialized with -1 (to represent empty slots)
     cluster_labels_batches = []
-    # cluster_labels = torch.full((K,N), -1, dtype=torch.int32, device="cuda")
     counts = torch.zeros(K, dtype=torch.float32, device="cuda")
     distances = torch.empty(N, device="cuda")
     
@@ -468,8 +433,7 @@ def our_kmeans_for_ann(N, D, A, K):
     batch_size = min(batch_size, MAX_BATCH_SIZE)  
     
     num_batches = (N + batch_size - 1) // batch_size
-    # print("batch size for 1m: ", batch_size, "usable memory: ", usable_memory, "num batches: ", num_batches)
-    
+   
     A_gpu_batches = [] #does not need to be on the GPU
     if isinstance(A, torch.Tensor) and A.device.type == "cuda":
     # A is already a CUDA tensor, just slice it into batches
@@ -486,12 +450,6 @@ def our_kmeans_for_ann(N, D, A, K):
             A_gpu_batches.append(A_batch)
     #--------------------------------------------------------------------------#
     
-    #--------------------------------------------------------------------------------------#
-    # this was used for transferring A to the GPU and choosing indices, without any batching
-    # A_tensor = torch.from_numpy(A).to(dtype=torch.float32, device="cuda", non_blocking=True)
-    # indices = torch.randint(0, N, (K,), device="cuda") # select K random indices from the indices of A
-    # init_centroids_d = A_tensor[indices]  #filter the chosen K random vectors directly on GPU //question whether this is on the gpu
-    #--------------------------------------------------------------------------------------#
     np.random.seed()
     initial_indices = np.random.choice(N, K, replace=False)
     init_centroids_d = torch.tensor(A[initial_indices], device="cuda", dtype=torch.float32)
@@ -513,11 +471,7 @@ def our_kmeans_for_ann(N, D, A, K):
         counts.zero_()
         cluster_labels_batches = []
        
-        # assign clusters to all vectors
-        # start_idx = 0
         for i, batch in enumerate(A_gpu_batches):
-            # start_idx = i * batch_size
-            # end_idx = min((i + 1) * batch_size, N)
 
             #---- stream1
             with torch.cuda.stream(stream1):
@@ -551,15 +505,12 @@ def our_kmeans_for_ann(N, D, A, K):
         centroid_shift = torch.norm(new_centroids - init_centroids_d, dim=1)
         init_centroids_d = new_centroids.clone()
         
-        # if torch.mean(centroid_shift) <= centroid_shift_tolerance:
         if torch.max(centroid_shift) <= centroid_shift_tolerance:
             converged = True
-        
-        # gpu_ssd = ((A - new_centroids[cluster_labels]) ** 2).sum().item()
-        # print("gpu ssd: ", gpu_ssd)
+     
     cluster_labels = torch.cat(cluster_labels_batches, dim=0)
-    #print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices)
-    return cluster_labels, new_centroids # decide on the return value based on what is needed for 2.2
+    
+    return cluster_labels, new_centroids 
 
 def euclidean_distance(vec1, vec2):
     return torch.sqrt(torch.sum((vec1 - vec2) ** 2, dim=-1))
@@ -946,21 +897,6 @@ def test_distance_functions_batch(dim=2, num_samples=1000):
         print(f"  GPU time: {gpu_time:.6f} seconds")
         print(f"  Speedup: {speedup:.2f}x\n")
 
-def test_kmeans_10():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("10_meta.json")
-
-    # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (10): {cpu_time:.6f} seconds")
-
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (10): {gpu_time:.6f} seconds")
-
-    #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 10 (CPU to GPU): {speedup:.2f}x\n")
 
 def test_kmeans_1000_2():
     # Load test data from JSON
@@ -993,20 +929,35 @@ def test_kmeans_1000_1024():
     print(f"Speedup 1000_1024 (CPU to GPU): {speedup:.2f}x\n")
 
 
-def test_kmeans_1000_215():
+def test_kmeans_10k_1024():
     # Load test data from JSON
-    N, D, A, K = testdata_kmeans("1000_215_meta.json")
+    N, D, A, K = testdata_kmeans("10k_1024_meta.json")
 
     # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1000_215): {cpu_time:.6f} seconds")
+    print(f"CPU Time (10k_1024): {cpu_time:.6f} seconds")
     # Measure GPU time
     _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1000_215): {gpu_time:.6f} seconds")
+    print(f"GPU Time (10k_1024): {gpu_time:.6f} seconds")
 
     #Calculate Speedup
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1000_215 (CPU to GPU): {speedup:.2f}x\n")
+    print(f"Speedup 10k_1024 (CPU to GPU): {speedup:.2f}x\n")
+
+def test_kmeans_10k_2():
+    # Load test data from JSON
+    N, D, A, K = testdata_kmeans("10k_2_meta.json")
+
+    # # Measure CPU time
+    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
+    print(f"CPU Time (10k_2): {cpu_time:.6f} seconds")
+    # Measure GPU time
+    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
+    print(f"GPU Time (10k_2): {gpu_time:.6f} seconds")
+
+    #Calculate Speedup
+    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
+    print(f"Speedup 10k_2 (CPU to GPU): {speedup:.2f}x\n")
 
 def test_kmeans_100k():
     # Load test data from JSON
@@ -1023,23 +974,6 @@ def test_kmeans_100k():
     #Calculate Speedup
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
     print(f"Speedup 100k (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_100k_K30():
-    # Load test data from JSON
-    print("Starting testing: ")
-    N, D, A, K = testdata_kmeans("100k_K30_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (100k_K30): {cpu_time:.6f} seconds")
-    
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (100k_K30): {gpu_time:.6f} seconds")
-
-    #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 100k_K30 (CPU to GPU): {speedup:.2f}x\n")
 
 def test_kmeans_1m():
     # Load test data from JSON
@@ -1102,82 +1036,6 @@ def test_kmeans_1m_10_K10():
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
     print(f"Speedup 1m_10_K10 (CPU to GPU): {speedup:.2f}x\n")
 
-def test_kmeans_1m_50_K10():
-    # Load test data from JSON
-    print("statrting k30")
-    N, D, A, K = testdata_kmeans("1m_50_K10_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1m_50_K30): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1m_50_K10): {gpu_time:.6f} seconds")
-
-    # #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1m_50_K10 (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_1m_K30():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("1m_K30_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1m_K30): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1m_K30): {gpu_time:.6f} seconds")
-
-    # #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1m_K30 (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_1m_50_K30():
-    # Load test data from JSON
-    print("statrting k30")
-    N, D, A, K = testdata_kmeans("1m_50_K30_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1m_50_K30): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1m_50_K30): {gpu_time:.6f} seconds")
-
-    # #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1m_50_K30 (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_1m_K100():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("1m_K100_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1m_K100): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1m_K100): {gpu_time:.6f} seconds")
-
-    # #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1m_K100 (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_2m_K50():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("2m_K50_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (2m_K50): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (2m_K50): {gpu_time:.6f} seconds")
-
-    # #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 2m_K50 (CPU to GPU): {speedup:.2f}x\n")
 
 def test_ann_2D():
     print("\n\n------------------------\n\n")
@@ -1361,9 +1219,11 @@ if __name__ == "__main__":
         test_knn_4k()
         test_knn_4m()
     elif args.test == "kmeans":
-        # test_kmeans_1000_2()
-        test_kmeans_1000_215
-        # test_kmeans_1m_10_K10()
+        test_kmeans_1000_2()
+        test_kmeans_1000_1024()
+        test_kmeans_10k_2()
+        test_kmeans_10k_1024()
+        test_kmeans_1m_10_K10()
     elif args.test == "ann":
         # test_ann()
         test_ann_2D()

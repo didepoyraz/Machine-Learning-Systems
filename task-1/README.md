@@ -13,9 +13,9 @@ pip install -r requirements.txt
 
 To generate data to perform tests, run:
 
-'''bash
+```bash
 python json_test_file_generation.py
-'''
+```
 
 To create your own test case:
 1. Add a function call to json_test_generation.py with input values for the function as needed, along with the name of the file to store it as.

@@ -40,7 +40,7 @@ Create a Bash script (e.g., `test.sh`) with the following content:
 ```bash
 #!/bin/bash
 source ~/miniconda3/bin/activate
-conda activate mlsys
+conda activate task1
 python task.py
 ```
 
@@ -79,7 +79,7 @@ Update `test.sh` to:
 ```bash
 #!/bin/bash
 source ~/miniconda3/bin/activate
-conda activate mlsys
+conda activate task1
 python task.py --distance manhattan --test knn
 ```
 

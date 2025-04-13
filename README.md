@@ -9,7 +9,3 @@ This repository contains the completed work for the **Machine Learning Systems**
 - **[Task-2](./task-2)**: Includes the integration of the PyTorch operator from Task 1 into an **end-to-end RAG (Retriever-Augmented Generation) serving pipeline**, including system deployment and optimization.
 
 - **[Resources](./resources)**: Contains helpful resources such as lecture slides, reading materials, code templates, and references related to **GPU programming** and **PyTorch demos**.
-
-### Final Remarks
-
-This repository contains all the work completed for the **Machine Learning Systems** course, including the implementation of machine learning operators and their integration into a distributed system. It demonstrates the application of GPU programming, system deployment, and performance optimization techniques in the context of machine learning systems.

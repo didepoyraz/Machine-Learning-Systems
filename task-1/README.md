@@ -4,7 +4,7 @@
 
 ```bash
 git clone https://github.com/didepoyraz/Machine-Learning-Systems
-cd Machine-Learning-Systems-task-1
+cd Machine-Learning-Systems/task-1
 conda create -n task1 python=3.10 -y
 conda activate task1
 pip install -r requirements.txt

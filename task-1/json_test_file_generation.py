@@ -116,12 +116,16 @@ elif args.test == "kmeans":
     generate_and_save_kmeans(10000,10,3, "10k_2")
     generate_and_save_kmeans(10000,1024,3, "10k_1024")
     generate_and_save_kmeans(1000000,10,10, "1m_10_K10")
+  
 elif args.test == 'ann':
-    generate_and_save_ann(1000, 2, 3, "2d")
-    generate_and_save_ann(1000, 2**15, 5, "215")
-    generate_and_save_ann(100000, 1024, "100k")
-    generate_and_save_ann(4000, 100, 3, "4k")
-    generate_and_save_ann(40000, 100, 5, "40k")
-    generate_and_save_ann(4000000, 100, 200, "4m")
+    generate_and_save_ann(10000, 2, 5, "ann_test1")
+    generate_and_save_ann(10000, 1024, 5, "ann_test2")
+    generate_and_save_ann(4000, 100, 3, "ann_test3")
+    generate_and_save_ann(40000, 100, 10, "ann_test4")
+    generate_and_save_ann(400000, 100, 10, "ann_test5")
+    generate_and_save_ann(100000, 1024, 10, "ann_test6")
+    generate_and_save_ann(1000000, 100, 10, "ann_test7")
+    generate_and_save_ann(2000000, 100, 10, "ann_test8")
+    generate_and_save_ann(4000000, 100, 200, "ann_test9")
 
 print("Data generation complete!")

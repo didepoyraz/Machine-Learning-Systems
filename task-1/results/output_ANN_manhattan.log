@@ -3,109 +3,110 @@
 Testing for ann_test1_meta.json
 10000 vectors with dimension D = 2
 Finding 10 nearest vectors to vector X
-KNN: 0.490273 seconds
+KNN: 0.539702 seconds
 10 nearest neighbors to find
-ann_search function took - 0.0743412971496582
+Warning: K-means only supports l2 and cosine distances. Using l2 instead of manhattan.
+ann_search function took - 0.08245730400085449
 ANN - Top K nearest neighbors indices: [1087 3102  846 5514 3471 1517 2492 4606  692 5274]
-ANN: 0.724370 seconds
-Recall Rate: 1.0
+ANN: 0.946060 seconds
+Recall Rate: 0.8
 
 
 Testing for ann_test2_meta.json
 10000 vectors with dimension D = 1024
 Finding 10 nearest vectors to vector X
-KNN: 0.008996 seconds
+KNN: 0.009474 seconds
 10 nearest neighbors to find
-ann_search function took - 0.00541996955871582
+ann_search function took - 0.00487518310546875
 ANN - Top K nearest neighbors indices: [4875 9423 9995 8772 7924 7847 9209 8518  946 7099]
-ANN: 1.874426 seconds
+ANN: 1.911534 seconds
 Recall Rate: 1.0
 
 
 Testing for ann_test3_meta.json
 4000 vectors with dimension D = 100
 Finding 10 nearest vectors to vector X
-KNN: 0.001203 seconds
+KNN: 0.000988 seconds
 10 nearest neighbors to find
-ann_search function took - 0.0013747215270996094
+ann_search function took - 0.0013453960418701172
 ANN - Top K nearest neighbors indices: [ 596 3585 3971  572 2517  292  649 1036  300  285]
-ANN: 0.802797 seconds
+ANN: 0.785576 seconds
 Recall Rate: 0.7
 
 
 Testing for ann_test4_meta.json
 40000 vectors with dimension D = 100
 Finding 10 nearest vectors to vector X
-KNN: 0.003547 seconds
+KNN: 0.003436 seconds
 10 nearest neighbors to find
-ann_search function took - 0.002766847610473633
+ann_search function took - 0.0026972293853759766
 ANN - Top K nearest neighbors indices: [ 8097 23897  9654 21250 22553 15914 20494 10081 33205  1840]
-ANN: 1.463881 seconds
+ANN: 1.365580 seconds
 Recall Rate: 1.0
 
 
 Testing for ann_test5_meta.json
 400000 vectors with dimension D = 100
 Finding 10 nearest vectors to vector X
-KNN: 0.032896 seconds
+KNN: 0.036648 seconds
 10 nearest neighbors to find
-ann_search function took - 0.02185201644897461
+ann_search function took - 0.021892786026000977
 ANN - Top K nearest neighbors indices: [342143 185295  71895  65245 132618 166736 250913 318398 287728 292576]
-ANN: 11.614376 seconds
+ANN: 11.555334 seconds
 Recall Rate: 1.0
 
 
 Testing for ann_test6_meta.json
 100000 vectors with dimension D = 1024
 Finding 10 nearest vectors to vector X
-KNN: 0.072151 seconds
+KNN: 0.078275 seconds
 10 nearest neighbors to find
-ann_search function took - 0.04385995864868164
+ann_search function took - 0.04356241226196289
 ANN - Top K nearest neighbors indices: [91123 47325 23675 44880 58989 77008 90318 92983 79946 65069]
-ANN: 16.664963 seconds
+ANN: 16.327887 seconds
 Recall Rate: 1.0
 
 
 Testing for ann_test7_meta.json
 1000000 vectors with dimension D = 100
 Finding 10 nearest vectors to vector X
-KNN: 0.076296 seconds
+KNN: 0.079830 seconds
 10 nearest neighbors to find
-ann_search function took - 0.053580284118652344
-ANN - Top K nearest neighbors indices: [441933 676724 504050  28705 814502 200326 489334 737413 660208 136200]
-ANN: 35.370366 seconds
-Recall Rate: 0.6
+ann_search function took - 0.05272316932678223
+ANN - Top K nearest neighbors indices: [101967 537214 556368 691317 219658  24577 631213 787849 562068 712893]
+ANN: 34.786186 seconds
+Recall Rate: 1.0
 
 
 Testing for ann_test8_meta.json
 2000000 vectors with dimension D = 100
 Finding 10 nearest vectors to vector X
-KNN: 0.467549 seconds
+KNN: 0.494362 seconds
 10 nearest neighbors to find
-ann_search function took - 0.09668397903442383
+ann_search function took - 0.09801387786865234
 ANN - Top K nearest neighbors indices: [ 471143  184789 1466179 1355750 1962310 1039436 1319413  507703 1061663
  1780275]
-ANN: 71.429787 seconds
+ANN: 70.838265 seconds
 Recall Rate: 1.0
 
 
 Testing for ann_test9_meta.json
 4000000 vectors with dimension D = 100
 Finding 10 nearest vectors to vector X
-KNN: 0.294779 seconds
+KNN: 0.297139 seconds
 10 nearest neighbors to find
-ann_search function took - 0.19311165809631348
-ANN - Top K nearest neighbors indices: [ 12  72  83 135 163 204 211 212 254 368]
-ANN: 144.420340 seconds
-Recall Rate: 0.8
+ann_search function took - 0.19647455215454102
+ANN - Top K nearest neighbors indices: [  1  32 118 213 244 365 383 467 497 521]
+ANN: 144.945722 seconds
+Recall Rate: 1.0
 
 
 Testing for ann_test10_meta.json
 40000 vectors with dimension D = 100
 Finding 10 nearest vectors to vector X
-KNN: 0.003569 seconds
+KNN: 0.004054 seconds
 10 nearest neighbors to find
-ann_search function took - 0.0027475357055664062
+ann_search function took - 0.002711057662963867
 ANN - Top K nearest neighbors indices: [ 8097  9654 21250 23897 16610  7746 22553 33205 18746 14227]
-ANN: 1.383647 seconds
+ANN: 1.296849 seconds
 Recall Rate: 1.0

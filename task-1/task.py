@@ -28,23 +28,63 @@ dist_metric = args.distance
 # ------------------------------------------------------------------------------------------------
 
 def distance_cosine(X, Y):
-    # Compute cosine similarity
+    '''
+    Calculate distance between two vectors using cosine similarity.
+
+    Parameters:
+        X (torch.Tensor): A 1D tensor representing the first vector.
+        Y (torch.Tensor): A 1D tensor representing the second vector.
+
+    Returns:
+        torch.Tensor: A scalar tensor representing the cosine distance (1 - cosine similarity).
+    '''
     cosine_similarity = torch.nn.functional.cosine_similarity(X, Y, dim=0)
     return 1 - cosine_similarity
 
 def distance_l2(X, Y):
-    # Compute L2 distance (Euclidean)
+    '''
+    Calculate distance between two vectors using l2 (Euclidean) distance.
+
+    Parameters:
+        X (torch.Tensor): A 1D tensor representing the first vector.
+        Y (torch.Tensor): A 1D tensor representing the second vector.
+
+    Returns:
+        torch.Tensor: A scalar tensor representing the l2 distance.
+    '''
     return torch.norm(X - Y)
 
 def distance_dot(X, Y):
-    # Compute dot product
+    '''
+    Calculate distance between two vectors using dot product
+
+    Parameters:
+        X (torch.Tensor): A 1D tensor representing the first vector.
+        Y (torch.Tensor): A 1D tensor representing the second vector.
+
+    Returns:
+        torch.Tensor: A scalar tensor representing the dot product.
+    '''
     return torch.dot(X, Y)
 
 def distance_manhattan(X, Y):
-    # Compute Manhattan distance (L1 norm)
+    '''
+    Calculate distance between two vectors using Manhattan distance.
+
+    Parameters:
+        X (torch.Tensor): A 1D tensor representing the first vector.
+        Y (torch.Tensor): A 1D tensor representing the second vector.
+
+    Returns:
+        torch.Tensor: A scalar tensor representing the L1 (Manhattan) distance.
+    '''
     return torch.sum(torch.abs(X - Y))
 
 def get_distance_function():
+    '''
+    Returns:
+        Distance function to be used.
+    '''
     return {
         "cosine": distance_cosine,
         "l2": distance_l2,
@@ -57,7 +97,23 @@ def get_distance_function():
 # ------------------------------------------------------------------------------------------------
 
 def our_knn(N, D, A, X, K):
+    '''
+    Perform K-Nearest Neighbors (KNN) search using a specified distance metric.
 
+    This function computes the K nearest neighbors of a query vector `X` within a dataset `A`,
+    optionally batching the computation to handle large datasets with limited GPU memory.
+    It supports multiple distance metrics and automatically selects batch size based on available GPU memory.
+
+    Parameters:
+        N (int): Number of vectors in the dataset A.
+        D (int): Dimensionality of each vector.
+        A (Union[np.ndarray, torch.Tensor]): Dataset of shape (N, D), can be a NumPy array or PyTorch tensor.
+        X (Union[np.ndarray, torch.Tensor]): Query vector of shape (D,) as NumPy array or PyTorch tensor.
+        K (int): Number of nearest neighbors to retrieve.
+
+    Returns:
+        np.ndarray: Array of indices (shape: (K,)) of the top K nearest neighbors in the dataset A.
+    '''
     global dist_metric
 
     if dist_metric is None:
@@ -169,21 +225,79 @@ def our_knn(N, D, A, X, K):
 # using numpy
 
 def distance_cosine_cpu(X, Y):
+    '''
+    Computes cosine distance (1 - cosine similarity) between two 1D NumPy vectors.
+
+    Parameters:
+        X (np.ndarray): A 1D NumPy array representing the first vector.
+        Y (np.ndarray): A 1D NumPy array representing the second vector.
+    
+    Returns:
+        float: The computed cosine similarity score between X and Y.
+
+    '''
     dot_product = np.dot(X, Y)
     norm_X = np.linalg.norm(X)
     norm_Y = np.linalg.norm(Y)
     return 1 - (dot_product / (norm_X * norm_Y))
 
 def distance_l2_cpu(X, Y):
+    '''
+    Computes l2 distance between two 1D NumPy vectors.
+
+    Parameters:
+        X (np.ndarray): A 1D NumPy array representing the first vector.
+        Y (np.ndarray): A 1D NumPy array representing the second vector.
+    
+    Returns:
+        float: The computed l2 distance between X and Y.
+
+    '''
     return np.linalg.norm(X - Y)
 
 def distance_dot_cpu(X, Y):
+    '''
+    Computes dot product between two 1D NumPy vectors.
+
+    Parameters:
+        X (np.ndarray): A 1D NumPy array representing the first vector.
+        Y (np.ndarray): A 1D NumPy array representing the second vector.
+    
+    Returns:
+        float: The computed dot product score between X and Y.
+
+    '''
     return np.dot(X, Y)
 
 def distance_manhattan_cpu(X, Y):
+    '''
+    Computes manhattan distancebetween two 1D NumPy vectors.
+
+    Parameters:
+        X (np.ndarray): A 1D NumPy array representing the first vector.
+        Y (np.ndarray): A 1D NumPy array representing the second vector.
+    
+    Returns:
+        float: The manhattan distance between X and Y.
+
+    '''
     return np.sum(np.abs(X - Y))
 
 def our_knn_cpu(N, D, A, X, K):
+    '''
+    Performs K-Nearest Neighbors search entirely on CPU using the specified distance metric.
+
+        Parameters:
+            N (int): Number of vectors in dataset A.
+            D (int): Dimensionality of each vector.
+            A (np.ndarray): Dataset of shape (N, D).
+            X (np.ndarray): Query vector of shape (D,).
+            K (int): Number of nearest neighbors to retrieve.
+
+        Returns:
+            np.ndarray: Array of indices (shape: (K,)) of the top K nearest neighbors.
+
+    '''
     if A.shape != (N, D) or X.shape != (D,):
         raise ValueError("Input dimensions do not match.")
 
@@ -211,6 +325,23 @@ def our_knn_cpu(N, D, A, X, K):
 NUM_INIT = None 
 
 def our_kmeans(N, D, A, K):
+    '''
+    Performs KMeans clustering on a large dataset using CUDA-enabled PyTorch 
+    for high performance on GPU. Supports 'l2' and 'cosine' distance metrics.
+
+    Parameters:
+        N (int): Number of data points.
+        D (int): Dimension of each data point.
+        A (np.ndarray): Input dataset of shape (N, D), in NumPy format.
+        K (int): Number of clusters.
+
+    Returns:
+        Tuple[np.ndarray, np.ndarray]: 
+            - cluster_labels (np.ndarray): Array of shape (N,) containing the cluster assignment for each point.
+            - centroids (np.ndarray): Array of shape (K, D) representing the final cluster centers.
+
+    '''
+
     global dist_metric
     if dist_metric not in ["l2", "cosine"]:
         print(f"Warning: K-means only supports l2 and cosine distances. Using l2 instead of {dist_metric}.")
@@ -221,7 +352,6 @@ def our_kmeans(N, D, A, K):
     converged = False
     
     new_centroids = torch.empty((K,D), dtype=torch.float32, device="cuda")
-  
     cluster_labels_batches = []
     counts = torch.zeros(K, dtype=torch.float32, device="cuda")
     distances = torch.empty(N, device="cuda")
@@ -253,7 +383,6 @@ def our_kmeans(N, D, A, K):
         A_batch = torch.from_numpy(A[start_idx : end_idx]).to(dtype=torch.float32, device="cuda", non_blocking=True)
         A_gpu_batches.append(A_batch)
     #--------------------------------------------------------------------------#
-    
     #----Choose a random initialisation point for K centroids from A
     np.random.seed()
     initial_indices = np.random.choice(N, K, replace=False)
@@ -282,7 +411,7 @@ def our_kmeans(N, D, A, K):
             with torch.cuda.stream(stream1):
                 if dist_metric == "l2":
                     distances = torch.sum((batch[:,None] - init_centroids_d)**2, dim=2)
-                    # distances = torch.cdist(A_tensor, init_centroids_d, p=2) ** 2
+                    # distances = torch.cdist(batch, init_centroids_d, p=2) ** 2
                 elif dist_metric == "cosine":
                     A_norm = torch.nn.functional.normalize(batch, p=2, dim=1)
                     C_norm = torch.nn.functional.normalize(init_centroids_d, p=2, dim=0)
@@ -312,27 +441,39 @@ def our_kmeans(N, D, A, K):
         
         if torch.max(centroid_shift) <= centroid_shift_tolerance:
             converged = True
+      
         
-    
     cluster_labels = torch.cat(cluster_labels_batches, dim=0)
-    
     #---Enable this line if a comparison between the library function and our implementation for KMeans is needed.
     #print_kmeans(A, K, new_centroids, cluster_labels, initial_indices)
     
-    return cluster_labels.cpu().numpy(), new_centroids.cpu().numpy()
+    return cluster_labels.cpu().numpy(), new_centroids.cpu().numpy() # decide on the return value based on what is needed for 2.2
 
 
-def print_kmeans(A, K, new_centroids, cluster_labels, initial_indices):
+def print_kmeans(A, N, K, new_centroids, cluster_labels, initial_indices):
+    '''
+    Call this function at the end of kmeans if a detailed analysis between the sklearns KMeans library function and our gpu KMeans is desired. 
+    It will output the Squared Sum of Differences (SSD), and the average centroid difference to see the accuracy of our implementation.
 
-    #---------------------------------------------------------------------------------------------------------------------------------------------#
-    # Call this function at the end of kmeans if a detailed analysis between the sklearns KMeans library function and our gpu KMeans is desired. 
-    # It will output the Squared Sum of Differences (SSD), and the average centroid difference to see the accuracy of our implementation.
-    #---------------------------------------------------------------------------------------------------------------------------------------------#
-    
+    Parameters:
+        A (np.ndarray): The original dataset of shape (N, D).
+        N (int): Number of data points.
+        K (int): Number of clusters.
+        new_centroids (torch.Tensor): Final centroids from the GPU-based KMeans.
+        cluster_labels (torch.Tensor): Cluster assignments from the GPU-based KMeans.
+        initial_indices (np.ndarray): Indices of the data points used to initialize centroids.
+
+    Outputs:
+        Prints the following metrics:
+            - Sum of Squared Differences (SSD) for both implementations.
+            - Difference between SSDs.
+            - Average L2 distance between corresponding centroids.
+            - Whether the cluster assignments match exactly.
+    '''
+
     init_centroids = A[initial_indices]  
     cluster_labels = cluster_labels.cpu().numpy()
     new_centroids = new_centroids.cpu().numpy()
-    
     # change init to "kmeans++" if you would like to see better init conditions for improved cluster alignment
     sklearn_kmeans = KMeans(n_clusters=K, init=init_centroids, n_init=1, max_iter=150)
     sklearn_kmeans.fit(A)
@@ -357,12 +498,24 @@ def print_kmeans(A, K, new_centroids, cluster_labels, initial_indices):
         print("Some cluster assignments differ, skleanrs")
 
 def our_kmeans_cpu(N, D, A, K):
-    
-    #--- KMeans CPU implementation imitating our exact logic of the GPU implementation for performance comparison.
+    '''
+    KMeans CPU implementation imitating our exact logic of the GPU implementation for performance comparison
+
+    Parameters:
+        N (int): Number of data points.
+        D (int): Dimension of each data point.
+        A (np.ndarray): Input dataset of shape (N, D), in NumPy format.
+        K (int): Number of clusters.
+
+    Returns:
+        Tuple[np.ndarray, np.ndarray]: 
+            - cluster_labels (np.ndarray): Array of shape (N,) containing the cluster assignment for each point.
+            - centroids (np.ndarray): Array of shape (K, D) representing the final cluster centers.
+
+    '''
     
     max_iterations=150
     tol=1e-5
-    
     #---Randomly initialize K centroids from data points
     indices = np.random.choice(N, K, replace=False)
     centroids = A[indices]
@@ -395,11 +548,120 @@ def our_kmeans_cpu(N, D, A, K):
 # Your Task 2.2 code here
 # ------------------------------------------------------------------------------------------------
 
+# You can create any kernel here
+
+def euclidean_distance_batched(vecs, query, batch_size=100_000):
+    '''
+    Computes Euclidean (L2) distances between a query vector and a large set of vectors in batches.
+
+    Parameters:
+        vecs (torch.Tensor): Tensor of shape (N, D) containing N vectors.
+        query (torch.Tensor): A single vector of shape (D,) to compare against.
+        batch_size (int): Number of vectors to process per batch (default: 100,000).
+
+    Returns:
+        torch.Tensor: A tensor of shape (N,) containing the L2 distances.
+    '''
+    distances = []
+    for i in range(0, vecs.shape[0], batch_size):
+        chunk = vecs[i:i+batch_size]
+        dist = torch.norm(chunk - query, dim=1)
+        distances.append(dist)
+    return torch.cat(distances)
+
+def negative_dot_distance_batched(vecs, query, batch_size=100_000):
+    '''
+    Computes negative dot product distances between a query vector and a large set of vectors in batches. 
+    Negative to maintain the less is closer logic.
+
+    Parameters:
+        vecs (torch.Tensor): Tensor of shape (N, D) containing N vectors.
+        query (torch.Tensor): A single vector of shape (D,) to compare against.
+        batch_size (int): Number of vectors to process per batch (default: 100,000).
+
+    Returns:
+        torch.Tensor: A tensor of shape (N,) containing the negative dot product values.
+    '''
+    distances = []
+    for i in range(0, vecs.shape[0], batch_size):
+        chunk = vecs[i:i+batch_size]
+        dist = -torch.sum(chunk * query, dim=1)
+        distances.append(dist)
+    return torch.cat(distances)
+
+def manhattan_distance_batched(vecs, query, batch_size=100_000):
+    '''
+    Computes Manhattan (L1) distances between a query vector and a large set of vectors in batches.
+
+    Parameters:
+        vecs (torch.Tensor): Tensor of shape (N, D) containing N vectors.
+        query (torch.Tensor): A single vector of shape (D,) to compare against.
+        batch_size (int): Number of vectors to process per batch (default: 100,000).
+
+    Returns:
+        torch.Tensor: A tensor of shape (N,) containing the L1 distances.
+    '''
+
+    distances = []
+    for i in range(0, vecs.shape[0], batch_size):
+        chunk = vecs[i:i+batch_size]
+        dist = torch.sum(torch.abs(chunk - query), dim=1)
+        distances.append(dist)
+    return torch.cat(distances)
+
+def cosine_distance_batched(vecs, query, batch_size=100_000):
+    '''
+    Computes cosine distances between a query vector and a large set of vectors in batches.
+    Distance is defined as (1 - cosine similarity).
+
+    Parameters:
+        vecs (torch.Tensor): Tensor of shape (N, D) containing N vectors.
+        query (torch.Tensor): A single vector of shape (D,) to compare against.
+        batch_size (int): Number of vectors to process per batch (default: 100,000).
+
+    Returns:
+        torch.Tensor: A tensor of shape (N,) containing the cosine distances.
+    '''
+    query = torch.nn.functional.normalize(query, p=2, dim=0)
+    distances = []
+    for i in range(0, vecs.shape[0], batch_size):
+        chunk = vecs[i:i+batch_size]
+        chunk = torch.nn.functional.normalize(chunk, p=2, dim=1)
+        dist = 1 - torch.sum(chunk * query, dim=1)
+        distances.append(dist)
+    return torch.cat(distances)
+
+def numpy_to_cuda(arr, dtype=torch.float32):
+    '''
+    Transfers a NumPy array to the CUDA device as a PyTorch tensor with optional dtype.
+
+    Parameters:
+        arr (np.ndarray): NumPy array to be transferred to the GPU.
+        dtype (torch.dtype): Desired data type of the tensor (default: torch.float32).
+
+    Returns:
+        torch.Tensor: The input array converted to a pinned-memory CUDA tensor.
+    '''
+    return torch.from_numpy(arr).pin_memory().to(dtype=dtype, device="cuda", non_blocking=True)
+
 def our_kmeans_for_ann(N, D, A, K):
-    
-    #---KMeans for ANN, difference from the task 2.1 KMeans implementation: returns the output in the GPU instead of the CPU 
-    # to use memory and time efficiently and prevent redundant transfers
-    
+
+    '''
+    KMeans for ANN, difference from the task 2.1 KMeans implementation: returns the output in the GPU instead of the CPU 
+    to use memory and time efficiently and prevent redundant transfers
+
+    Parameters:
+        N (int): Number of data points.
+        D (int): Dimension of each data point.
+        A (np.ndarray or torch.Tensor): Input dataset of shape (N, D), in NumPy format.
+        K (int): Number of clusters.
+
+    Returns:
+        Tuple[torch.Tensor, torch.Tensor]: 
+            - cluster_labels (torch.Tensor): Tensor of shape (N,) containing the cluster assignment for each point.
+            - centroids (torch.Tensor): Tensor of shape (K, D) representing the final cluster centers.
+
+    '''
     global dist_metric
     if dist_metric not in ["l2", "cosine"]:
         print(f"Warning: K-means only supports l2 and cosine distances. Using l2 instead of {dist_metric}.")
@@ -411,6 +673,7 @@ def our_kmeans_for_ann(N, D, A, K):
     
     new_centroids = torch.empty((K,D), dtype=torch.float32, device="cuda")
     
+
     cluster_labels_batches = []
     counts = torch.zeros(K, dtype=torch.float32, device="cuda")
     distances = torch.empty(N, device="cuda")
@@ -433,7 +696,6 @@ def our_kmeans_for_ann(N, D, A, K):
     batch_size = min(batch_size, MAX_BATCH_SIZE)  
     
     num_batches = (N + batch_size - 1) // batch_size
-   
     A_gpu_batches = [] #does not need to be on the GPU
     if isinstance(A, torch.Tensor) and A.device.type == "cuda":
     # A is already a CUDA tensor, just slice it into batches
@@ -477,7 +739,7 @@ def our_kmeans_for_ann(N, D, A, K):
             with torch.cuda.stream(stream1):
                 if dist_metric == "l2":
                     distances = torch.sum((batch[:,None] - init_centroids_d)**2, dim=2)
-                    # distances = torch.cdist(A_tensor, init_centroids_d, p=2) ** 2
+                    # distances = torch.cdist(batch, init_centroids_d, p=2) ** 2
                 elif dist_metric == "cosine":
                     A_norm = torch.nn.functional.normalize(batch, p=2, dim=1)
                     C_norm = torch.nn.functional.normalize(init_centroids_d, p=2, dim=0)
@@ -507,43 +769,9 @@ def our_kmeans_for_ann(N, D, A, K):
         
         if torch.max(centroid_shift) <= centroid_shift_tolerance:
             converged = True
-     
+
     cluster_labels = torch.cat(cluster_labels_batches, dim=0)
-    
-    return cluster_labels, new_centroids 
-
-def euclidean_distance(vec1, vec2):
-    return torch.sqrt(torch.sum((vec1 - vec2) ** 2, dim=-1))
-
-def euclidean_distance_batched(vecs, query, batch_size=100_000):
-    distances = []
-    for i in range(0, vecs.shape[0], batch_size):
-        chunk = vecs[i:i+batch_size]
-        dist = torch.norm(chunk - query, dim=1)
-        distances.append(dist)
-    return torch.cat(distances)
-
-def negative_dot_distance(vec1, vec2):
-    return -torch.sum(vec1 * vec2, dim=-1)
-
-def negative_dot_distance_batched(vecs, query, batch_size=100_000):
-    distances = []
-    for i in range(0, vecs.shape[0], batch_size):
-        chunk = vecs[i:i+batch_size]
-        dist = -torch.sum(chunk * query, dim=1)
-        distances.append(dist)
-    return torch.cat(distances)
-
-def numpy_to_cuda(arr, dtype=torch.float32, batch_size=100_000):
-    assert isinstance(arr, np.ndarray), "Input must be a NumPy array"
-    
-    cuda_chunks = []
-    for i in range(0, arr.shape[0], batch_size):
-        chunk = arr[i:i+batch_size]
-        chunk_torch = torch.from_numpy(chunk).pin_memory().to(dtype=dtype, device="cuda", non_blocking=True)
-        cuda_chunks.append(chunk_torch)
-
-    return torch.cat(cuda_chunks, dim=0)
+    return cluster_labels, new_centroids # decide on the return value based on what is needed for 2.2
 
 def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2, batch_size = 100_000):
     """
@@ -558,61 +786,39 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2, batch_size = 
         K2 (int): Number of nearest neighbors to return.
 
     Returns:
-        torch.Tensor: (K2,) Tensor containing the indices of the top K2 nearest neighbors.
+        np.ndarray: NumPy array of shape (K2, D) containing the indices (from A) of the K2 nearest neighbors to the query vector X.
     """
-    if isinstance(cluster_centers, np.ndarray):
-        #start = time.time()
-        cluster_centers = numpy_to_cuda(cluster_centers)
-        #print("Cluster centers to tensor: " + str(time.time() - start))
-    if isinstance(cluster_assignments, np.ndarray):
-        #start = time.time()
-        cluster_assignments = torch.from_numpy(cluster_assignments).to(
-            dtype=torch.long, device="cuda", non_blocking=True
-        )
-        #print("Cluster assignments to tensor: " + str(time.time() - start))
-    if isinstance(A, np.ndarray):
-        #start = time.time()
-        A = numpy_to_cuda(A)
-        #print("A to cuda: " + str(time.time() - start))
-    if isinstance(X, np.ndarray):
-        #start = time.time()
-        X = numpy_to_cuda(X)
-        #print("X to cuda: " + str(time.time() - start))
 
     if dist_metric == "l2":
-        #start = time.time()
         cluster_distances = euclidean_distance_batched(cluster_centers, X)
-        #print("Cluster distances calculated via euclidean: " + str(time.time() - start))
     elif dist_metric == "cosine":
-        # For cosine, normalize vectors first
-        X_norm = torch.nn.functional.normalize(X.unsqueeze(0), p=2, dim=1).squeeze(0)
-        centers_norm = torch.nn.functional.normalize(cluster_centers, p=2, dim=1)
-        cluster_distances = negative_dot_distance_batched(X_norm, centers_norm)
-    #start = time.time()
+        cluster_distances = cosine_distance_batched(cluster_centers, X)
+    elif dist_metric == "manhattan":
+        cluster_distances = manhattan_distance_batched(cluster_centers, X)
+    elif dist_metric == "dot":
+        cluster_distances = negative_dot_distance_batched(cluster_centers, X) 
+    else:
+        raise ValueError(f"Unsupported distance metric: {dist_metric}")
+    
     nearest_clusters = torch.argsort(cluster_distances)[:K1]
-    #print("finding nearest clusters: " + str(time.time() - start))
 
     # Safely gather candidate indices and points
-    #start = time.time()
+    
     candidate_indices = []
     for cluster_idx in nearest_clusters:
         idx = torch.where(cluster_assignments == cluster_idx)[0]
         candidate_indices.append(idx)
 
     candidate_indices = torch.cat(candidate_indices)
-    #print("candidate indices: " + str(time.time() - start))
-
     # Batch the candidate point gathering (optional for large A)
-    #start = time.time()
+
     candidate_points = []
     for i in range(0, candidate_indices.shape[0], batch_size):
         idx_chunk = candidate_indices[i:i+batch_size]
         candidate_points.append(A[idx_chunk])
     candidate_points = torch.cat(candidate_points, dim=0)
-    #print("Candidate points: " + str(time.time() - start))
 
     # pass CUDA tensors directly to our_knn
-    #start = time.time()
     top_k_local_indices = our_knn(
         N=candidate_points.shape[0],
     D=X.shape[0],
@@ -620,39 +826,46 @@ def ann_search(A, cluster_centers, cluster_assignments, X, K1, K2, batch_size = 
         X=X,                 # Already a tensor
         K=K2
     )
-
+    
     # Map local indices back to original dataset indices
     nearest_neighbors = candidate_indices[top_k_local_indices]
-    #print("Top K and finding indices: " + str(time.time() - start))
     return nearest_neighbors
 
 def our_ann(N, D, A, X, K):
+    '''
+    Perform Approximate Nearest Neighbor (ANN) search with adaptive K-Means clustering.
+
+    Parameters:
+        N (int): Number of data points in the dataset.
+        D (int): Dimensionality of each data point.
+        A (np.ndarray): Array of shape (N, D) containing the dataset vectors.
+        X (np.ndarray or torch.Tensor): Array/Tensor of shape (D,) representing the query vector.
+        K (int): Number of nearest neighbors to retrieve.
+    
+    Returns:
+        np.ndarray: NumPy array of shape (K2, D) containing the indices (from A) of the K2 nearest neighbors to the query vector X.
+    '''
     device = "cuda"
     #K_clusters = 5
     print(str(K) + " nearest neighbors to find")
     K2 = K
     i = 5
     #K = 3
-
     if N < 5000:
         K = 3
-
-    elif N < 100000:
+        K1 = math.ceil(K * 0.6)
+    elif N < 10000:
         K = 5
-
-    elif N < 1000000:
+        K1 = math.ceil(K * 0.6)
+    elif N < 100000:
         K = 10
+        K1 = math.ceil(K * 0.6)
+    elif N < 1000000:
+        K = 100
+        K1 = math.ceil(K * 0.4)
     else:
-        K = 200
-
-    #print(str(K) + " clusters using KMeans")
-    K1 = math.ceil(K * 0.6)
-    #print("If K1 is assigned after K - " + str(K1))
-
-    global dist_metric
-    if dist_metric not in ["l2", "cosine"]:
-        print(f"Warning: K-means only supports l2 and cosine distances. Using l2 instead of {dist_metric}.")
-        dist_metric = "l2"  # Set a fallback metric
+        K = 250
+        K1 = math.ceil(K * 0.4)
 
     best_ssd = float("inf")
     best_centroids = None
@@ -660,46 +873,34 @@ def our_ann(N, D, A, X, K):
     A = numpy_to_cuda(A)
     
     for i in range(i):
-        
         cluster_labels, new_centroids = our_kmeans_for_ann(N,D,A,K)
-        ssd = torch.sum((A - new_centroids[cluster_labels]) ** 2)
+        ssd = torch.sum((A - new_centroids[cluster_labels]) ** 2).item()
         
         if ssd < best_ssd:
             best_ssd = ssd
             best_centroids = new_centroids
             best_cluster_labels = cluster_labels
-            
+
+    if isinstance(best_centroids, np.ndarray):
+        best_centroids = numpy_to_cuda(best_centroids)
+    if isinstance(best_cluster_labels, np.ndarray):
+        best_cluster_labels = torch.from_numpy(best_cluster_labels).to(
+            dtype=torch.long, device="cuda", non_blocking=True
+        )
+
+    if isinstance(X, np.ndarray):
+        X = numpy_to_cuda(X)
+
     starttime = time.time()
     top_k_neighbors = ann_search(A, best_centroids, best_cluster_labels, X, K1, K2)
 
     print('ann_search function took - ' + str(time.time() - starttime))
-    print("ANN - Top K nearest neighbors indices:", top_k_neighbors.cpu().numpy(), "kmeans best ssd: ", best_ssd)
+    print("ANN - Top K nearest neighbors indices:", top_k_neighbors)
     return top_k_neighbors
 
 # ------------------------------------------------------------------------------------------------
 # Test your code here
-# ------------------------------------------------------------------------------------------------
-
-# Example
-def test_kmeans():
-    N, D, A, K = testdata_kmeans("test_file.json")
-    kmeans_result = our_kmeans(N, D, A, K)
-    print(kmeans_result)
-
-def test_knn():
-    N, D, A, X, K = testdata_knn("")
-    knn_result = our_knn(N, D, A, X, K)
-    print(knn_result)
-
-def test_knn_cpu():
-    N, D, A, X, K = testdata_knn("")
-    knn_result = our_knn_cpu(N, D, A, X, K)
-    print(knn_result)
-    
-def test_ann():
-    N, D, A, X, K = testdata_ann("test_file.json")
-    ann_result = our_ann(N, D, A, X, K)
-    print(ann_result)
+# ------------------------------------------------------------------------------------------------    
     
 def recall_rate(list1, list2):
     """
@@ -711,6 +912,9 @@ def recall_rate(list1, list2):
 
 # incorporate timing into testing
 def measure_time(func, *args, **kwargs):
+    '''
+    Measures time taken to execute the functions.
+    '''
     start = time.perf_counter()
     result = func(*args, **kwargs)
     if torch.cuda.is_available():
@@ -718,9 +922,17 @@ def measure_time(func, *args, **kwargs):
     end = time.perf_counter()
     return result, end - start
 
-def test_knn_2D():
+def test_knn(filename=""):
+    '''
+    Reads given file and performs KNN tests.
+
+    Parameters:
+        filename (str): Name of the JSON that contains meta data for the test.
+
+    '''
+    print("\n\nTesting for " + filename)
     # Load test data from JSON (using testdata_knn)
-    N, D, A, X, K = testdata_knn("2d_meta.json")
+    N, D, A, X, K = testdata_knn(filename)
 
     # Manually check file types for A and X
     if isinstance(A, str):  # If A is a file path (for .txt or .npy)
@@ -740,72 +952,14 @@ def test_knn_2D():
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
     print(f"Speedup (CPU to GPU): {speedup:.2f}x\n")
 
-
-def test_knn_215():
-    # Load test data from JSON
-    N, D, A, X, K = testdata_knn("215_meta.json")
-
-    # Measure CPU time
-    _, cpu_time = measure_time(our_knn_cpu, N, D, A, X, K)
-    print(f"CPU Time (2^15): {cpu_time:.6f} seconds")
-
-    # Measure GPU time
-    _, gpu_time = measure_time(our_knn, N, D, A, X, K)
-    print(f"GPU Time (2^15): {gpu_time:.6f} seconds")
-
-    # Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 2*15 (CPU to GPU): {speedup:.2f}x\n")
-
-def test_knn_4k():
-    # Load test data from JSON
-    N, D, A, X, K = testdata_knn("4k_meta.json")
-
-    # Measure CPU time
-    _, cpu_time = measure_time(our_knn_cpu, N, D, A, X, K)
-    print(f"CPU Time (4k): {cpu_time:.6f} seconds")
-
-    # Measure GPU time
-    _, gpu_time = measure_time(our_knn, N, D, A, X, K)
-    print(f"GPU Time (4k): {gpu_time:.6f} seconds")
-
-    # Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 4k (CPU to GPU): {speedup:.2f}x\n")
-    
-def test_knn_40k():
-    # Load test data from JSON
-    N, D, A, X, K = testdata_knn("40k_meta.json")
-
-    # Measure CPU time
-    _, cpu_time = measure_time(our_knn_cpu, N, D, A, X, K)
-    print(f"CPU Time (40k): {cpu_time:.6f} seconds")
-
-    # Measure GPU time
-    _, gpu_time = measure_time(our_knn, N, D, A, X, K)
-    print(f"GPU Time (40k): {gpu_time:.6f} seconds")
-
-    # Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 40k (CPU to GPU): {speedup:.2f}x\n")
-
-def test_knn_4m():
-    # Load test data from JSON
-    N, D, A, X, K = testdata_knn("4m_meta.json")
-
-    # Measure CPU time
-    _, cpu_time = measure_time(our_knn_cpu, N, D, A, X, K)
-    print(f"CPU Time (4m): {cpu_time:.6f} seconds")
-
-    # Measure GPU time
-    _, gpu_time = measure_time(our_knn, N, D, A, X, K)
-    print(f"GPU Time (4m): {gpu_time:.6f} seconds")
-
-    # Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 4m (CPU to GPU): {speedup:.2f}x\n")
-
 def test_distance_functions(dim=2, num_samples=1000):
+    '''
+    Reads given file and performs distance function tests.
+
+    Parameters:
+        filename (str): Name of the JSON that contains meta data for the test.
+        
+    '''
     # Create random vectors for testing
     X_cpu = np.random.rand(dim).astype(np.float32)
     Y_cpu = np.random.rand(num_samples, dim).astype(np.float32)
@@ -853,6 +1007,13 @@ def test_distance_functions(dim=2, num_samples=1000):
         print(f"  Speedup: {speedup:.2f}x\n")
 
 def test_distance_functions_batch(dim=2, num_samples=1000):
+    '''
+    Reads given file and performs batched distance function tests.
+
+    Parameters:
+        filename (str): Name of the JSON that contains meta data for the test.
+        
+    '''
     # Create random vectors for testing
     X_cpu = np.random.rand(dim).astype(np.float32)
     Y_cpu = np.random.rand(num_samples, dim).astype(np.float32)
@@ -897,296 +1058,47 @@ def test_distance_functions_batch(dim=2, num_samples=1000):
         print(f"  GPU time: {gpu_time:.6f} seconds")
         print(f"  Speedup: {speedup:.2f}x\n")
 
+def test_kmeans(filename=""):
+    '''
+    Reads given file and performs KMeans tests.
 
-def test_kmeans_1000_2():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("1000_2_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1000_2): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1000_2): {gpu_time:.6f} seconds")
-
-    #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1000_2 (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_1000_1024():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("1000_1024_meta.json")
-
-    # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1000_1024): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1000_1024): {gpu_time:.6f} seconds")
-
-    #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1000_1024 (CPU to GPU): {speedup:.2f}x\n")
-
-
-def test_kmeans_10k_1024():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("10k_1024_meta.json")
-
-    # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (10k_1024): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (10k_1024): {gpu_time:.6f} seconds")
-
-    #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 10k_1024 (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_10k_2():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("10k_2_meta.json")
+    Parameters:
+        filename (str): Name of the JSON that contains meta data for the test.
+        
+    '''
+    print("\n\nTesting for " + filename)
+    N, D, A, K = testdata_kmeans(filename)
 
     # # Measure CPU time
     _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (10k_2): {cpu_time:.6f} seconds")
+    print(f"CPU Time (2m_K50): {cpu_time:.6f} seconds")
     # Measure GPU time
     _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (10k_2): {gpu_time:.6f} seconds")
-
-    #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 10k_2 (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_100k():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("100k_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (100k): {cpu_time:.6f} seconds")
-    
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (100k): {gpu_time:.6f} seconds")
-
-    #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 100k (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_1m():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("1m_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1m): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1m): {gpu_time:.6f} seconds")
+    print(f"GPU Time (2m_K50): {gpu_time:.6f} seconds")
 
     # #Calculate Speedup
     speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1m (CPU to GPU): {speedup:.2f}x\n")
+    print(f"Speedup 2m_K50 (CPU to GPU): {speedup:.2f}x\n")
 
-def test_kmeans_1m_K10():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("1m_K10_meta.json")
+def test_ann(filename=""):
+    '''
+    Reads given file and performs ANN tests.
 
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1m_K10): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1m_K10): {gpu_time:.6f} seconds")
-
-    # #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1m_K10 (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_1m_K50():
-    # Load test data from JSON
-    N, D, A, K = testdata_kmeans("1m_K50_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1m_K50): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1m_K50): {gpu_time:.6f} seconds")
-
-    # #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1m_K50 (CPU to GPU): {speedup:.2f}x\n")
-
-def test_kmeans_1m_10_K10():
-    # Load test data from JSON
-    print("statrting k30")
-    N, D, A, K = testdata_kmeans("1m_10_K10_meta.json")
-
-    # # Measure CPU time
-    _, cpu_time = measure_time(our_kmeans_cpu, N, D, A, K)
-    print(f"CPU Time (1m_10_K10): {cpu_time:.6f} seconds")
-    # Measure GPU time
-    _, gpu_time = measure_time(our_kmeans, N, D, A, K)
-    print(f"GPU Time (1m_10_K10): {gpu_time:.6f} seconds")
-
-    # #Calculate Speedup
-    speedup = cpu_time / gpu_time if gpu_time > 0 else float('inf')  # Avoid division by zero
-    print(f"Speedup 1m_10_K10 (CPU to GPU): {speedup:.2f}x\n")
-
-
-def test_ann_2D():
-    print("\n\n------------------------\n\n")
-    print("For 2D: ")
-    N, D, A, X, K = testdata_knn("2d_meta.json")
-
-    # Manually check file types for A and X
-    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
-        A = read_data(A)
-    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
-        X = read_data(X)
-
-    knn_result, gpu_time = measure_time(our_knn, N, D, A, X, K)
-    print(knn_result)
-    print(f"KNN: {gpu_time:.6f} seconds")
-
-    N, D, A, X, K = testdata_ann("2d_meta.json")
-
-    # Manually check file types for A and X
-    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
-        A = read_data(A)
-    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
-        X = read_data(X)
-
-    ann_result, gpu_time = measure_time(our_ann, N, D, A, X, K)
-    print(f"ANN Time: {gpu_time:.6f} seconds")
-
-    list1 = {int(x) for x in knn_result}
-    list2 = {int(x.cpu()) for x in ann_result}
-
-    rr = recall_rate(list1, list2)
-    print("Recall Rate: " + str(rr))
-
-def test_ann_215():
-    print("\n\n------------------------\n\n")
-    print("For 215: ")
-    # Load test data from JSON
-    N, D, A, X, K = testdata_knn("215_meta.json")
-
-    knn_result, gpu_time = measure_time(our_knn, N, D, A, X, K)
-    print(knn_result)
-    print(f"KNN: {gpu_time:.6f} seconds")
-
-    N, D, A, X, K = testdata_ann("215_meta.json")
-
-    # Manually check file types for A and X
-    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
-        A = read_data(A)
-    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
-        X = read_data(X)
-
-    ann_result, gpu_time = measure_time(our_ann, N, D, A, X, K)
-    print(f"ANN: {gpu_time:.6f} seconds")
-
-    list1 = {int(x) for x in knn_result}
-    list2 = {int(x.cpu()) for x in ann_result}
-
-    rr = recall_rate(list1, list2)
-    print("Recall Rate: " + str(rr))
-
-def test_ann_4k():
-    print("\n\n------------------------\n\n")
-    print("For 4k ")
-    N, D, A, X, K = testdata_knn("4k_meta.json")
-
-    knn_result, gpu_time = measure_time(our_knn, N, D, A, X, K)
-    print(knn_result)
-    print(f"KNN: {gpu_time:.6f} seconds")
-
-    N, D, A, X, K = testdata_ann("4k_meta.json")
-
-    # Manually check file types for A and X
-    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
-        A = read_data(A)
-    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
-        X = read_data(X)
-
-    ann_result, gpu_time = measure_time(our_ann, N, D, A, X, K)
-    print(f"ANN: {gpu_time:.6f} seconds")
-
-    list1 = {int(x) for x in knn_result}
-    list2 = {int(x.cpu()) for x in ann_result}
-
-    rr = recall_rate(list1, list2)
-    print("Recall Rate: " + str(rr))
-
-def test_ann_40k():
-    print("\n\n------------------------\n\n")
-    print("For 40k ")
-    N, D, A, X, K = testdata_knn("40k_meta.json")
-
-    knn_result, gpu_time = measure_time(our_knn, N, D, A, X, K)
-    print(knn_result)
-    print(f"KNN: {gpu_time:.6f} seconds")
-
-    N, D, A, X, K = testdata_ann("40k_meta.json")
-
-    # Manually check file types for A and X
-    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
-        A = read_data(A)
-    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
-        X = read_data(X)
-
-    ann_result, gpu_time = measure_time(our_ann, N, D, A, X, K)
-    print(f"ANN: {gpu_time:.6f} seconds")
-
-    list1 = {int(x) for x in knn_result}
-    list2 = {int(x.cpu()) for x in ann_result}
-
-    rr = recall_rate(list1, list2)
-    print("Recall Rate: " + str(rr))
-
-def test_ann_4m():
-    print("\n\n------------------------\n\n")
-    print("For 4m ")
+    Parameters:
+        filename (str): Name of the JSON that contains meta data for the test.
+        
+    '''
+    print("\n\nTesting for " + filename)
 
     # Load test data from JSON
-    N, D, A, X, K = testdata_knn("4m_meta.json")
+    N, D, A, X, K = testdata_knn(filename)
+
+    print(f"{N} vectors with dimension D = {D}")
+    print(f"Finding {K} nearest vectors to vector X")
 
     # Measure GPU time
     knn_result, gpu_time = measure_time(our_knn, N, D, A, X, K)
-    print(knn_result)
     print(f"KNN: {gpu_time:.6f} seconds")
-
-    N, D, A, X, K = testdata_ann("4m_meta.json")
-
-    # Manually check file types for A and X
-    if isinstance(A, str):  # If A is a file path (for .txt or .npy)
-        A = read_data(A)
-    if isinstance(X, str):  # If X is a file path (for .txt or .npy)
-        X = read_data(X)
-
-    ann_result, gpu_time = measure_time(our_ann, N, D, A, X, K)
-    print(f"ANN: {gpu_time:.6f} seconds")
-
-    list1 = {int(x) for x in knn_result}
-    list2 = {int(x.cpu()) for x in ann_result}
-
-    rr = recall_rate(list1, list2)
-    print("Recall Rate: " + str(rr))
-
-def test_ann_100k():
-    print("\n\n------------------------\n\n")
-    print("For 100k vectors with 1024 dimensions")
-    N, D, A, X, K = testdata_knn("100k_meta.json")
-
-    knn_result, gpu_time = measure_time(our_knn, N, D, A, X, K)
-    print(knn_result)
-    print(f"KNN: {gpu_time:.6f} seconds")
-
-    N, D, A, X, K = testdata_ann("100k_meta.json")
 
     # Manually check file types for A and X
     if isinstance(A, str):  # If A is a file path (for .txt or .npy)
@@ -1212,23 +1124,30 @@ if __name__ == "__main__":
         test_distance_functions_batch(dim=2)
         test_distance_functions_batch(dim=2**15)
     elif args.test == "knn":
-        test_knn()
-        test_knn_cpu()
-        test_knn_2D()
-        test_knn_215()
-        test_knn_4k()
-        test_knn_4m()
+        files = ["2d_meta.json", "215_meta.json", "4k_meta.json", "40k_meta.json" + "4m_meta.json"]
+        '''
+        for file in files:
+            try:
+                test_knn(file)
+            except Exception as e:
+                print("Error: ) + str(e))
+        '''
+        test_knn("4m_meta.json")
     elif args.test == "kmeans":
-        test_kmeans_1000_2()
-        test_kmeans_1000_1024()
-        test_kmeans_10k_2()
-        test_kmeans_10k_1024()
-        test_kmeans_1m_10_K10()
+        #files = ["2m_K50_meta.json", "1m_K100_meta.json", "1m_50_K30_meta.json", "1000_215_meta.json"]
+        test_kmeans("1000_215_meta.json")
+        '''
+        for file in files:
+            try:
+                test_kmeans(file)
+            except Exception as e:
+                print("Error: " + str(e))
+        '''
     elif args.test == "ann":
-        # test_ann()
-        test_ann_2D()
-        test_ann_215()
-        test_ann_4k()
-        test_ann_40k()
-        test_ann_4m()
-        test_ann_100k()
+        files = ["ann_test1", "ann_test2", "ann_test3", "ann_test4", "ann_test5", "ann_test6", "ann_test7", "ann_test8", "ann_test9"]
+        for file in files:
+            try:
+                test_ann(file + "_meta.json")
+            except Exception as e:
+                print("Error: " + str(e))
+        #test_ann("ann_test8_meta.json")
